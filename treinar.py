@@ -45,11 +45,11 @@ PRESETS = {
     # só valida que o pipeline inteiro roda (segundos)
     "teste": dict(n_layer=2, n_head=2, n_embd=64, block_size=64, batch_size=16, max_iters=150,
                   eval_interval=50, eval_iters=5, lr=2e-3, dropout=0.0, warmup=15),
-    # CPU comum (4-8 núcleos): ~3M de parâmetros, dá pra treinar em menos de uma hora
-    "cpu": dict(n_layer=4, n_head=4, n_embd=256, block_size=192, batch_size=32, max_iters=3000,
-                eval_interval=200, eval_iters=20, lr=1e-3, dropout=0.15, warmup=100),
+    # CPU comum (4-8 núcleos): ~3M de parâmetros, ~40 min em 4 núcleos
+    "cpu": dict(n_layer=4, n_head=4, n_embd=256, block_size=192, batch_size=32, max_iters=2500,
+                eval_interval=150, eval_iters=20, lr=1e-3, dropout=0.2, warmup=100),
     # GPU (CUDA/MPS): ~11M de parâmetros, contexto maior
-    "gpu": dict(n_layer=6, n_head=6, n_embd=384, block_size=256, batch_size=64, max_iters=5000,
+    "gpu": dict(n_layer=6, n_head=6, n_embd=384, block_size=256, batch_size=64, max_iters=3000,
                 eval_interval=250, eval_iters=50, lr=1e-3, dropout=0.2, warmup=200),
 }
 
@@ -92,6 +92,8 @@ def args_cli() -> argparse.Namespace:
     g.add_argument("--eval-iters", type=int)
     g.add_argument("--log-interval", type=int, default=25)
     g.add_argument("--tempo-max", type=float, help="para (e salva) depois de N minutos")
+    g.add_argument("--paciencia", type=int, default=4,
+                   help="para cedo se a validação não melhorar por N avaliações seguidas (0 desliga)")
     g.add_argument("--criterio", choices=["validacao", "final"], default="validacao",
                    help="salvar o modelo com a menor loss de validação, ou o do fim do treino")
 
@@ -333,6 +335,7 @@ def main() -> None:
     t_ult = t_inicio
     it = it_inicio
     perdas = None
+    sem_melhora = 0
     try:
         while True:
             fim = it >= max_iters or (args.tempo_max and time.time() - t_inicio > args.tempo_max * 60)
@@ -344,10 +347,17 @@ def main() -> None:
                       f"validação {perdas['validacao']:.4f}{marca}")
                 if melhorou:
                     melhor_val = perdas["validacao"]
+                    sem_melhora = 0
                     if args.criterio == "validacao" and it > it_inicio:
                         salvar(it, perdas, "melhor validação")
+                elif it > it_inicio:
+                    sem_melhora += 1
                 if it > it_inicio:
                     salvar_checkpoint(it)
+                if args.paciencia and sem_melhora >= args.paciencia and not fim:
+                    print(f"parada antecipada: a validação não melhora há {sem_melhora} avaliações "
+                          f"(o modelo começou a decorar o texto em vez de aprender)")
+                    break
                 if it > it_inicio and it % (hp["eval_interval"] * 2) == 0 and not fim:
                     print("   amostra:", amostra().replace("\n", "\n   | "))
             if fim:

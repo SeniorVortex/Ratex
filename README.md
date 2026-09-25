@@ -74,7 +74,8 @@ Pronto. O script:
 2. monta o vocabulário;
 3. separa 10% do texto para validação (pedaços espalhados pelo arquivo inteiro, não só o final);
 4. treina com `CrossEntropyLoss`, mostrando a loss caindo no terminal, e de tempos em tempos gera uma amostra para você ver o texto melhorando;
-5. salva o modelo com a **menor loss de validação** em `ratex/xselo-0-1/v1/`.
+5. salva o modelo com a **menor loss de validação** em `ratex/xselo-0-1/v1/`;
+6. para sozinho quando a validação para de melhorar (parada antecipada), porque dali em diante o modelo só estaria decorando o texto.
 
 Exemplo de saída:
 
@@ -91,7 +92,7 @@ O `--preset auto` (padrão) usa `gpu` se encontrar CUDA/MPS e `cpu` se não enco
 | preset  | camadas | cabeças | n_embd | contexto | parâmetros | uso |
 |---------|---------|---------|--------|----------|-----------:|-----|
 | `teste` | 2 | 2 | 64  | 64  | ~0,1M | só ver se tudo funciona (segundos) |
-| `cpu`   | 4 | 4 | 256 | 192 | ~3,2M | CPU comum, ~1 h em 4 núcleos |
+| `cpu`   | 4 | 4 | 256 | 192 | ~3,2M | CPU comum, ~40 min em 4 núcleos |
 | `gpu`   | 6 | 6 | 384 | 256 | ~10,8M | GPU, poucos minutos |
 
 Qualquer hiperparâmetro pode ser sobrescrito:
@@ -102,6 +103,7 @@ python treinar.py --preset gpu --max-iters 8000      # treino mais longo na GPU
 python treinar.py --n-layer 6 --n-embd 320 --n-head 5 --block-size 256 --dropout 0.2
 python treinar.py --epocas 50                        # define a duração em passadas pelo dataset
 python treinar.py --tempo-max 30                     # para sozinho (e salva) em 30 minutos
+python treinar.py --paciencia 0                      # desliga a parada antecipada (padrão: 4 avaliações)
 python treinar.py --retomar                          # continua do último checkpoint
 python treinar.py --tokenizador bpe --vocab-bpe 512  # sub-palavras em vez de caracteres
 python treinar.py --criterio final                   # salva o modelo do fim, não o de menor validação
