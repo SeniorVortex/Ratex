@@ -21,6 +21,7 @@ import json
 import os
 import re
 import secrets
+import shutil
 import subprocess
 import sys
 import time
@@ -101,6 +102,18 @@ def prompt_com_busca(system_prompt: str, resultados: list[dict]) -> str:
             f"responderem a pergunta, diga isso com honestidade:\n\n{fontes}")
 
 
+def _criar_venv(venv: Path) -> None:
+    """Cria o ambiente Python separado. O Colab (e alguns Linux) vêm sem o ensurepip, que o
+    `python -m venv` precisa; aí o virtualenv resolve, porque traz o próprio pip."""
+    shutil.rmtree(venv, ignore_errors=True)
+    feito = subprocess.run([sys.executable, "-m", "venv", str(venv)], capture_output=True, text=True)
+    if feito.returncode == 0:
+        return
+    shutil.rmtree(venv, ignore_errors=True)
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", "virtualenv"], check=True)
+    subprocess.run([sys.executable, "-m", "virtualenv", "-q", str(venv)], check=True)
+
+
 def iniciar_searxng(pasta: Path = PASTA_SEARXNG, porta: int = 8888, esperar: float = 90.0) -> str:
     """Baixa, configura e liga um SearXNG só pra este computador. Retorna a URL.
     Precisa de git e internet. Da 2ª vez em diante é rápido (reaproveita a instalação)."""
@@ -114,13 +127,15 @@ def iniciar_searxng(pasta: Path = PASTA_SEARXNG, porta: int = 8888, esperar: flo
         pasta.mkdir(parents=True, exist_ok=True)
         subprocess.run(["git", "clone", "-q", "--depth", "1", "https://github.com/searxng/searxng.git", str(codigo)],
                        check=True)
-    if not python.exists():
+    pronto = venv / ".xselo-instalado"
+    if not pronto.exists():
         # ambiente separado: as versões fixas do SearXNG não bagunçam as bibliotecas do Xselo
-        subprocess.run([sys.executable, "-m", "venv", str(venv)], check=True)
+        _criar_venv(venv)
         subprocess.run([str(python), "-m", "pip", "install", "-q", "-U", "pip", "setuptools", "wheel"], check=True)
         subprocess.run([str(python), "-m", "pip", "install", "-q", "-r", str(codigo / "requirements.txt")], check=True)
         subprocess.run([str(python), "-m", "pip", "install", "-q", "--no-build-isolation", "-e", str(codigo)],
                        check=True)
+        pronto.write_text("ok\n")  # só marca quando tudo instalou (se cair no meio, tenta de novo)
     config = pasta / "settings.yml"
     config.write_text(
         "use_default_settings: true\n"
