@@ -67,10 +67,10 @@ PASTA_HIBRIDO = RAIZ / NOME_HIBRIDO
 BASE_PADRAO = BASES["qwen-0.5b"]
 
 GERACAO_HIBRIDO = {
-    "temperatura": 0.7,
+    "temperatura": 0.3,  # baixa: menos sorteio, menos invenção de fatos
     "top_k": 40,
     "top_p": 0.9,
-    "penalidade_repeticao": 1.1,
+    "penalidade_repeticao": 1.05,
     "max_novos_tokens": 400,
 }
 
@@ -213,15 +213,16 @@ def montar_mensagens(historico: list[dict], system_prompt: str = SYSTEM_PROMPT) 
     return [{"role": "system", "content": system_prompt}, *historico]
 
 
-def consulta_da_conversa(historico: list[dict]) -> str:
-    """O que buscar na memória: a última pergunta, e a anterior junto se a última for curta
-    ("e a irmã dela?")."""
+def buscar_na_conversa(memoria, historico: list[dict]) -> list[str]:
+    """Busca a última pergunta na memória. Só se ela não achar nada, tenta junto com a
+    pergunta anterior (para continuações tipo "e a irmã dela?")."""
     perguntas = [m["content"] for m in historico if m["role"] == "user"]
     if not perguntas:
-        return ""
-    if len(perguntas) > 1 and len(perguntas[-1].split()) <= 5:
-        return f"{perguntas[-2]} {perguntas[-1]}"
-    return perguntas[-1]
+        return []
+    trechos = memoria.buscar(perguntas[-1])
+    if not trechos and len(perguntas) > 1:
+        trechos = memoria.buscar(f"{perguntas[-2]} {perguntas[-1]}")
+    return trechos
 
 
 @torch.no_grad()
@@ -236,7 +237,7 @@ def responder(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PR
     if memoria is not None:
         from .memoria import prompt_com_memoria
 
-        system_prompt = prompt_com_memoria(system_prompt, memoria.buscar(consulta_da_conversa(historico)))
+        system_prompt = prompt_com_memoria(system_prompt, buscar_na_conversa(memoria, historico))
     texto = tok.apply_chat_template(montar_mensagens(historico, system_prompt), tokenize=False,
                                     add_generation_prompt=True)
     entrada = tok(texto, return_tensors="pt", add_special_tokens=False).to(modelo.device)
