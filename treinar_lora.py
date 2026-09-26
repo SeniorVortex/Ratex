@@ -253,6 +253,10 @@ def main() -> None:
     treino, val = preparar(treino_conv), preparar(val_conv)
     n_tokens = sum(len(i) for i, _ in treino)
     print(f"exemplos: treino {len(treino)} | validação {len(val)} | {n_tokens:,} tokens por época")
+    if not treino:
+        raise SystemExit(f"nenhum exemplo sobrou pro treino: com --max-tokens {args.max_tokens}, o system prompt e a "
+                         "pergunta já ocupam tudo e a resposta é cortada. Aumente --max-tokens (o padrão da versão "
+                         "é o recomendado).")
 
     otim = torch.optim.AdamW([p for p in modelo.parameters() if p.requires_grad], lr=args.lr, weight_decay=0.0)
     # só conta grupos completos de acumulação: o resto de cada época é descartado
@@ -313,6 +317,7 @@ def main() -> None:
     parar = False
     while passo < total_passos and not parar:
         epoca += 1
+        passo_no_inicio = passo
         otim.zero_grad(set_to_none=True)
         acumulado, n_micro, t_log = 0.0, 0, time.time()
         for k, (ids, labels, mask) in enumerate(lotes(treino, args.batch_size, tok.pad_token_id, True, rnd)):
@@ -342,6 +347,13 @@ def main() -> None:
                 print("tempo máximo atingido")
                 parar = True
                 break
+        if passo == passo_no_inicio and not parar:
+            # época menor que um grupo de acumulação: aplica o que juntou, senão o treino não anda nunca
+            for g in otim.param_groups:
+                g["lr"] = lr_em(passo)
+            otim.step()
+            otim.zero_grad(set_to_none=True)
+            passo += 1
         perda = avaliar()
         marca = "  <- melhor até agora" if perda < melhor else ""
         print(f"== fim da época {epoca}: loss de validação {perda:.4f}{marca}")
