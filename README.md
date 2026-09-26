@@ -149,6 +149,31 @@ O que a tabela ensina:
 
 No 1.5B, o Qwen puro com memória já chega perto (88,9), então daqui pra frente o que mais rende é base maior e dataset maior. Os relatórios com todas as respostas ficam em `avaliacoes/`.
 
+## Polimento por preferência (DPO): `python treinar_dpo.py`
+
+Depois de treinado, o Xselo pode ser **polido com as suas correções**. Cada vez que ele errar numa conversa, anote em `dados_preferencia/` a conversa, a resposta ruim que ele deu e a resposta certa:
+
+```
+Pessoa: quem é o ser mais poderoso de touhou?
+Ruim: O ser mais poderoso é a Luna Child, a deusa da lua...
+Boa: Não existe um ranking oficial, mas a candidata mais citada é a Hecatia...
+```
+
+Dá pra incluir o começo da conversa antes do par (linhas `Pessoa:`/`Xselo:`), pra ensinar comportamento no meio do papo, tipo aceitar correção. O treino ensina o modelo a preferir as respostas boas, sempre comparando com o modelo de antes, pra ele não esquecer o que já sabia.
+
+```bash
+python treinar_dpo.py --modelo ratex/xselo-0-3/v1          # salva em ratex/xselo-0-3/v1-dpo
+```
+
+No Colab, a célula **5b** faz isso sozinha depois do treino (dá pra desligar na célula 1).
+
+**O que o primeiro teste mostrou** (12 pares, Xselo 0.3 de 1,5B, sem memória, na CPU):
+- as probabilidades inverteram como deveriam: antes, o modelo achava a resposta ruim mais provável que a boa (−1,46 contra −2,37 por token); depois, a boa passou na frente (−1,66 contra −2,00);
+- em perguntas que não estavam nos pares, ele parou de concordar com erro ("a capital é São Paulo" → "não, eu não errei") e parou de inventar um nome em "qual o personagem mais forte?";
+- **mas não passou a dar as respostas certas**: continuou teimando que a Cirno é "deusa do sol". DPO ajusta o **jeito** de responder, não ensina **fatos**, e um modelo de 1,5B não sabe Touhou. Fato se resolve com memória e dataset; o DPO pede algo como 50–200 pares pra fazer efeito firme.
+
+Por isso a versão polida do 0.3 não substituiu a oficial. A ferramenta fica pronta pra quando os pares crescerem, e ela rende mais no 32B, que já sabe muito mais.
+
 ## A memória de consulta (RAG)
 
 Um modelo pequeno não decora todos os fatos de Touhou só com o LoRA. Por isso, antes de responder, o Xselo **consulta o próprio dataset** (`nucleo/memoria.py`), procurando em cada parágrafo e cada diálogo de `dataset.txt`, `dados_extras/` e `dados_gerais/`. Os trechos mais relevantes entram no prompt como "anotações do caderno".
@@ -186,6 +211,8 @@ Ratex/
 ├── treinar.py             # v1: treina o micro-Transformer do zero -> ratex/xselo-0-1/v1/
 ├── treinar_lora.py        # 0.2/0.3: treina o LoRA em cima do modelo base -> ratex/xselo-0-X/v1/
 ├── gerar.py               # conversa / gera texto (híbrido mais novo se existir, senão v1)
+├── treinar_dpo.py         # polimento por preferência (DPO) com dados_preferencia/
+├── dados_preferencia/     # pares "Ruim/Boa" tirados das conversas
 ├── avaliar.py             # prova fixa com nota por categoria (touhou, geral, matemática)
 ├── avaliacoes/            # relatórios da prova de cada versão
 ├── nucleo/
@@ -371,7 +398,10 @@ Detalhes e otimizações:
 - [x] Treinar a 0.3 (Qwen2.5-0.5B e depois Qwen2.5-1.5B, na CPU)
 - [x] RAG: o Xselo consulta o próprio dataset antes de responder
 - [x] 0.4: lote de prosa, pesos por fonte, respostas com vários parágrafos, prova de escrita
-- [ ] Treinar a 0.4 no Qwen 32B no Colab (A100) e comparar os textos com a 0.3
+- [x] Treinar a 0.4 no Qwen 32B no Colab (A100)
+- [x] DPO com as correções das conversas (`treinar_dpo.py`, célula 5b do notebook)
+- [ ] Juntar 50–200 pares de preferência e polir o 32B
+- [ ] Busca na internet via SearXNG como ferramenta do Xselo
 - [x] Memória por significado (embeddings) junto com a busca por palavra
 - [ ] Mais dataset: mais conversas gerais e de Touhou no tom do Xselo (a melhoria com melhor custo-benefício)
 - [ ] Segurar o conhecimento geral da base no LoRA (lr menor, mais conversas gerais)
