@@ -1,0 +1,9 @@
+# checkpoints de treino (pesos + estado do otimizador, pesados e só servem pra retomar)
+checkpoints/
+*.pt
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/

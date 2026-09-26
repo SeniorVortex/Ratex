@@ -1,0 +1,8 @@
+{
+  "temperatura": 0.8,
+  "top_k": 40,
+  "top_p": 0.95,
+  "penalidade_repeticao": 1.0,
+  "janela_repeticao": 64,
+  "max_novos_tokens": 500
+}

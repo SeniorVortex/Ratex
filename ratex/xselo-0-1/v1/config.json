@@ -1,0 +1,33 @@
+{
+  "nome": "ratex/xselo-0-1/v1",
+  "model_type": "xselo-gpt",
+  "architectures": [
+    "XseloGPT"
+  ],
+  "vocab_size": 90,
+  "block_size": 192,
+  "n_layer": 4,
+  "n_head": 4,
+  "n_embd": 256,
+  "dropout": 0.2,
+  "bias": false,
+  "tokenizador": "char",
+  "n_parametros": 3220224,
+  "dtype_pesos": "float32",
+  "treino": {
+    "iteracoes": 1950,
+    "loss_treino": 0.7996,
+    "loss_validacao": 1.3319,
+    "melhor_loss_validacao": 1.3319,
+    "tokens_dataset": 146437,
+    "caracteres_dataset": 146437,
+    "arquivos_dataset": [
+      "dataset.txt"
+    ],
+    "batch_size": 32,
+    "lr": 0.001,
+    "preset": "cpu",
+    "device": "cpu",
+    "data": "2026-09-26T00:29:42Z"
+  }
+}
