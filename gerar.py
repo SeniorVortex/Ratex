@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """
-Gera texto com o ratex/xselo-0-1/v1.
+Conversa / gera texto com o Xselo.
+
+Por padrão usa o ratex/xselo-0-2/v1 (modelo base + LoRA) se ele já foi treinado,
+e cai para o ratex/xselo-0-1/v1 (micro-Transformer feito do zero) se não foi.
 
 Exemplos:
-    python gerar.py "Touhou é"                   # continua um texto
+    python gerar.py --chat                       # bate-papo com o Xselo (usa o xselo-0-2)
+    python gerar.py "quem é a Cirno?"            # uma pergunta só
+    python gerar.py --modelo ratex/xselo-0-1/v1 "Touhou é"   # o v1 continua um texto
     python gerar.py --prompt "Reimu" --amostras 3
-    python gerar.py --chat                       # bate-papo (Pessoa/Xselo)
-    python gerar.py                              # modo interativo: digita um começo, ele completa
+    python gerar.py                              # modo interativo
 
 Controles de amostragem:
     --temperatura 0.8   menor = mais conservador/repetitivo, maior = mais criativo/caótico
@@ -24,6 +28,7 @@ from pathlib import Path
 import torch
 
 from nucleo import NOME_MODELO, PASTA_PADRAO, carregar_modelo
+from nucleo.hibrido import PASTA_HIBRIDO, eh_hibrido
 
 PREFIXO_PESSOA = "Pessoa:"
 PREFIXO_XSELO = "Xselo:"
@@ -34,7 +39,9 @@ def args_cli() -> argparse.Namespace:
     p.add_argument("prompt_posicional", nargs="?", metavar="PROMPT", help="texto inicial")
     p.add_argument("--prompt", "-p", help="texto inicial (mesmo que o argumento posicional)")
     p.add_argument("--chat", action="store_true", help="modo conversa: você pergunta, o Xselo responde")
-    p.add_argument("--modelo", default=str(PASTA_PADRAO), help="pasta do modelo")
+    p.add_argument("--modelo", default="auto",
+                   help="pasta do modelo; 'auto' = ratex/xselo-0-2/v1 se existir, senão ratex/xselo-0-1/v1")
+    p.add_argument("--base", help="xselo-0-2: modelo base alternativo (ex.: pasta local já baixada)")
     p.add_argument("--tokens", type=int, help="máximo de tokens novos por geração")
     p.add_argument("--temperatura", "-t", type=float)
     p.add_argument("--top-k", type=int)
@@ -44,7 +51,7 @@ def args_cli() -> argparse.Namespace:
     p.add_argument("--parar-em", action="append", default=[],
                    help="interrompe a geração quando este texto aparecer (pode repetir a opção)")
     p.add_argument("--seed", type=int, help="semente para resultados reproduzíveis")
-    p.add_argument("--device", default="cpu", help="cpu, cuda, mps...")
+    p.add_argument("--device", default="auto", help="auto, cpu, cuda, mps...")
     return p.parse_args()
 
 
@@ -156,12 +163,74 @@ def modo_chat(g: Gerador, args, max_novos: int) -> None:
         historico[:] = historico[-8:]
 
 
+def ler_linha(prompt: str) -> str | None:
+    try:
+        return input(prompt).strip()
+    except (EOFError, KeyboardInterrupt):
+        print()
+        return None
+
+
+def main_hibrido(args, pasta: Path) -> None:
+    """xselo-0-2: modelo base instruído + LoRA do Xselo, com o chat template do modelo base."""
+    from nucleo.hibrido import carregar_hibrido, responder
+
+    print(f"carregando {pasta} (modelo base + LoRA)...", file=sys.stderr)
+    modelo, tok, cfg = carregar_hibrido(pasta, device=args.device, base=args.base)
+    ger = dict(cfg.get("geracao", {}))
+    for chave, valor in (("temperatura", args.temperatura), ("top_k", args.top_k), ("top_p", args.top_p),
+                         ("penalidade_repeticao", args.penalidade), ("max_novos_tokens", args.tokens)):
+        if valor is not None:
+            ger[chave] = valor
+    print(f"[{cfg['nome']} | base {args.base or cfg['base']} + LoRA r={cfg['lora']['rank']} | "
+          f"temp {ger.get('temperatura')} | top-k {ger.get('top_k')} | top-p {ger.get('top_p')}]", file=sys.stderr)
+    system = cfg.get("system_prompt")
+
+    def perguntar(historico: list[dict]) -> str:
+        print("xselo> ", end="", flush=True)
+        return responder(modelo, tok, historico, system_prompt=system, **ger)
+
+    prompt = args.prompt or args.prompt_posicional
+    if prompt and not args.chat:
+        for i in range(args.amostras):
+            if args.amostras > 1:
+                print(f"\n----- amostra {i + 1}/{args.amostras} -----")
+            print(f"você> {prompt}")
+            perguntar([{"role": "user", "content": prompt}])
+        return
+
+    print("Papo com o Xselo 0.2, especialista em Touhou. Comandos: /novo (esquece a conversa), /sair")
+    historico: list[dict] = []
+    while True:
+        msg = prompt if prompt else ler_linha("\nvocê> ")
+        prompt = None
+        if msg is None or msg in ("/sair", "/exit", "/quit"):
+            return
+        if not msg:
+            continue
+        if msg == "/novo":
+            historico.clear()
+            print("(conversa zerada)")
+            continue
+        historico.append({"role": "user", "content": msg})
+        historico.append({"role": "assistant", "content": perguntar(historico)})
+        historico[:] = historico[-12:]  # memória: as últimas 6 trocas
+
+
 def main() -> None:
     args = args_cli()
     if args.seed is not None:
         torch.manual_seed(args.seed)
+    if args.modelo == "auto":
+        pasta = PASTA_HIBRIDO if eh_hibrido(PASTA_HIBRIDO) else PASTA_PADRAO
+    else:
+        pasta = Path(args.modelo)
+    if eh_hibrido(pasta):
+        return main_hibrido(args, pasta)
+    if args.device == "auto":
+        args.device = "cpu"  # o v1 é minúsculo: CPU basta
     try:
-        modelo, tok, config, geracao = carregar_modelo(Path(args.modelo), device=args.device)
+        modelo, tok, config, geracao = carregar_modelo(pasta, device=args.device)
     except FileNotFoundError as e:
         sys.exit(str(e))
 

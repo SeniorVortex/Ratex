@@ -18,6 +18,46 @@ bebe o jeito mais fofo.
 
 O modelo que está no repositório tem **3,2 M de parâmetros**. Foi treinado **só na CPU** (4 núcleos, ~40 min) com o `dataset.txt` (~146 mil caracteres) e chegou a loss de validação **1,33**. Ele já escreve em português com o tom e o vocabulário de Touhou e respeita o formato de conversa, **mas ainda mistura fatos e personagens**. É a versão preliminar. O caminho para ele ficar bom está no [roadmap](#próximos-passos-roadmap): mais dataset e treino numa GPU.
 
+## Nova geração: `ratex/xselo-0-2/v1` (base inteligente + LoRA)
+
+O xselo-0-2 junta os dois mundos:
+
+- **a inteligência de um modelo pronto**: por padrão o [`Qwen/Qwen2.5-0.5B-Instruct`](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct), que já sabe conversar e fala português bem. Também dá para usar o [`HuggingFaceTB/SmolLM-135M-Instruct`](https://huggingface.co/HuggingFaceTB/SmolLM-135M-Instruct), que é menor e mais rápido, mas quase só fala inglês;
+- **o conhecimento e a prosa do Xselo**: todo o `dataset.txt` (e `dados_extras/`) vira ~540 conversas de chat, usadas para treinar uma camada **LoRA** por cima do modelo base.
+
+O LoRA treina só ~2% dos pesos (algumas dezenas de MB) e deixa o modelo base congelado. A pasta `ratex/xselo-0-2/v1/` guarda só o adaptador. O modelo base é baixado do Hugging Face na primeira execução.
+
+```bash
+pip install -r requirements.txt
+python treinar_lora.py                     # treina o LoRA em cima do Qwen2.5-0.5B-Instruct
+python gerar.py --chat                     # conversa com o xselo-0-2
+```
+
+| tempo estimado | CPU (4 núcleos) | GPU |
+|---|---|---|
+| `python treinar_lora.py` (Qwen 0.5B, 3 épocas) | ~2 h | poucos minutos |
+| `python treinar_lora.py --base HuggingFaceTB/SmolLM-135M-Instruct` | ~30-40 min | ~1 min |
+
+Opções úteis:
+
+```bash
+python treinar_lora.py --epocas 5 --rank 32               # treino mais forte
+python treinar_lora.py --tempo-max 60                     # para e salva em 60 minutos
+python treinar_lora.py --mesclar                          # também salva o modelo completo (base+LoRA) em .../mesclado
+python treinar_lora.py --exportar-conversas conv.jsonl    # só mostra as conversas geradas do dataset
+python gerar.py --chat --base /pasta/do/Qwen2.5-0.5B-Instruct   # usa um modelo base já baixado (offline)
+python gerar.py --modelo ratex/xselo-0-1/v1 "Touhou é"    # volta pro v1 feito do zero
+```
+
+Como o dataset vira conversa (`nucleo/dados_chat.py`):
+
+- os diálogos `Pessoa:`/`Xselo:` entram como estão (e contam em dobro por serem o formato-alvo);
+- as fichas `Nome: descrição` viram "quem é Nome?", "qual o poder de Nome?", "quais os memes de Nome?"...;
+- jogos, lugares, mecânica, músicas, memes, crônicas e analogias viram perguntas de leigo;
+- o treino só calcula a loss nas **respostas do Xselo**, e o system prompt fixa a persona.
+
+`pytorch_model.bin` e `vocab.json` são do v1. O xselo-0-2 usa o tokenizador do modelo base (salvo junto na pasta), e o vocabulário de Touhou do v1 chega até ele pelo texto do dataset.
+
 ---
 
 ## Estrutura do repositório
@@ -26,18 +66,22 @@ O modelo que está no repositório tem **3,2 M de parâmetros**. Foi treinado **
 Ratex/
 ├── dataset.txt            # o texto de treino (Touhou explicado na linguagem da rua)
 ├── dados_extras/          # cole aqui mais .txt; eles entram no treino automaticamente
-├── treinar.py             # treina o modelo do zero e salva em ratex/xselo-0-1/v1/
-├── gerar.py               # gera texto / conversa com o modelo treinado
+├── treinar.py             # v1: treina o micro-Transformer do zero -> ratex/xselo-0-1/v1/
+├── treinar_lora.py        # 0-2: treina o LoRA em cima do modelo base -> ratex/xselo-0-2/v1/
+├── gerar.py               # conversa / gera texto (xselo-0-2 se existir, senão v1)
 ├── nucleo/
 │   ├── modelo.py          # arquitetura Transformer (embeddings, atenção, FFN, LayerNorm, logits)
 │   ├── tokenizador.py     # tokenizador por caractere (padrão) e BPE leve (opcional)
-│   └── pasta_modelo.py    # salvar/carregar no formato de pasta estilo Hugging Face
+│   ├── pasta_modelo.py    # salvar/carregar no formato de pasta estilo Hugging Face
+│   ├── dados_chat.py      # 0-2: transforma o dataset em conversas + system prompt do Xselo
+│   └── hibrido.py         # 0-2: carrega base + LoRA e gera respostas
 ├── ratex/xselo-0-1/v1/    # O MODELO
 │   ├── pytorch_model.bin      # pesos (state_dict do PyTorch)
 │   ├── config.json            # vocab_size, n_embd, n_head, n_layer, block_size, ... + dados do treino
 │   ├── vocab.json             # tokenizador (tipo + tokens [+ merges do BPE])
 │   ├── generation_config.json # temperatura/top-k/top-p padrão do gerar.py
 │   └── README.md              # model card
+├── ratex/xselo-0-2/v1/    # (depois do treino) adaptador LoRA + tokenizador + ratex_config.json
 ├── checkpoints/           # (ignorado pelo git) checkpoint para retomar treino
 └── requirements.txt
 ```
@@ -117,9 +161,11 @@ python treinar.py --help                             # todas as opções
 
 ## Gerando texto: `python gerar.py`
 
+Se o `ratex/xselo-0-2/v1/` existir, o `gerar.py` usa ele (veja a seção do xselo-0-2 acima). Os exemplos abaixo são do v1:
+
 ```bash
 # continua um texto
-python gerar.py "Touhou é"
+python gerar.py --modelo ratex/xselo-0-1/v1 "Touhou é"
 python gerar.py "Reimu"
 python gerar.py "Rato, pera que caralhos rato esta fazendo aqui eee ranego em"
 
@@ -201,7 +247,7 @@ Detalhes e otimizações:
 - [ ] Treino na GPU com o preset `gpu` e contexto maior (mais "memória" na conversa)
 - [ ] Tokenizador BPE como padrão quando o dataset crescer
 - [ ] RoPE no lugar do embedding posicional aprendido
-- [ ] Ajuste fino em diálogos (instruction tuning) para uma prosa ainda melhor
+- [x] Ajuste fino em diálogos em cima de um modelo base (xselo-0-2, LoRA)
 - [ ] Memória de conversa mais longa no `gerar.py --chat`
 
 ---

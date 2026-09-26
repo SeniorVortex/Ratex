@@ -2,6 +2,9 @@
 checkpoints/
 *.pt
 
+# modelo completo mesclado do xselo-0-2 (grande; o que vai pro git é só o LoRA)
+ratex/**/mesclado/
+
 # python
 __pycache__/
 *.pyc

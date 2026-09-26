@@ -1,2 +1,7 @@
 torch>=2.1
 numpy
+# xselo-0-2 (modelo base + LoRA)
+transformers>=4.45
+peft>=0.13
+accelerate
+safetensors
