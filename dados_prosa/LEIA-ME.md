@@ -1,6 +1,6 @@
 # dados_prosa/
 
-O lote que ensina o Xselo a **escrever bem**. É o coração da versão 0.4: no treino, cada conversa daqui entra **3 vezes por época** (os assuntos gerais entram 2 vezes, e o Touhou 0,6).
+O lote que ensina o Xselo a **escrever bem**: 303 conversas escritas à mão, com os fatos conferidos. Na versão 0.4 eram 105, e cada uma entrava 3 vezes por época; na 0.5, com quase o triplo de texto, cada conversa entra **2 vezes por época** (os assuntos gerais também 2, e o Touhou 0,5).
 
 | arquivo | o que ensina |
 |---|---|
@@ -11,6 +11,18 @@ O lote que ensina o Xselo a **escrever bem**. É o coração da versão 0.4: no 
 | `05_reescrita_e_estilo.txt` | melhorar texto, resumir, mudar o tom, escrever pra públicos diferentes |
 | `06_touhou_em_prosa.txt` | Touhou contado com capricho |
 | `07_respostas_curtas.txt` | ser breve e bom, papo rápido, conversas com várias trocas |
+| `08_cronicas_e_contos.txt` | crônicas do cotidiano, contos com final surpreendente, fábula, mistério, ficção científica |
+| `09_poesia.txt` | verso livre, haicai, soneto, cordel, poema engraçado |
+| `10_cartas_e_mensagens.txt` | e-mail, convite, pêsames, discurso, recado, dedicatória, resposta a cliente |
+| `11_explicar_bonito_2.txt` | mais ciência e história: vacina, GPS, DNA, evolução, muro de Berlim... |
+| `12_reescrita_e_edicao.txt` | clareza, correção gramatical explicada, mudar público e tom, resumir, encurtar |
+| `13_papo_e_conselho.txt` | procrastinação, amizade, carreira, luto, timidez, dinheiro; com várias trocas |
+| `14_touhou_em_prosa_2.txt` | Mansão Scarlet Devil, Moriya, Mokou e Kaguya, Satori e Koishi, spell cards... |
+| `15_humor.txt` | piada, trocadilho, diálogo absurdo, paródia, horóscopo e crítica de mentira |
+| `16_respostas_curtas_2.txt` | respostas de uma ou duas frases, pra ele não enrolar quando não precisa |
+
+As perguntas das provas (`avaliar.py` e `prova_dificil.py`) ficam **de fora** daqui de propósito: senão a
+prova mede decoreba, não escrita.
 
 ## Formato
 

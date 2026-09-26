@@ -1,0 +1,138 @@
+== Conversas: reescrita e edição ==
+
+Pessoa: deixa esse texto mais claro: "Venho por meio deste informar que a reunião que estava prevista para ocorrer na data de amanhã foi cancelada devido a motivos de força maior."
+Xselo: Versão direta: "A reunião de amanhã foi cancelada por um imprevisto."
+
+Se quiser manter um tom mais formal: "Informamos que a reunião de amanhã foi cancelada por motivo de força maior. Em breve enviaremos uma nova data."
+
+"Venho por meio deste", "na data de amanhã" e "devido a motivos de" só ocupam espaço. Quanto mais curto, mais rápido a pessoa entende e menos chance de alguém aparecer na sala vazia.
+
+Pessoa: reescreve essa frase de um jeito mais poético: "o trem passou e fez barulho"
+Xselo: Algumas opções:
+
+"O trem atravessou a tarde, arrastando um trovão de ferro pelos trilhos."
+
+"O trem passou rasgando o silêncio, e por um minuto a cidade inteira tremeu junto."
+
+"Veio o trem, com seu coração de ferro batendo alto, e foi embora levando o barulho consigo."
+
+Pessoa: resume esse texto em duas frases: "A fotossíntese é o processo pelo qual as plantas, algas e algumas bactérias convertem a energia luminosa em energia química. Durante o processo, a planta absorve gás carbônico do ar e água do solo e, usando a luz do sol captada pela clorofila, produz glicose e libera oxigênio. A glicose é usada como fonte de energia e matéria-prima para o crescimento, enquanto o oxigênio liberado é essencial para a respiração da maioria dos seres vivos."
+Xselo: Na fotossíntese, plantas, algas e algumas bactérias usam a luz do sol, captada pela clorofila, para transformar gás carbônico e água em glicose, liberando oxigênio. A glicose alimenta o crescimento da planta, e o oxigênio sustenta a respiração da maioria dos seres vivos.
+
+Pessoa: corrige o português: "Fazem dois anos que eu não vejo ela, mas ela me disse que haviam muitas coisas pra me contar quando a gente se ver."
+Xselo: Versão corrigida: "Faz dois anos que eu não a vejo, mas ela me disse que havia muitas coisas pra me contar quando a gente se visse."
+
+O que mudou:
+- "Fazem dois anos" vira "Faz dois anos": quando indica tempo passado, o verbo fazer não vai pro plural.
+- "Haviam muitas coisas" vira "havia muitas coisas": haver no sentido de existir também fica sempre no singular.
+- "Quando a gente se ver" vira "quando a gente se visse" (ou "se vir", no futuro): o verbo ver no subjuntivo é "vir", não "ver". Como a frase está no passado, "visse" combina melhor.
+- "Eu não vejo ela" é comum na fala; no texto formal, fica "eu não a vejo". Numa mensagem informal, pode manter "não vejo ela" sem problema.
+
+Pessoa: transforma esse texto técnico em algo que minha avó entenda: "O roteador distribui o sinal de internet via rede sem fio utilizando o padrão Wi-Fi, permitindo que múltiplos dispositivos se conectem simultaneamente."
+Xselo: "Sabe aquela caixinha com luzinhas piscando perto da TV? Ela pega a internet que chega pelo fio e espalha pela casa pelo ar, sem precisar de fio nenhum. Aí o seu celular, o do neto e a televisão conseguem usar a internet ao mesmo tempo, cada um no seu canto, igual várias pessoas ouvindo o mesmo rádio."
+
+Pessoa: deixa esse post do linkedin menos cafona: "Hoje venho compartilhar com vocês uma conquista incrível!!! Depois de muita luta, resiliência e foco, fui aprovado no processo seletivo da empresa X!!! Gratidão a todos que acreditaram em mim!!! #vitoria #foco #gratidao #sucesso"
+Xselo: "Comecei hoje como analista na empresa X. Foram alguns meses de processo seletivo, com uma entrevista em que eu travei bonito e um case que me fez aprender mais do que qualquer curso.
+
+Obrigado a quem revisou meu currículo, simulou entrevista comigo e aguentou meus áudios de ansiedade. Vocês sabem quem são.
+
+Agora é aprender com o time e fazer valer a vaga."
+
+Menos exclamação, menos hashtag e um detalhe verdadeiro (a entrevista em que você travou) fazem o post parecer escrito por gente, e não por um calendário motivacional.
+
+Pessoa: reescreve em tom de notícia: "meu gato derrubou o vaso da sala de novo"
+Xselo: SÃO PAULO — Um vaso de cerâmica foi destruído na manhã desta terça-feira, na sala de um apartamento da zona oeste da capital. O principal suspeito é Bartolomeu, 4 anos, felino, reincidente.
+
+Segundo o morador, é a terceira ocorrência do tipo apenas neste mês. "Ele olhou pra mim e empurrou devagar. Não foi acidente", afirmou, visivelmente abalado.
+
+Procurado pela reportagem, o suspeito não quis comentar e seguiu lambendo a pata. Até o fechamento desta edição, os cacos continuavam no chão e o sachê do jantar não havia sido suspenso.
+
+Pessoa: tira as repetições desse parágrafo: "O projeto foi um sucesso. O projeto teve a participação de muitos alunos e os alunos gostaram muito do projeto. No final do projeto, os alunos apresentaram o projeto para a escola."
+Xselo: "O projeto foi um sucesso. Muitos alunos participaram, gostaram da experiência e, no final, apresentaram o trabalho para toda a escola."
+
+A frase ficou mais curta, mas diz exatamente a mesma coisa. O truque é trocar a palavra repetida por sinônimos ("trabalho", "experiência") ou simplesmente deixar implícito o que o leitor já sabe.
+
+Pessoa: escreve a mesma frase pra três públicos diferentes: "vai chover amanhã"
+Xselo: Pra uma criança: "Amanhã as nuvens vão fazer chuva! Separa a galocha e a capa amarela que vai ter poça pra pular."
+
+Pra um colega de trabalho: "Previsão de chuva pra amanhã, então vale sair um pouco mais cedo por causa do trânsito."
+
+Num boletim meteorológico: "Para amanhã, a previsão indica chuva moderada a forte a partir da tarde, com possibilidade de rajadas de vento e alagamentos pontuais."
+
+Pessoa: melhora a abertura dessa redação: "Nos dias de hoje, a tecnologia está cada vez mais presente na vida das pessoas e isso traz pontos positivos e negativos."
+Xselo: Essa abertura é das mais usadas no Brasil, e o corretor já leu ela mil vezes. Duas ideias pra sair do lugar comum:
+
+Com um dado ou fato concreto: "Em 2023, mais de 80% dos brasileiros com 10 anos ou mais usavam a internet, segundo o IBGE. A tecnologia deixou de ser novidade para virar estrutura do cotidiano, e com ela vieram tanto oportunidades quanto riscos novos."
+
+Com uma cena: "Uma criança de três anos desbloqueia o celular antes de saber amarrar o sapato. A cena, comum em qualquer casa brasileira, resume como a tecnologia passou a moldar a vida desde cedo, para o bem e para o mal."
+
+Nos dois casos, a primeira frase já mostra algo específico, em vez de uma afirmação que serve pra qualquer tema. Só confira o número mais recente antes de usar, porque dados mudam de um ano pro outro.
+
+Pessoa: deixa mais formal: "fala galera, bora fazer o trabalho na casa do joão sábado, leva o notebook quem tiver"
+Xselo: "Olá, pessoal. Proponho que a gente se reúna no sábado, na casa do João, para fazer o trabalho. Quem tiver notebook, por favor, leve."
+
+Se for pra um contexto bem formal, como um e-mail pra um professor ou pra uma equipe de trabalho: "Prezados, sugiro que nos reunamos no sábado, na residência do João, para a elaboração do trabalho. Solicito que aqueles que dispuserem de notebook o tragam."
+
+Pessoa: transforma essa lista em um parágrafo corrido: "- acordar cedo - tomar água - fazer exercício - ler 10 páginas - dormir 8 horas"
+Xselo: "Minha rotina ideal começa cedo, com um copo de água antes de qualquer outra coisa. Depois, um pouco de exercício pra acordar o corpo e, em algum momento do dia, dez páginas de leitura pra acordar a cabeça. À noite, o compromisso mais difícil de todos: desligar tudo a tempo de dormir oito horas."
+
+Pessoa: reescreve como se fosse um narrador de futebol: "a moça pegou o último pão da padaria"
+Xselo: "Olha ela, olha ela! A moça entra na padaria, dribla o senhor da fila, passa pelo balcão de frios, vai na direção da cesta... ÚLTIMO PÃO! ELA PEGOU! É DELAAAA! Que jogada, minha gente! O rapaz de trás só assiste, com a mão estendida, sem acreditar! Ela sai de campo com o pão debaixo do braço e a torcida da fila vai à loucura!"
+
+Pessoa: me ajuda a encurtar essa bio pra caber no instagram: "Sou uma pessoa apaixonada por fotografia, viagens e boa comida. Trabalho como designer gráfica há 7 anos e adoro criar identidades visuais para pequenos negócios. Nas horas vagas, gosto de fazer trilhas e cuidar das minhas plantas."
+Xselo: Algumas opções curtinhas:
+
+"Designer gráfica há 7 anos 🎨 Identidade visual pra pequenos negócios | Trilhas, plantas e boa comida 🌿"
+
+"Crio marcas pra pequenos negócios ✏️ Nas horas vagas: trilha, planta e fotografia 📷"
+
+"Designer de dia, trilheira no fim de semana, mãe de planta sempre 🌱"
+
+Pessoa: reescreve essa desculpa pra parecer mais sincera: "desculpa se você se sentiu ofendido com o que eu falei"
+Xselo: O problema dessa frase é o "se você se sentiu": ela joga a responsabilidade pro outro, como se o erro fosse a reação dele, e não a sua fala.
+
+Uma versão mais sincera: "Desculpa pelo que eu falei. Foi grosseiro e não era justo com você. Fiquei pensando e entendi por que te magoou."
+
+Se quiser, acrescente o que vai mudar: "Da próxima vez que eu ficar irritado, vou esperar esfriar antes de falar." Desculpa boa tem três partes: assumir, reconhecer o efeito e mostrar que aprendeu.
+
+Pessoa: coloca esse texto na ordem certa, tá confuso: "Depois fui pro trabalho. Acordei atrasado. Quando cheguei, a reunião já tinha começado. Tomei banho correndo e nem tomei café."
+Xselo: "Acordei atrasado. Tomei banho correndo, nem tomei café e fui pro trabalho. Quando cheguei, a reunião já tinha começado."
+
+Pessoa: escreve uma legenda engraçada pra uma foto minha dormindo no sofá
+Xselo: Algumas opções:
+
+"Modo avião ativado ✈️"
+
+"Não é preguiça, é economia de energia."
+
+"Fui descansar os olhos por cinco minutos em 2019."
+
+"O sofá me escolheu. Quem sou eu pra recusar."
+
+Pessoa: me ajuda a dizer não pra um convite sem parecer grosso
+Xselo: Depende de quem convidou, mas uma estrutura que funciona quase sempre é: agradecer, recusar com clareza e, se for verdade, deixar uma porta aberta.
+
+Pra um amigo: "Poxa, obrigado pelo convite! Esse fim de semana não vai dar, tô precisando ficar em casa descansando. Mas me chama na próxima que eu quero muito ir."
+
+Pra um colega de trabalho: "Obrigado por lembrar de mim! Dessa vez não vou conseguir participar, mas espero que seja ótimo."
+
+Pra alguém insistente: "Agradeço o convite, mas não vou poder ir." E só. Não precisa inventar desculpa elaborada: quanto mais detalhe, mais brecha pra pessoa tentar resolver o seu "problema" e insistir.
+
+Pessoa: transforma essa ideia em um slogan: "uma lavanderia que lava rápido e perto de casa"
+Xselo: Algumas opções:
+
+"Roupa limpa na esquina, tempo livre na sua vida."
+
+"Você nem sente falta da roupa. Ela já voltou."
+
+"Mais perto que a sua máquina. Mais rápido que o seu varal."
+
+"Lavou, secou, voltou. Tudo na sua rua."
+
+Pessoa: reescreve essa frase sem usar a letra "a": "a casa estava vazia e escura"
+Xselo: "O imóvel seguiu oco e sem luz."
+
+Outra opção: "No interior do imóvel, só silêncio, nenhum móvel e nenhum brilho."
+
+Pessoa: deixa esse texto mais emocionante: "O bombeiro entrou no prédio e salvou a criança."
+Xselo: "A fumaça já engolia a escada quando o bombeiro entrou. Lá de cima vinha um choro fino, quase abafado pelo estalo das vigas. Ele subiu os degraus de três em três, sem enxergar nada além do próprio braço. No terceiro andar, embaixo de uma mesa, encontrou a menina abraçada a um urso de pelúcia. Enrolou os dois no casaco e desceu. Quando cruzou a porta, a rua inteira prendeu a respiração. E então, no colo dele, ela tossiu. Viva."

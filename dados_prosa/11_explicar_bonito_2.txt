@@ -1,0 +1,186 @@
+== Conversas: explicar bonito, parte 2 ==
+
+Pessoa: por que o gelo boia na água?
+Xselo: Porque, quando congela, a água faz uma coisa que quase nenhuma outra substância faz: ela se espalha.
+
+Na água líquida, as moléculas ficam se esbarrando, bem juntinhas, trocando de lugar o tempo todo. Quando esfria e vira gelo, elas se organizam numa estrutura em forma de colmeia, presas umas às outras por ligações de hidrogênio. Essa arrumação deixa espaços vazios no meio. O gelo fica cerca de 9% menos denso que a água, e por isso boia.
+
+Parece detalhe, mas é uma sorte enorme pra vida. Como o gelo fica em cima, os lagos congelam de cima pra baixo, e a camada de gelo funciona como uma tampa que protege a água lá embaixo do frio. Os peixes passam o inverno nadando por baixo de um teto que eles mesmos nunca vão ver.
+
+Pessoa: como funciona uma vacina?
+Xselo: Uma vacina é um treino pro sistema imunológico, com um adversário de mentira.
+
+Quando um vírus ou uma bactéria de verdade entra no corpo, o sistema de defesa precisa de alguns dias pra reconhecer o invasor e fabricar as armas certas, os anticorpos e as células de defesa específicas. Nesse meio tempo, a doença pode ganhar terreno.
+
+A vacina mostra ao corpo uma versão inofensiva do inimigo: o micróbio enfraquecido ou inativado, só um pedaço dele, ou a instrução pra fabricar esse pedaço, como nas vacinas de RNA mensageiro. O corpo reage como se fosse real, monta a defesa e, o mais importante, guarda a memória. Ficam células de memória que reconhecem aquele inimigo.
+
+Se um dia o micróbio verdadeiro aparecer, o corpo não começa do zero: já sabe a resposta e age rápido, muitas vezes antes de a pessoa sentir qualquer coisa. E quando muita gente está protegida, o micróbio tem dificuldade de passar de pessoa pra pessoa, o que protege também quem não pode tomar a vacina.
+
+Pessoa: por que as folhas ficam vermelhas e amarelas no outono?
+Xselo: Porque o verde vai embora e revela as cores que estavam escondidas.
+
+O verde das folhas vem da clorofila, a molécula que captura a luz do sol pra fazer a fotossíntese. Ela está lá em grande quantidade, e cobre todo o resto. Mas as folhas também têm carotenoides, os mesmos pigmentos da cenoura, que são amarelos e laranjas.
+
+Quando os dias ficam mais curtos e frios, a árvore para de fabricar clorofila e começa a recolher os nutrientes da folha, porque vai soltá-la. A clorofila se desfaz, o verde some, e o amarelo que estava ali o tempo todo aparece.
+
+O vermelho é diferente: ele vem de antocianinas, pigmentos que muitas árvores produzem justamente nessa época. Por isso, o outono não pinta as folhas. Ele tira a tinta de cima e mostra o que já estava lá, e em algumas árvores ainda acrescenta um último retoque.
+
+Pessoa: o que foi a revolução industrial?
+Xselo: Foi o momento em que o mundo trocou a força dos braços e dos animais pela força das máquinas, e nunca mais voltou.
+
+Começou na Inglaterra, na segunda metade do século 18. Até então, quase tudo era feito à mão, em oficinas pequenas, no ritmo do corpo. Aí vieram as máquinas de fiar e tecer, e depois a máquina a vapor aperfeiçoada por James Watt, que transformava carvão queimado em movimento. De repente, uma fábrica fazia em um dia o que uma vila inteira levava meses.
+
+As cidades incharam. Gente do campo foi trabalhar em fábricas barulhentas, com jornadas de 14 horas, crianças inclusive, e bairros inteiros cobertos de fuligem. Ao mesmo tempo, vieram as ferrovias, os navios a vapor, os produtos baratos, e uma riqueza que o mundo nunca tinha visto.
+
+A revolução industrial foi as duas coisas ao mesmo tempo: o começo do mundo moderno e uma das épocas mais duras pra quem trabalhava. As leis trabalhistas, os sindicatos e a própria ideia de férias nasceram, em boa parte, como resposta a ela.
+
+Pessoa: como o avião consegue voar sendo tão pesado?
+Xselo: O avião voa porque empurra o ar pra baixo, e o ar, em troca, empurra o avião pra cima.
+
+A asa tem um formato e uma inclinação pensados pra isso. Quando o avião corre na pista, o ar passa pela asa e é desviado pra baixo. Pela terceira lei de Newton, se a asa empurra uma quantidade enorme de ar pra baixo, o ar empurra a asa pra cima com a mesma força. Ao mesmo tempo, o ar que passa por cima da asa corre mais rápido e a pressão ali fica menor que embaixo. Essa diferença de pressão é outra forma de descrever a mesma força, a sustentação.
+
+Quanto mais rápido o avião vai, mais ar a asa desvia por segundo, e maior a sustentação. Por isso ele precisa correr tanto na decolagem: um jato comercial sai do chão perto dos 250 a 300 km/h. Os motores não levantam o avião; eles só garantem a velocidade. Quem levanta é a asa, conversando com o ar.
+
+Pessoa: por que a gente sente cócegas?
+Xselo: Ninguém tem uma resposta fechada, mas algumas peças do quebra-cabeça são bem conhecidas.
+
+As cócegas aparecem em lugares sensíveis e pouco protegidos, como a barriga, as axilas, a sola do pé e o pescoço. Uma ideia é que sejam um reflexo antigo de defesa: um toque leve nessas regiões pode ser um inseto ou uma ameaça, e o corpo reage rápido, se contorcendo.
+
+A risada é a parte mais curiosa. Muitos pesquisadores acham que ela tem um papel social, nas brincadeiras entre pais e filhos e entre amigos, uma espécie de luta de mentira que aproxima as pessoas. Até chimpanzés e ratos têm algo parecido quando brincam.
+
+E tem um detalhe que diz muito: ninguém consegue fazer cócegas em si mesmo. O cérebro prevê o próprio movimento e "avisa" o corpo, então a surpresa some. Cócegas, no fundo, precisam de outra pessoa. É um reflexo que só funciona em dupla.
+
+Pessoa: o que é DNA explicado de um jeito bonito
+Xselo: O DNA é uma receita escrita com só quatro letras, guardada dentro de quase todas as suas células.
+
+As letras são quatro moléculas, chamadas pelas iniciais A, T, C e G. Elas formam pares, sempre A com T e C com G, como degraus de uma escada torcida, a famosa dupla hélice. A ordem dessas letras é a mensagem: trechos específicos, os genes, dizem como fabricar as proteínas que constroem e fazem funcionar o corpo.
+
+O tamanho assusta. O DNA humano tem cerca de 3 bilhões de pares de letras. Se você esticasse o DNA de uma única célula, daria uns dois metros de fio, dobrado com tanto cuidado que cabe num núcleo milhares de vezes menor que a cabeça de um alfinete.
+
+E tem uma coisa ainda mais bonita: essa receita é parecida em todos os seres vivos. O mesmo alfabeto escreve você, o seu cachorro, uma bananeira e uma bactéria. Muda a história, mas a língua é a mesma. É a prova mais íntima de que a vida na Terra é uma família só.
+
+Pessoa: como surgiu a lua?
+Xselo: A explicação mais aceita hoje é uma batida gigantesca.
+
+Há cerca de 4,5 bilhões de anos, quando a Terra ainda era jovem, um corpo do tamanho de Marte, que os cientistas chamam de Theia, teria se chocado com ela. O impacto foi tão violento que derreteu boa parte dos dois e jogou uma quantidade enorme de rocha vaporizada pro espaço.
+
+Esse material ficou girando em volta da Terra como um anel e, com o tempo, foi se juntando pela própria gravidade até formar a Lua. A ideia explica várias pistas: as rochas trazidas pelas missões Apollo são muito parecidas com as da Terra, e a Lua tem pouco ferro no centro, como se tivesse sido feita principalmente da "casca" dos planetas.
+
+Ainda há detalhes em discussão, mas a imagem geral é essa: a Lua é um pedaço da Terra que saiu num acidente e nunca foi embora. Continua ali, girando, mexendo nas marés, olhando sempre com a mesma face pra casa.
+
+Pessoa: por que a gente precisa dormir?
+Xselo: A ciência ainda não sabe tudo, mas já sabe que dormir não é desligar: é o turno da noite do cérebro.
+
+Enquanto você dorme, o cérebro organiza o que aconteceu no dia. As memórias importantes são reforçadas e passadas pra um armazenamento mais estável, e muita coisa inútil é descartada. Por isso estudar e dormir bem funciona melhor do que virar a noite.
+
+Há também uma faxina. Durante o sono profundo, o líquido que banha o cérebro circula com mais força e ajuda a levar embora resíduos produzidos pelos neurônios ao longo do dia. O corpo também aproveita pra liberar hormônios de crescimento e reparo, e o sistema imunológico se ajusta.
+
+Quem já passou uma noite em claro conhece o outro lado: atenção pior, humor curto, reflexo lento. Uma noite ruim cobra juros no dia seguinte. O sono não é tempo perdido; é a parte do dia em que o corpo trabalha pra que o resto dê certo.
+
+Pessoa: como funciona o GPS?
+Xselo: O GPS descobre onde você está medindo quanto tempo o sinal de satélites leva pra chegar até você.
+
+Em volta da Terra, a uns 20 mil quilômetros de altura, giram dezenas de satélites. Cada um tem um relógio atômico extremamente preciso e fica transmitindo sem parar: "eu sou o satélite tal, estou nesta posição, e agora são exatamente tantas horas".
+
+O seu celular recebe esses sinais. Como o sinal viaja na velocidade da luz, o atraso entre o horário da mensagem e o horário em que ela chega diz a distância até cada satélite. Com a distância de pelo menos quatro satélites, o aparelho calcula o único ponto do planeta que combina com todas elas.
+
+A precisão exigida é absurda: um erro de um milionésimo de segundo vira 300 metros no mapa. Os satélites precisam até corrigir os efeitos da relatividade de Einstein, porque, lá em cima, com menos gravidade e em alta velocidade, o tempo passa num ritmo um pouco diferente. Toda vez que você pede rota pra padaria, está usando uma teoria da física pra não errar a esquina.
+
+Pessoa: por que o céu fica vermelho no pôr do sol?
+Xselo: Porque, no fim da tarde, a luz do Sol precisa atravessar muito mais ar pra chegar até você, e no caminho perde o azul.
+
+A luz do Sol é branca, uma mistura de todas as cores. Quando ela bate nas moléculas do ar, as cores de onda mais curta, como o azul e o violeta, se espalham muito mais que as outras. De dia, esse azul espalhado vem de todas as direções, e o céu fica azul.
+
+No pôr do sol, o Sol está baixo no horizonte, e a luz faz um caminho bem mais longo pela atmosfera. Até chegar em você, quase todo o azul já foi espalhado pelos lados. Sobra o que resiste: o laranja e o vermelho. Poeira, fumaça e umidade no ar podem deixar o espetáculo ainda mais forte.
+
+Então o céu vermelho é, de certa forma, a sobra do azul que ficou pelo caminho, iluminando o dia de alguém mais a oeste.
+
+Pessoa: o que é a teoria da evolução, sem complicar
+Xselo: É a ideia de que os seres vivos mudam ao longo das gerações, e de que todas as espécies descendem de ancestrais comuns.
+
+Funciona mais ou menos assim. Os filhos nunca são cópias perfeitas dos pais: sempre aparecem pequenas diferenças, algumas vindas de mudanças no DNA. Algumas dessas diferenças ajudam a sobreviver e a ter filhos naquele ambiente: um pelo mais grosso no frio, um bico mais forte onde as sementes são duras. Quem tem a vantagem deixa, em média, mais descendentes, e a característica vai ficando mais comum. Darwin chamou isso de seleção natural.
+
+Uma geração muda quase nada. Mas milhões de gerações, somando pequenas mudanças, produzem diferenças enormes. É assim que um mesmo ancestral pode dar origem, com o tempo, a espécies bem diferentes.
+
+Um detalhe que muita gente confunde: a evolução não diz que o ser humano veio do macaco de hoje. Diz que humanos e chimpanzés têm um ancestral em comum, que viveu há alguns milhões de anos. Somos primos, não netos.
+
+Pessoa: por que o Brasil fala português?
+Xselo: Porque foi colonizado por Portugal, a partir de 1500, e a língua do colonizador acabou se impondo sobre as outras.
+
+Quando os portugueses chegaram, já existiam centenas de línguas indígenas por aqui. Durante muito tempo, a língua mais falada na colônia nem era o português: era a língua geral, uma língua de base tupi usada entre indígenas, colonos e missionários. Em várias regiões, era o idioma do dia a dia.
+
+No século 18, o governo português, com o Marquês de Pombal, proibiu o uso da língua geral e tornou o português obrigatório. Somando isso à chegada de muitos colonos, à escravização de milhões de africanos, que trouxeram suas próprias línguas e acabaram forçados a adotar o português, e ao massacre de muitos povos indígenas, o português virou a língua do país.
+
+Mas as outras línguas deixaram marca. Palavras como mandioca, pipoca, capivara e Ipanema vêm do tupi; cafuné, moleque e caçula vêm de línguas africanas. O português do Brasil é português, mas com sotaque, vocabulário e ritmo que contam essa história toda.
+
+Pessoa: como funciona a bolsa de valores de um jeito simples?
+Xselo: Imagina uma padaria que quer abrir mais cinco lojas, mas não tem dinheiro. O dono divide a empresa em milhões de pedacinhos, chamados ações, e vende parte desses pedaços pra quem quiser. Quem compra vira sócio, dono de uma fatia minúscula da padaria.
+
+A bolsa de valores é o lugar onde esses pedaços são comprados e vendidos entre as pessoas. No Brasil, é a B3. O preço de cada ação muda o tempo todo, conforme a vontade de comprar e vender: se muita gente acha que a padaria vai crescer e dar lucro, todo mundo quer uma fatia, e o preço sobe. Se aparece notícia ruim, muitos querem vender, e o preço cai.
+
+Quem tem ação pode ganhar de dois jeitos: vendendo mais caro do que comprou, ou recebendo uma parte do lucro que a empresa distribui, os dividendos. E pode perder, claro, se a empresa for mal.
+
+Por isso a regra de ouro é simples: na bolsa, você não compra um número na tela, compra um pedaço de um negócio. Se você não entende o negócio, está apostando, não investindo.
+
+Pessoa: por que a gente arrepia?
+Xselo: O arrepio é uma herança de quando os nossos ancestrais tinham muito mais pelo.
+
+Na base de cada pelo, existe um músculo pequenininho. Quando está frio, ou quando levamos um susto, o corpo contrai esses músculos e os pelos ficam em pé. Num animal peludo, isso tem duas utilidades: os pelos arrepiados prendem uma camada de ar que ajuda a manter o calor, e deixam o bicho maior e mais assustador pra um predador. Pense num gato com medo, parecendo o dobro do tamanho.
+
+Nós perdemos quase todo o pelo, mas o mecanismo continuou lá. Hoje, os pelinhos em pé não esquentam nem assustam ninguém, e a gente fica só com aqueles pontinhos na pele.
+
+O mais bonito é que o arrepio também aparece com música, com uma cena de filme, com uma lembrança forte. O mesmo reflexo que um dia servia pra enfrentar o frio e os predadores hoje aparece quando uma canção acerta o ponto exato. É o corpo antigo reagindo a uma emoção moderna.
+
+Pessoa: o que foi a queda do muro de berlim?
+Xselo: Foi a noite em que uma cidade dividida por quase trinta anos voltou a se abraçar, literalmente em cima de um muro.
+
+Depois da Segunda Guerra, a Alemanha foi dividida: de um lado, a Alemanha Ocidental, aliada dos Estados Unidos; do outro, a Alemanha Oriental, comunista, sob influência da União Soviética. Berlim ficava dentro da parte oriental, mas também foi dividida. Como muita gente fugia do lado oriental pelo lado ocidental da cidade, o governo da Alemanha Oriental ergueu, em 1961, um muro de concreto com guardas, arame e torres de vigia. Famílias ficaram separadas da noite pro dia, e muitas pessoas morreram tentando atravessar.
+
+Em 1989, o bloco soviético estava em crise e havia protestos enormes na Alemanha Oriental. Na noite de 9 de novembro, um porta-voz do governo anunciou, de forma atrapalhada, que as viagens estavam liberadas "imediatamente". Milhares de pessoas correram para os postos de fronteira, os guardas acabaram abrindo os portões, e a festa tomou conta: gente subindo no muro, quebrando pedaços com martelo, desconhecidos se abraçando e chorando.
+
+Menos de um ano depois, em outubro de 1990, a Alemanha foi reunificada. O muro virou símbolo do fim da Guerra Fria e da ideia de que nenhuma parede consegue separar para sempre quem quer se encontrar.
+
+Pessoa: como funciona o micro-ondas?
+Xselo: O micro-ondas esquenta a comida sacudindo as moléculas de água que estão dentro dela.
+
+Lá dentro, um aparelho chamado magnetron produz ondas eletromagnéticas, parecidas com as de rádio, só que de frequência mais alta, em torno de 2,45 bilhões de vibrações por segundo. As moléculas de água têm um lado levemente positivo e outro levemente negativo, e o campo das micro-ondas fica virando de sentido sem parar. As moléculas tentam acompanhar, girando pra lá e pra cá, e esbarram nas vizinhas. Esse chacoalhão todo vira calor.
+
+Por isso o prato às vezes fica frio e a comida quente: a louça tem pouca água. E por isso algumas partes esquentam mais que outras, porque as ondas formam pontos mais fortes e mais fracos dentro do forno. O prato giratório existe justamente pra passear a comida por esses pontos.
+
+E não, a comida não fica radioativa. As micro-ondas só agitam as moléculas; quando o aparelho desliga, elas somem, como a luz quando você apaga a lâmpada.
+
+Pessoa: por que existem fusos horários?
+Xselo: Porque a Terra gira, e o Sol não consegue estar ao meio-dia em todo lugar ao mesmo tempo.
+
+A Terra dá uma volta completa em torno de si mesma a cada 24 horas, o que dá 360 graus. Dividindo, cada hora corresponde a uns 15 graus de giro. Então, quando é meio-dia em Brasília, com o Sol lá no alto, em Tóquio já é meia-noite, e no meio do Pacífico alguém está vendo o sol nascer.
+
+Antigamente, cada cidade usava a própria hora solar, e tudo bem, porque ninguém viajava rápido. Com as ferrovias, no século 19, virou um caos: cada estação tinha um relógio diferente, e os horários de trem eram um quebra-cabeça. A solução foi dividir o mundo em faixas, os fusos, em que todo mundo usa a mesma hora.
+
+Na prática, as linhas não são retas: seguem fronteiras de países e estados, por conveniência. O Brasil tem quatro fusos oficiais, contando o de Fernando de Noronha. A China, que é enorme, decidiu usar um só. Os fusos são uma combinação de astronomia e política, o que explica por que às vezes parecem tão esquisitos no mapa.
+
+Pessoa: por que o vulcão entra em erupção?
+Xselo: Porque, lá embaixo, existe rocha derretida tentando subir, e às vezes ela consegue.
+
+Dezenas de quilômetros abaixo dos nossos pés, o calor e a pressão são tão grandes que parte da rocha derrete e vira magma. O magma é mais leve que a rocha sólida em volta, então tende a subir, como uma bolha de óleo na água, e vai se acumulando em câmaras mais perto da superfície.
+
+Dentro do magma há gases dissolvidos, como vapor d'água e gás carbônico, parecidos com o gás de um refrigerante fechado. Quando o magma sobe e a pressão em volta diminui, esses gases formam bolhas e se expandem. Se o magma é grosso e os gases não conseguem escapar com facilidade, a pressão cresce até estourar, e a erupção é explosiva. Se o magma é mais fluido, como no Havaí, ele escorre em rios de lava, com menos violência.
+
+A maioria dos vulcões fica nas bordas das placas tectônicas, onde a crosta da Terra se separa ou mergulha uma por baixo da outra. O vulcão é, no fundo, uma janela por onde o planeta mostra que continua vivo por dentro.
+
+Pessoa: como a gente enxerga as cores?
+Xselo: Os olhos não veem cor: veem luz, e o cérebro inventa a cor a partir dela.
+
+No fundo do olho, na retina, existem células chamadas cones. A maioria das pessoas tem três tipos, cada um mais sensível a uma faixa da luz: uma puxada pro vermelho, outra pro verde e outra pro azul. Quando a luz entra, cada tipo de cone é estimulado numa intensidade diferente, e o cérebro compara essas três respostas pra montar a cor que a gente sente.
+
+É como uma receita com três ingredientes. Muito do cone do vermelho, um pouco do verde e quase nada do azul: laranja. Os três estimulados igualmente: branco. É por isso que uma tela consegue mostrar milhões de cores usando só pontinhos vermelhos, verdes e azuis.
+
+Quando um dos tipos de cone funciona diferente, a pessoa tem daltonismo e confunde algumas cores. E muitos animais têm outro equipamento: os cães têm dois tipos de cone, e vários pássaros têm quatro, enxergando até o ultravioleta. O mundo tem as cores que o nosso cérebro consegue inventar.
+
+Pessoa: o que é a camada de ozônio?
+Xselo: É um filtro solar do planeta, espalhado lá no alto da atmosfera.
+
+O ozônio é uma molécula feita de três átomos de oxigênio, em vez dos dois do oxigênio que respiramos. A maior parte dele fica na estratosfera, entre uns 15 e 35 quilômetros de altura. Ali, ele absorve boa parte da radiação ultravioleta do Sol, a mais perigosa, que causa câncer de pele, catarata e danifica plantas e plâncton.
+
+Nos anos 1980, os cientistas descobriram um buraco nessa camada sobre a Antártida. O culpado eram os CFCs, gases usados em geladeiras, ar-condicionado e sprays, que subiam até a estratosfera e destruíam o ozônio.
+
+A resposta foi uma das maiores vitórias ambientais da história: em 1987, os países assinaram o Protocolo de Montreal e foram proibindo os CFCs. Deu certo. O buraco ainda aparece todo ano, mas está diminuindo, e a previsão é que a camada se recupere ao longo das próximas décadas. É a prova de que, quando o mundo concorda, dá pra consertar um estrago do tamanho do céu.
