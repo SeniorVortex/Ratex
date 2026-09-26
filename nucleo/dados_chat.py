@@ -32,7 +32,7 @@ SYSTEM_PROMPT = (
 
 _TITULO = re.compile(r"^==\s*(.+?)\s*==\s*$")
 _FICHA = re.compile(r"^([0-9A-ZÀ-Ú][^:\n]{0,59}):\s+(\S.*)$", re.S)
-_NAO_E_NOME = ("Analogia", "Meme", "Memes", "O meme", "Outro meme", "Pra ", "Resumindo", "Spoiler")
+_NAO_E_NOME = ("A personalidade", "Analogia", "Meme", "Memes", "O meme", "Outro meme", "Pra ", "Resumindo", "Spoiler")
 
 # (prefixo do título da seção, tipo)
 _TIPOS_SECAO = [
@@ -63,6 +63,51 @@ _PERGUNTAS_GERAIS = [
     "conta pra mim: {t}",
     "o que você sabe sobre {t}?",
 ]
+
+
+# perguntas de leigo para as seções "soltas" (as que não são fichas de personagem/jogo/lugar)
+_PERGUNTAS_SECAO = {
+    "quem é o xselo": ["quem é você?", "se apresenta aí", "quem é o Xselo?"],
+    "o que é touhou": ["o que é touhou?", "me explica touhou como se eu fosse um neandertal", "touhou é o quê, afinal?"],
+    "por que tanta gente": ["por que tanta gente é viciada em touhou?", "o que touhou tem de tão bom?"],
+    "zun": ["quem é o ZUN?", "quem criou touhou?", "me fala do criador de touhou"],
+    "gensokyo": ["o que é Gensokyo?", "onde se passa touhou?"],
+    "como funciona o jogo": ["como funciona o jogo?", "como se joga touhou?", "me explica o danmaku"],
+    "por que os tiros": ["por que os tiros de touhou são tão bonitos?", "como funcionam os duelos de spell card?"],
+    "incidentes": ["o que é um incidente em touhou?", "como são as histórias de touhou?"],
+    "a era pc-98": ["quais são os jogos antigos de touhou?", "o que são os jogos de PC-98?"],
+    "a série continua": ["touhou ainda lança jogo novo?", "quais são os spin-offs de touhou?"],
+    "os livros e mangás": ["touhou tem mangá?", "quais são os mangás oficiais de touhou?"],
+    "as músicas": ["como são as músicas de touhou?", "me fala das músicas do ZUN"],
+    "a comunidade de fãs": ["como é a comunidade de touhou?", "o que os fãs de touhou fazem?"],
+    "por onde começar": ["por onde eu começo em touhou?", "me dá dicas pra começar a jogar", "sou iniciante, o que eu faço?"],
+    "como explicar touhou": ["como eu explico touhou pro meu amigo?", "meu amigo não entende touhou, o que eu falo pra ele?"],
+}
+
+# O dataset foi escrito para o v1 (feito do zero); no 0.2 o Xselo se apresenta direito.
+_IDENTIDADE = [
+    ("ratex/xselo-0-1/v1", "ratex/xselo-0-2/v1"),
+    ("Sou um modelo pequenininho, feito do zero, e fui treinado pra explicar",
+     "Sou um modelo de linguagem ajustado com LoRA em cima de um modelo base maior, e fui treinado pra explicar"),
+    ("Sou um modelo pequenininho, treinado do zero, pra explicar",
+     "Fui ajustado com LoRA em cima de um modelo base maior pra explicar"),
+    ("Eu sou um modelo minúsculo, feito do zero, então às vezes eu falo besteira.",
+     "Eu ainda sou uma IA pequena, então às vezes eu falo besteira."),
+]
+
+
+def adaptar_identidade(texto: str) -> str:
+    for velho, novo in _IDENTIDADE:
+        texto = texto.replace(velho, novo)
+    return texto
+
+
+def _pergunta_da_secao(titulo: str, rnd: random.Random) -> str | None:
+    t = titulo.lower()
+    for prefixo, perguntas in _PERGUNTAS_SECAO.items():
+        if t.startswith(prefixo):
+            return rnd.choice(perguntas)
+    return None
 
 
 def _tipo_secao(titulo: str) -> str:
@@ -206,8 +251,12 @@ def _construir(texto: str, seed: int) -> list[tuple[list[dict], str]]:
                 resposta = re.sub(r"^Analogia pra leigo:\s*", "", p)
                 conversas.append((_conversa(pergunta, resposta[:1].upper() + resposta[1:]), "texto"))
             else:
-                pergunta = rnd.choice(_PERGUNTAS_GERAIS).format(t=t or "Touhou")
+                pergunta = _pergunta_da_secao(titulo, rnd) or rnd.choice(_PERGUNTAS_GERAIS).format(t=t or "Touhou")
                 conversas.append((_conversa(pergunta, p), "texto"))
+    for conversa, _ in conversas:
+        for msg in conversa:
+            if msg["role"] == "assistant":
+                msg["content"] = adaptar_identidade(msg["content"])
     return conversas
 
 
