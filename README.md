@@ -80,6 +80,22 @@ python treinar_lora.py --exportar-conversas conv.jsonl    # só mostra as conver
 python gerar.py --chat --base /pasta/do/Qwen2.5-7B-Instruct   # usa um modelo base já baixado (offline)
 ```
 
+### Treinar no Google Colab (GPU)
+
+A CPU aguenta até o 1.5B. Pra 7B, 14B ou 32B, use o notebook pronto, que roda na GPU do Colab (a A100 do Colab Pro é a ideal):
+
+**[Abrir `notebooks/treinar_no_colab.ipynb` no Colab](https://colab.research.google.com/github/SeniorVortex/Ratex/blob/main/notebooks/treinar_no_colab.ipynb)**
+
+Ele confere a GPU, decide sozinho entre bf16 e 4 bits, treina, roda a prova, deixa você conversar com o modelo e salva no Google Drive (e, se quiser, no Hugging Face). Até onde dá pra ir em cada GPU:
+
+| GPU | maior modelo que dá pra treinar |
+|---|---|
+| T4 (16 GB) | 7B (4 bits) |
+| L4 (24 GB) | 14B (4 bits) |
+| A100 (40 GB) | 32B (4 bits) |
+
+70B precisa de GPU de 80 GB (fora do Colab Pro). Modelos de 405B+ só em cluster alugado, ou usados prontos por API (OpenRouter), sem treinar.
+
 **Precisa de internet para o Hugging Face** na primeira vez, para baixar o modelo base. Sem acesso ao `huggingface.co`, baixe a pasta do modelo em outro lugar e passe `--base /caminho`.
 
 ## A prova: `python avaliar.py`
