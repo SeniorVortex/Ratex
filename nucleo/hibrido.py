@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from pathlib import Path
 
 import torch
@@ -244,15 +245,30 @@ def buscar_na_conversa(memoria, historico: list[dict]) -> list[str]:
 def responder(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PROMPT,
               stream: bool = True, max_novos_tokens: int = 400, temperatura: float = 0.7,
               top_k: int = 40, top_p: float = 0.9, penalidade_repeticao: float = 1.1,
-              memoria=None, **_) -> str:
+              memoria=None, busca=None, **_) -> str:
     """Gera a próxima resposta do Xselo para uma conversa [{role, content}, ...].
-    Com `memoria` (nucleo.memoria.Memoria), os trechos relevantes do dataset entram no prompt."""
+    Com `memoria` (nucleo.memoria.Memoria), os trechos relevantes do dataset entram no prompt.
+    Com `busca` (nucleo.busca.Busca), perguntas sobre coisa atual (ou que começam com /buscar)
+    são pesquisadas na internet antes, e os resultados entram no prompt com as fontes."""
     from transformers import TextStreamer
 
     if memoria is not None:
         from .memoria import prompt_com_memoria
 
         system_prompt = prompt_com_memoria(system_prompt, buscar_na_conversa(memoria, historico))
+    pergunta = next((m["content"] for m in reversed(historico) if m["role"] == "user"), "")
+    if busca is not None and pergunta:
+        from .busca import precisa_buscar, prompt_com_busca
+
+        if precisa_buscar(pergunta):
+            try:
+                resultados = busca.buscar(pergunta)
+            except Exception as erro:  # sem internet / SearXNG fora do ar: responde sem busca
+                resultados = []
+                print(f"(busca indisponível: {erro})", file=sys.stderr)
+            if resultados:
+                print(f"(pesquisei na internet: {len(resultados)} fontes)", file=sys.stderr)
+            system_prompt = prompt_com_busca(system_prompt, resultados)
     texto = tok.apply_chat_template(montar_mensagens(historico, system_prompt), tokenize=False,
                                     add_generation_prompt=True)
     entrada = tok(texto, return_tensors="pt", add_special_tokens=False).to(modelo.device)

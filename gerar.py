@@ -44,6 +44,9 @@ def args_cli() -> argparse.Namespace:
     p.add_argument("--modelo", default="auto",
                    help="versão (0.1, 0.2, 0.3) ou pasta do modelo; 'auto' = o híbrido mais novo treinado, senão o v1")
     p.add_argument("--base", help="xselo híbrido: modelo base alternativo (ex.: pasta local já baixada)")
+    p.add_argument("--busca", nargs="?", const="auto", metavar="URL",
+                   help="xselo híbrido: pesquisa na internet via SearXNG quando a pergunta é sobre coisa atual "
+                        "(ou começa com /buscar). Sem URL, liga um SearXNG local sozinho")
     p.add_argument("--sem-memoria", action="store_true",
                    help="xselo híbrido: não consulta o dataset antes de responder (desliga o RAG)")
     p.add_argument("--tokens", type=int, help="máximo de tokens novos por geração")
@@ -195,10 +198,17 @@ def main_hibrido(args, pasta: Path) -> None:
 
         memoria = Memoria()
         print(f"[memória: {len(memoria.trechos)} trechos do dataset para consulta]", file=sys.stderr)
+    busca = None
+    if args.busca:
+        from nucleo.busca import Busca, iniciar_searxng
+
+        url = iniciar_searxng() if args.busca == "auto" else args.busca
+        busca = Busca(url)
+        print(f"[busca na internet: SearXNG em {url}; use /buscar pra forçar uma pesquisa]", file=sys.stderr)
 
     def perguntar(historico: list[dict]) -> str:
         print("xselo> ", end="", flush=True)
-        return responder(modelo, tok, historico, system_prompt=system, memoria=memoria, **ger)
+        return responder(modelo, tok, historico, system_prompt=system, memoria=memoria, busca=busca, **ger)
 
     prompt = args.prompt or args.prompt_posicional
     if prompt and not args.chat:

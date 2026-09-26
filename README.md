@@ -174,6 +174,31 @@ No Colab, a célula **5b** faz isso sozinha depois do treino (dá pra desligar n
 
 Por isso a versão polida do 0.3 não substituiu a oficial. A ferramenta fica pronta pra quando os pares crescerem, e ela rende mais no 32B, que já sabe muito mais.
 
+## Busca na internet (SearXNG)
+
+O Xselo pode **pesquisar na internet** antes de responder coisas atuais, usando o [SearXNG](https://github.com/searxng/searxng), um buscador aberto que junta Google, Bing, Wikipédia e outros sem rastrear ninguém (`nucleo/busca.py`).
+
+- **Quando ele busca:** se a pergunta tem cara de coisa atual ("agora", "hoje", "notícia", "preço", "quem ganhou", um ano recente...), ou se você começa a mensagem com **`/buscar`**.
+- Os melhores resultados entram no prompt com o link, e ele deve citar a fonte como `[1]`, `[2]`.
+- `iniciar_searxng()` baixa, configura e liga um SearXNG só pra aquele computador (~1–2 min na primeira vez, num ambiente Python separado pra não bagunçar o resto).
+
+```bash
+python gerar.py --chat --busca                           # liga um SearXNG local sozinho
+python gerar.py --chat --busca http://localhost:8888     # usa um SearXNG que já está rodando
+```
+
+No Colab, a célula **6b** liga a busca, e a conversa (célula 7) já usa. Se preferir rodar o SearXNG pelo Docker no seu PC, lembre de liberar o formato JSON no `settings.yml` (`search: formats: [html, json]`).
+
+## Arena às cegas: o ranking
+
+Pra saber se o Xselo está bom **no seu gosto**, e não só na prova automática: você faz uma pergunta, dois competidores respondem como **A** e **B** sem você saber quem é quem, e você escolhe a melhor. Cada escolha atualiza uma **nota Elo**, igual ranking de xadrez (`nucleo/arena.py`).
+
+- Competidores: o **Xselo polido**, o **Xselo antes do polimento** e o **Qwen puro**. Todos dividem o mesmo modelo base na memória (não gasta GPU a mais) e usam o mesmo prompt, memória e busca, então a única diferença entre eles é o nosso treino.
+- `/placar` mostra o ranking; o placar e todas as partidas ficam salvos (no Colab, no seu Drive, em `Ratex/arena.json`), então dá pra continuar em outro dia.
+- As partidas em que o Xselo perdeu são ótimas pra virar pares de `dados_preferencia/`.
+
+No Colab é a célula **7b**.
+
 ## A memória de consulta (RAG)
 
 Um modelo pequeno não decora todos os fatos de Touhou só com o LoRA. Por isso, antes de responder, o Xselo **consulta o próprio dataset** (`nucleo/memoria.py`), procurando em cada parágrafo e cada diálogo de `dataset.txt`, `dados_extras/` e `dados_gerais/`. Os trechos mais relevantes entram no prompt como "anotações do caderno".
@@ -221,7 +246,10 @@ Ratex/
 │   ├── pasta_modelo.py    # salvar/carregar no formato de pasta estilo Hugging Face
 │   ├── dados_chat.py      # transforma o dataset em conversas + system prompts do Xselo
 │   ├── matematica.py      # 0.3: exercícios de matemática com passo a passo e resposta exata
-│   ├── memoria.py         # memória de consulta (RAG): busca BM25 nos trechos do dataset
+│   ├── memoria.py         # memória de consulta (RAG): significado + palavra nos trechos do dataset
+│   ├── busca.py           # busca na internet via SearXNG (e liga um SearXNG local sozinho)
+│   ├── arena.py           # arena às cegas com ranking Elo
+│   ├── preferencias.py    # leitor dos pares de dados_preferencia/
 │   └── hibrido.py         # versões, bases, carrega base + LoRA e gera respostas
 ├── ratex/xselo-0-1/v1/    # O MODELO
 │   ├── pytorch_model.bin      # pesos (state_dict do PyTorch)
@@ -401,7 +429,9 @@ Detalhes e otimizações:
 - [x] Treinar a 0.4 no Qwen 32B no Colab (A100)
 - [x] DPO com as correções das conversas (`treinar_dpo.py`, célula 5b do notebook)
 - [ ] Juntar 50–200 pares de preferência e polir o 32B
-- [ ] Busca na internet via SearXNG como ferramenta do Xselo
+- [x] Busca na internet via SearXNG como ferramenta do Xselo
+- [x] Arena às cegas com ranking Elo (Xselo × Xselo sem polimento × Qwen puro)
+- [ ] Transformar as derrotas da arena em pares de preferência automaticamente
 - [x] Memória por significado (embeddings) junto com a busca por palavra
 - [ ] Mais dataset: mais conversas gerais e de Touhou no tom do Xselo (a melhoria com melhor custo-benefício)
 - [ ] Segurar o conhecimento geral da base no LoRA (lr menor, mais conversas gerais)
