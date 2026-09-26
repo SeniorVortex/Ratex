@@ -9,13 +9,14 @@ O **Xselo** é um micro-Transformer (estilo nanoGPT) treinado **do zero absoluto
 A prosa dele é descontraída, sem academicismo, e feita para explicar Touhou para neandertais, ou seja, gente que nunca ouviu falar disso na vida.
 
 ```
-você> o que é touhou?
-xselo> Touhou é uma série de jogos japoneses de desviar de tiro, daqueles em que a tela vira
-       um show de fogos de artifício e você tem que passar no meio de tudo...
+$ python gerar.py "Touhou é"
+Touhou é um jogo de ritmo de tiros de fãs chamam isso de Touhou. É uma tanuki rata que vive
+bebe o jeito mais fofo.
 ```
 
-> É um modelo de ~3 milhões de parâmetros treinado com ~150 KB de texto. Ele escreve com o
-> "sotaque" do dataset e acerta muita coisa, mas também inventa. Faz parte da graça (e do plano de evolução).
+### Estado atual da v1
+
+O modelo que está no repositório tem **3,2 M de parâmetros**. Foi treinado **só na CPU** (4 núcleos, ~40 min) com o `dataset.txt` (~146 mil caracteres) e chegou a loss de validação **1,33**. Ele já escreve em português com o tom e o vocabulário de Touhou e respeita o formato de conversa, **mas ainda mistura fatos e personagens**. É a versão preliminar. O caminho para ele ficar bom está no [roadmap](#próximos-passos-roadmap): mais dataset e treino numa GPU.
 
 ---
 
@@ -80,8 +81,8 @@ Pronto. O script:
 Exemplo de saída:
 
 ```
-iter    400/3000 | época  18.61 | loss 1.3981 | lr 9.71e-04 | 1180.2 ms/it | falta ~51m08s
-== avaliação it 400: loss treino 1.3712 | validação 1.5540  <- melhor até agora
+iter   1950/2500 | época  90.69 | loss 1.0466 | lr 2.12e-04 |  964.0 ms/it | falta ~8m50s
+== avaliação it 1950: loss treino 0.7996 | validação 1.3319  <- melhor até agora
    -> modelo salvo em ratex/xselo-0-1/v1 (melhor validação)
 ```
 
