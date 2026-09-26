@@ -2,11 +2,13 @@
 """
 Conversa / gera texto com o Xselo.
 
-Por padrão usa o ratex/xselo-0-2/v1 (modelo base + LoRA) se ele já foi treinado,
-e cai para o ratex/xselo-0-1/v1 (micro-Transformer feito do zero) se não foi.
+Por padrão usa a versão híbrida (modelo base + LoRA) mais nova que já foi treinada
+(ratex/xselo-0-3/v1, depois ratex/xselo-0-2/v1) e cai para o ratex/xselo-0-1/v1
+(micro-Transformer feito do zero) se nenhuma foi.
 
 Exemplos:
-    python gerar.py --chat                       # bate-papo com o Xselo (usa o xselo-0-2)
+    python gerar.py --chat                       # bate-papo com o Xselo mais novo
+    python gerar.py --modelo 0.2 --chat          # escolhe a versão: 0.1, 0.2 ou 0.3
     python gerar.py "quem é a Cirno?"            # uma pergunta só
     python gerar.py --modelo ratex/xselo-0-1/v1 "Touhou é"   # o v1 continua um texto
     python gerar.py --prompt "Reimu" --amostras 3
@@ -28,7 +30,7 @@ from pathlib import Path
 import torch
 
 from nucleo import NOME_MODELO, PASTA_PADRAO, carregar_modelo
-from nucleo.hibrido import PASTA_HIBRIDO, eh_hibrido
+from nucleo.hibrido import VERSOES, eh_hibrido, pasta_da_versao, pasta_mais_nova
 
 PREFIXO_PESSOA = "Pessoa:"
 PREFIXO_XSELO = "Xselo:"
@@ -40,8 +42,8 @@ def args_cli() -> argparse.Namespace:
     p.add_argument("--prompt", "-p", help="texto inicial (mesmo que o argumento posicional)")
     p.add_argument("--chat", action="store_true", help="modo conversa: você pergunta, o Xselo responde")
     p.add_argument("--modelo", default="auto",
-                   help="pasta do modelo; 'auto' = ratex/xselo-0-2/v1 se existir, senão ratex/xselo-0-1/v1")
-    p.add_argument("--base", help="xselo-0-2: modelo base alternativo (ex.: pasta local já baixada)")
+                   help="versão (0.1, 0.2, 0.3) ou pasta do modelo; 'auto' = o híbrido mais novo treinado, senão o v1")
+    p.add_argument("--base", help="xselo híbrido: modelo base alternativo (ex.: pasta local já baixada)")
     p.add_argument("--tokens", type=int, help="máximo de tokens novos por geração")
     p.add_argument("--temperatura", "-t", type=float)
     p.add_argument("--top-k", type=int)
@@ -172,7 +174,7 @@ def ler_linha(prompt: str) -> str | None:
 
 
 def main_hibrido(args, pasta: Path) -> None:
-    """xselo-0-2: modelo base instruído + LoRA do Xselo, com o chat template do modelo base."""
+    """Xselo híbrido: modelo base instruído + LoRA do Xselo, com o chat template do modelo base."""
     from nucleo.hibrido import carregar_hibrido, responder
 
     print(f"carregando {pasta} (modelo base + LoRA)...", file=sys.stderr)
@@ -199,7 +201,7 @@ def main_hibrido(args, pasta: Path) -> None:
             perguntar([{"role": "user", "content": prompt}])
         return
 
-    print("Papo com o Xselo 0.2, especialista em Touhou. Comandos: /novo (esquece a conversa), /sair")
+    print(f"Papo com o Xselo {cfg.get('versao', '0.2')}. Comandos: /novo (esquece a conversa), /sair")
     historico: list[dict] = []
     while True:
         msg = prompt if prompt else ler_linha("\nvocê> ")
@@ -222,7 +224,13 @@ def main() -> None:
     if args.seed is not None:
         torch.manual_seed(args.seed)
     if args.modelo == "auto":
-        pasta = PASTA_HIBRIDO if eh_hibrido(PASTA_HIBRIDO) else PASTA_PADRAO
+        pasta = pasta_mais_nova() or PASTA_PADRAO
+    elif args.modelo == "0.1":
+        pasta = PASTA_PADRAO
+    elif args.modelo in VERSOES:
+        pasta = pasta_da_versao(args.modelo)
+        if not eh_hibrido(pasta):
+            sys.exit(f"o xselo {args.modelo} ainda não foi treinado: rode `python treinar_lora.py --versao {args.modelo}`")
     else:
         pasta = Path(args.modelo)
     if eh_hibrido(pasta):

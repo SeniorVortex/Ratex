@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-Treina o ratex/xselo-0-2/v1: um adaptador LoRA em cima de um modelo base instruído
-(Qwen2.5-0.5B-Instruct por padrão), usando todo o dataset e a prosa do Xselo v1.
+Treina o Xselo híbrido: um adaptador LoRA em cima de um modelo base instruído.
+
+    --versao 0.3 (padrão)  ratex/xselo-0-3/v1: Touhou + assuntos gerais + matemática,
+                           base escolhida pelo hardware (Qwen2.5 de 0.5B até 7B)
+    --versao 0.2           ratex/xselo-0-2/v1: só Touhou, em cima do Qwen2.5-0.5B-Instruct
 
 Uso rápido:
-    python treinar_lora.py                                           # Qwen2.5-0.5B-Instruct
-    python treinar_lora.py --base HuggingFaceTB/SmolLM-135M-Instruct # base menor e mais rápida
-    python treinar_lora.py --epocas 5 --rank 32                      # treino mais forte
-    python treinar_lora.py --exportar-conversas conversas.jsonl      # só mostra os dados de chat
+    python treinar_lora.py                                  # 0.3, base automática
+    python treinar_lora.py --base qwen-7b --4bit            # 0.3 no Qwen2.5-7B com QLoRA (GPU com ~16 GB)
+    python treinar_lora.py --base qwen-1.5b                 # apelidos: qwen-0.5b/1.5b/3b/7b, smollm2-1.7b...
+    python treinar_lora.py --versao 0.2                     # a versão anterior, só Touhou
+    python treinar_lora.py --exportar-conversas conv.jsonl  # só mostra os dados de chat
 
 Veja `python treinar_lora.py --help` para todas as opções.
 """
@@ -20,21 +24,24 @@ import math
 import random
 import sys
 import time
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
 import torch
 
-from nucleo.dados_chat import SYSTEM_PROMPT, construir_conversas_com_origem, ler_textos
+from nucleo.dados_chat import construir_conversas_com_origem, conversas_de_matematica, ler_textos
 from nucleo.hibrido import (
     ARQ_RATEX,
-    BASE_PADRAO,
+    BASES,
     GERACAO_HIBRIDO,
-    NOME_HIBRIDO,
-    PASTA_HIBRIDO,
+    VERSAO_PADRAO,
+    VERSOES,
     carregar_base,
     escolher_device,
     montar_mensagens,
+    pasta_da_versao,
+    resolver_base,
     responder,
 )
 
@@ -42,12 +49,18 @@ RAIZ = Path(__file__).resolve().parent
 
 
 def args_cli() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description=f"Treina o LoRA do {NOME_HIBRIDO}.",
+    p = argparse.ArgumentParser(description="Treina o LoRA do Xselo híbrido.",
                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    p.add_argument("--base", default=BASE_PADRAO,
-                   help="modelo base (id do Hugging Face ou pasta local). Ex.: HuggingFaceTB/SmolLM-135M-Instruct")
-    p.add_argument("--dados", nargs="+", default=["dataset.txt", "dados_extras"])
-    p.add_argument("--saida", default=str(PASTA_HIBRIDO))
+    p.add_argument("--versao", choices=sorted(VERSOES), default=VERSAO_PADRAO)
+    p.add_argument("--base", help="modelo base: 'auto', um apelido (" + ", ".join(BASES) +
+                   "), um id do Hugging Face ou uma pasta local. Padrão: o da versão")
+    p.add_argument("--4bit", dest="quatro_bits", action="store_true",
+                   help="QLoRA: carrega a base em 4 bits (GPU NVIDIA + bitsandbytes). Ligado sozinho no 'auto' quando precisa")
+    p.add_argument("--checkpointing", action="store_true",
+                   help="gradient checkpointing: bem menos memória, ~30%% mais lento (bom pra bases de 3B/7B)")
+    p.add_argument("--dados", nargs="+", help="arquivos/pastas de texto. Padrão: o da versão")
+    p.add_argument("--matematica", type=int, help="quantos exercícios de matemática gerados entram. Padrão: o da versão")
+    p.add_argument("--saida", help="pasta de saída. Padrão: ratex/xselo-<versão>/v1")
     p.add_argument("--epocas", type=float, default=3)
     p.add_argument("--lr", type=float, default=2e-4)
     p.add_argument("--batch-size", type=int, default=4)
@@ -69,10 +82,10 @@ def args_cli() -> argparse.Namespace:
     return p.parse_args()
 
 
-def tokenizar(tok, conversa: list[dict], max_tokens: int):
+def tokenizar(tok, conversa: list[dict], max_tokens: int, system_prompt: str):
     """Tokeniza a conversa com o chat template do modelo base. Só as respostas do
     Xselo (e o token de fim de turno) entram na loss; system e usuário ficam -100."""
-    texto = tok.apply_chat_template(montar_mensagens(conversa), tokenize=False)
+    texto = tok.apply_chat_template(montar_mensagens(conversa, system_prompt), tokenize=False)
     enc = tok(texto, return_offsets_mapping=True, add_special_tokens=False)
     ids, offsets = enc["input_ids"], enc["offset_mapping"]
 
@@ -116,24 +129,41 @@ def main() -> None:
     rnd = random.Random(args.seed)
     torch.manual_seed(args.seed)
 
+    v = VERSOES[args.versao]
+    system = v["system_prompt"]
+    args.dados = args.dados or v["dados"]
+    args.saida = args.saida or str(pasta_da_versao(args.versao))
+    n_mat = v["matematica"] if args.matematica is None else args.matematica
+
     texto, arquivos = ler_textos(args.dados, RAIZ)
-    conversas = construir_conversas_com_origem(texto, seed=args.seed)
+    conversas = construir_conversas_com_origem(texto, seed=args.seed, nome_modelo=v["nome"], geral=v["geral"])
+    conversas += conversas_de_matematica(n_mat, seed=args.seed)
+    mistura = dict(sorted(Counter(o for _, o in conversas).items()))
     if args.exportar_conversas:
         with open(args.exportar_conversas, "w", encoding="utf-8") as f:
             for c, origem in conversas:
-                f.write(json.dumps({"origem": origem, "messages": montar_mensagens(c)}, ensure_ascii=False) + "\n")
-        print(f"{len(conversas)} conversas salvas em {args.exportar_conversas}")
+                f.write(json.dumps({"origem": origem, "messages": montar_mensagens(c, system)}, ensure_ascii=False) + "\n")
+        print(f"{len(conversas)} conversas salvas em {args.exportar_conversas} {mistura}")
         return
 
     device = escolher_device(args.device)
-    print(f"== Ratex :: {NOME_HIBRIDO} (LoRA) ==")
-    print(f"base: {args.base} | device: {device} | torch {torch.__version__}")
-    print(f"dados: {len(arquivos)} arquivo(s), {len(texto):,} caracteres -> {len(conversas)} conversas")
+    base, sugere_4bit = resolver_base(args.base or v["base"], device)
+    quatro_bits = args.quatro_bits or sugere_4bit
+    print(f"== Ratex :: {v['nome']} (LoRA) ==")
+    print(f"base: {base}{' (4 bits)' if quatro_bits else ''} | device: {device} | torch {torch.__version__}")
+    print(f"dados: {len(arquivos)} arquivo(s), {len(texto):,} caracteres -> {len(conversas)} conversas {mistura}")
 
     from peft import LoraConfig, get_peft_model
 
-    modelo, tok = carregar_base(args.base, device)
+    modelo, tok = carregar_base(base, device, quatro_bits=quatro_bits)
     modelo.config.use_cache = False
+    if quatro_bits:
+        from peft import prepare_model_for_kbit_training
+
+        modelo = prepare_model_for_kbit_training(modelo, use_gradient_checkpointing=args.checkpointing)
+    elif args.checkpointing:
+        modelo.gradient_checkpointing_enable()
+        modelo.enable_input_require_grads()
     lora = LoraConfig(r=args.rank, lora_alpha=args.alpha, lora_dropout=args.lora_dropout,
                       target_modules="all-linear", task_type="CAUSAL_LM")
     modelo = get_peft_model(modelo, lora)
@@ -142,7 +172,7 @@ def main() -> None:
     print(f"parâmetros: {total / 1e6:.1f}M no total, {treinaveis / 1e6:.2f}M treináveis no LoRA "
           f"({100 * treinaveis / total:.2f}%)")
 
-    # os diálogos escritos à mão são o formato-alvo: ganham peso extra
+    # os diálogos escritos à mão (Touhou e assuntos gerais) são o formato-alvo: ganham peso extra
     rnd.shuffle(conversas)
     if args.max_conversas:
         conversas = conversas[: args.max_conversas]
@@ -151,7 +181,7 @@ def main() -> None:
     treino_conv += [(c, o) for c, o in treino_conv if o == "dialogo"] * (args.repetir_dialogos - 1)
 
     def preparar(lista):
-        exemplos = [tokenizar(tok, c, args.max_tokens) for c, _ in lista]
+        exemplos = [tokenizar(tok, c, args.max_tokens, system) for c, _ in lista]
         return [(i, l) for i, l in exemplos if any(x != -100 for x in l[1:])]  # descarta se o corte comeu a resposta
 
     treino, val = preparar(treino_conv), preparar(val_conv)
@@ -192,10 +222,12 @@ def main() -> None:
         modelo.save_pretrained(saida)
         tok.save_pretrained(saida)
         cfg = {
-            "nome": NOME_HIBRIDO,
+            "nome": v["nome"],
+            "versao": args.versao,
             "tipo": "lora",
-            "base": args.base,
-            "system_prompt": SYSTEM_PROMPT,
+            "base": base,
+            "quatro_bits": quatro_bits,
+            "system_prompt": system,
             "geracao": GERACAO_HIBRIDO,
             "lora": {"rank": args.rank, "alpha": args.alpha, "dropout": args.lora_dropout,
                      "target_modules": "all-linear", "parametros_treinaveis": treinaveis},
@@ -248,7 +280,7 @@ def main() -> None:
             melhor = perda
             info.update({
                 "epocas": epoca, "passos": passo, "loss_validacao": round(perda, 4),
-                "loss_validacao_antes": round(perda_inicial, 4), "conversas": len(conversas),
+                "loss_validacao_antes": round(perda_inicial, 4), "conversas": len(conversas), "mistura": mistura,
                 "exemplos_treino": len(treino), "tokens_por_epoca": n_tokens, "lr": args.lr,
                 "batch_efetivo": args.batch_size * args.acumular, "max_tokens": args.max_tokens,
                 "device": device, "minutos": round((time.time() - t0) / 60, 1),
@@ -262,17 +294,20 @@ def main() -> None:
     if args.mesclar:
         from peft import PeftModel
 
-        base, _ = carregar_base(args.base, device)
-        mesclado = PeftModel.from_pretrained(base, saida).merge_and_unload()
+        modelo_base, _ = carregar_base(base, device)
+        mesclado = PeftModel.from_pretrained(modelo_base, saida).merge_and_unload()
         mesclado.save_pretrained(saida / "mesclado")
         tok.save_pretrained(saida / "mesclado")
         print(f"modelo completo mesclado salvo em {saida / 'mesclado'}")
 
     modelo.eval()
     modelo.config.use_cache = True
-    for pergunta in ("o que é touhou?", "quem é a Cirno?"):
+    perguntas = ["o que é touhou?", "quem é a Cirno?"]
+    if v["geral"]:
+        perguntas += ["por que o céu é azul?", "quanto é 15% de 240?"]
+    for pergunta in perguntas:
         print(f"\nvocê> {pergunta}\nxselo> ", end="", flush=True)
-        responder(modelo, tok, [{"role": "user", "content": pergunta}], **GERACAO_HIBRIDO)
+        responder(modelo, tok, [{"role": "user", "content": pergunta}], system_prompt=system, **GERACAO_HIBRIDO)
     print("\nagora é só rodar:  python gerar.py --chat")
 
 

@@ -5,3 +5,5 @@ transformers>=4.45
 peft>=0.13
 accelerate
 safetensors
+# opcional, só GPU NVIDIA: QLoRA em 4 bits para bases grandes (--4bit, qwen-7b)
+# bitsandbytes

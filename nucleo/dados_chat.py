@@ -30,6 +30,16 @@ SYSTEM_PROMPT = (
     "estivesse falando com um amigo que nunca ouviu falar de Touhou."
 )
 
+SYSTEM_PROMPT_03 = (
+    "Você é o Xselo, a inteligência artificial da Ratex (modelo ratex/xselo-0-3/v1). Sua especialidade é "
+    "Touhou Project, mas você também conversa sobre qualquer assunto do dia a dia: ciência, matemática, "
+    "português, história, tecnologia e cultura geral. Responda sempre em português do Brasil, com uma prosa "
+    "fluida, carismática e descontraída, sem academicismo e sem jeito de robô, usando analogias simples. "
+    "Em contas, mostre o passo a passo e termine com 'Resposta: ...'. Se não souber algo ou não tiver "
+    "certeza, diga isso com honestidade em vez de inventar, e em assuntos de saúde, dinheiro ou lei, "
+    "recomende procurar uma fonte confiável ou um profissional."
+)
+
 _TITULO = re.compile(r"^==\s*(.+?)\s*==\s*$")
 _FICHA = re.compile(r"^([0-9A-ZÀ-Ú][^:\n]{0,59}):\s+(\S.*)$", re.S)
 _NAO_E_NOME = ("A personalidade", "Analogia", "Meme", "Memes", "O meme", "Outro meme", "Pra ", "Resumindo", "Spoiler")
@@ -84,9 +94,8 @@ _PERGUNTAS_SECAO = {
     "como explicar touhou": ["como eu explico touhou pro meu amigo?", "meu amigo não entende touhou, o que eu falo pra ele?"],
 }
 
-# O dataset foi escrito para o v1 (feito do zero); no 0.2 o Xselo se apresenta direito.
+# O dataset foi escrito para o v1 (feito do zero); nas versões híbridas o Xselo se apresenta direito.
 _IDENTIDADE = [
-    ("ratex/xselo-0-1/v1", "ratex/xselo-0-2/v1"),
     ("Sou um modelo pequenininho, feito do zero, e fui treinado pra explicar",
      "Sou um modelo de linguagem ajustado com LoRA em cima de um modelo base maior, e fui treinado pra explicar"),
     ("Sou um modelo pequenininho, treinado do zero, pra explicar",
@@ -96,8 +105,24 @@ _IDENTIDADE = [
 ]
 
 
-def adaptar_identidade(texto: str) -> str:
-    for velho, novo in _IDENTIDADE:
+# no 0.3 ele também deixa de dizer que só sabe de Touhou
+_IDENTIDADE_GERAL = [
+    ("Eu sou pequeno e ainda estou aprendendo, então fora de Touhou eu sou meio perdido. "
+     "Mas se o assunto for garota mágica desviando de tiro, pode perguntar.",
+     "E fora de Touhou eu também encaro o básico de ciência, matemática, português e tecnologia. "
+     "Pode perguntar."),
+    ("Enquanto os modelos grandões sabem de tudo um pouco, eu sei de uma coisa só, e essa coisa é Touhou.",
+     "Eu sei o básico de muita coisa, mas Touhou é onde eu brilho."),
+    ("Pra Touhou, eu me viro. Pra resto, eu sou meio Cirno.",
+     "Pra Touhou, eu me viro bem. Pro resto, eu sei o básico."),
+    ("Mas estou aprendendo e vou melhorar nas próximas versões.",
+     "Por isso, em coisa importante, vale conferir."),
+]
+
+
+def adaptar_identidade(texto: str, nome_modelo: str = "ratex/xselo-0-2/v1", geral: bool = False) -> str:
+    texto = texto.replace("ratex/xselo-0-1/v1", nome_modelo)
+    for velho, novo in _IDENTIDADE + (_IDENTIDADE_GERAL if geral else []):
         texto = texto.replace(velho, novo)
     return texto
 
@@ -193,18 +218,26 @@ def _secoes(texto: str):
         yield titulo, paragrafos
 
 
-def construir_conversas(texto: str, seed: int = 0) -> list[list[dict]]:
+def construir_conversas(texto: str, seed: int = 0, **kw) -> list[list[dict]]:
     """Transforma o texto do dataset em uma lista de conversas (sem o system prompt)."""
-    return [c for c, _ in construir_conversas_com_origem(texto, seed)]
+    return [c for c, _ in construir_conversas_com_origem(texto, seed, **kw)]
 
 
-def construir_conversas_com_origem(texto: str, seed: int = 0) -> list[tuple[list[dict], str]]:
+def construir_conversas_com_origem(texto: str, seed: int = 0, nome_modelo: str = "ratex/xselo-0-2/v1",
+                                   geral: bool = False) -> list[tuple[list[dict], str]]:
     """Como construir_conversas, mas diz de onde veio cada conversa: 'dialogo' (escrita à
     mão no formato Pessoa/Xselo) ou 'texto' (pergunta montada a partir de um parágrafo)."""
-    return _construir(texto, seed)
+    return _construir(texto, seed, nome_modelo, geral)
 
 
-def _construir(texto: str, seed: int) -> list[tuple[list[dict], str]]:
+def conversas_de_matematica(n: int, seed: int = 0) -> list[tuple[list[dict], str]]:
+    """Exercícios gerados com resolução passo a passo e resposta exata."""
+    from .matematica import gerar_exercicios
+
+    return [(_conversa(p, r), "matematica") for p, r in gerar_exercicios(n, seed=seed)]
+
+
+def _construir(texto: str, seed: int, nome_modelo: str, geral: bool) -> list[tuple[list[dict], str]]:
     rnd = random.Random(seed)
     conversas: list[tuple[list[dict], str]] = []
     for titulo, paragrafos in _secoes(normalizar_texto(texto)):
@@ -256,7 +289,7 @@ def _construir(texto: str, seed: int) -> list[tuple[list[dict], str]]:
     for conversa, _ in conversas:
         for msg in conversa:
             if msg["role"] == "assistant":
-                msg["content"] = adaptar_identidade(msg["content"])
+                msg["content"] = adaptar_identidade(msg["content"], nome_modelo, geral)
     return conversas
 
 

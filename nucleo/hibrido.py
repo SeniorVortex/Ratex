@@ -1,13 +1,17 @@
 """
-xselo-0-2: modelo "híbrido" = modelo base instruído do Hugging Face
-(Qwen2.5-0.5B-Instruct por padrão, ou SmolLM-135M-Instruct) + um adaptador
-LoRA treinado com o dataset e a prosa do Xselo v1.
+Xselo "híbrido": modelo base instruído do Hugging Face + um adaptador LoRA
+treinado com a prosa do Xselo.
 
-A pasta ratex/xselo-0-2/v1/ guarda só o que é nosso:
+Versões:
+    0.2  ratex/xselo-0-2/v1  Qwen2.5-0.5B-Instruct + LoRA, só o dataset de Touhou do v1
+    0.3  ratex/xselo-0-3/v1  base escolhida pelo hardware (até Qwen2.5-7B) + LoRA com
+                             Touhou + assuntos gerais (dados_gerais/) + matemática gerada
 
-    adapter_model.safetensors   pesos do LoRA (poucos MB)
+A pasta de cada versão guarda só o que é nosso:
+
+    adapter_model.safetensors   pesos do LoRA (poucas dezenas de MB)
     adapter_config.json         configuração do LoRA (formato PEFT)
-    ratex_config.json           modelo base, system prompt, geração padrão e dados do treino
+    ratex_config.json           versão, modelo base, system prompt, geração padrão e dados do treino
     tokenizer*.json, ...        tokenizador do modelo base (com o chat template)
 
 O modelo base é baixado do Hugging Face na primeira vez que for usado (e fica
@@ -21,26 +25,70 @@ from pathlib import Path
 
 import torch
 
-from .dados_chat import SYSTEM_PROMPT
+from .dados_chat import SYSTEM_PROMPT, SYSTEM_PROMPT_03
 
 RAIZ = Path(__file__).resolve().parent.parent
-NOME_HIBRIDO = "ratex/xselo-0-2/v1"
-PASTA_HIBRIDO = RAIZ / NOME_HIBRIDO
-BASE_PADRAO = "Qwen/Qwen2.5-0.5B-Instruct"
 ARQ_RATEX = "ratex_config.json"
+
+# apelidos curtos para os modelos base mais úteis (todos instruídos e com chat template)
+BASES = {
+    "qwen-0.5b": "Qwen/Qwen2.5-0.5B-Instruct",
+    "qwen-1.5b": "Qwen/Qwen2.5-1.5B-Instruct",
+    "qwen-3b": "Qwen/Qwen2.5-3B-Instruct",
+    "qwen-7b": "Qwen/Qwen2.5-7B-Instruct",
+    "smollm-135m": "HuggingFaceTB/SmolLM-135M-Instruct",
+    "smollm2-1.7b": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+}
+
+VERSOES = {
+    "0.2": {
+        "nome": "ratex/xselo-0-2/v1",
+        "base": "qwen-0.5b",
+        "dados": ["dataset.txt", "dados_extras"],
+        "matematica": 0,
+        "geral": False,
+        "system_prompt": SYSTEM_PROMPT,
+    },
+    "0.3": {
+        "nome": "ratex/xselo-0-3/v1",
+        "base": "auto",
+        "dados": ["dataset.txt", "dados_extras", "dados_gerais"],
+        "matematica": 300,
+        "geral": True,
+        "system_prompt": SYSTEM_PROMPT_03,
+    },
+}
+VERSAO_PADRAO = "0.3"
+
+# compatibilidade com o código do 0.2
+NOME_HIBRIDO = VERSOES["0.2"]["nome"]
+PASTA_HIBRIDO = RAIZ / NOME_HIBRIDO
+BASE_PADRAO = BASES["qwen-0.5b"]
 
 GERACAO_HIBRIDO = {
     "temperatura": 0.7,
     "top_k": 40,
     "top_p": 0.9,
     "penalidade_repeticao": 1.1,
-    "max_novos_tokens": 320,
+    "max_novos_tokens": 400,
 }
+
+
+def pasta_da_versao(versao: str) -> Path:
+    return RAIZ / VERSOES[versao]["nome"]
 
 
 def eh_hibrido(pasta) -> bool:
     pasta = Path(pasta)
     return (pasta / "adapter_config.json").exists() and (pasta / ARQ_RATEX).exists()
+
+
+def pasta_mais_nova() -> Path | None:
+    """A versão híbrida treinada mais nova que existir no repositório."""
+    for versao in sorted(VERSOES, key=lambda v: tuple(map(int, v.split("."))), reverse=True):
+        if eh_hibrido(pasta_da_versao(versao)):
+            return pasta_da_versao(versao)
+    return None
 
 
 def escolher_device(pedido: str = "auto") -> str:
@@ -53,16 +101,59 @@ def escolher_device(pedido: str = "auto") -> str:
     return "cpu"
 
 
-def carregar_base(base: str, device: str):
-    """Carrega o modelo base + tokenizador (id do Hugging Face ou pasta local)."""
+def bitsandbytes_disponivel() -> bool:
+    try:
+        import bitsandbytes  # noqa: F401
+    except ImportError:
+        return False
+    return torch.cuda.is_available()
+
+
+def resolver_base(base: str, device: str) -> tuple[str, bool]:
+    """Troca apelidos pelo id do Hugging Face e resolve 'auto' pelo hardware.
+    Retorna (id_ou_pasta, usar_4bit_sugerido)."""
+    if base != "auto":
+        return BASES.get(base, base), False
+    if device == "cpu":
+        return BASES["qwen-0.5b"], False
+    if device == "mps":
+        return BASES["qwen-1.5b"], False
+    vram = torch.cuda.get_device_properties(0).total_memory / 2**30
+    if vram >= 40:
+        return BASES["qwen-7b"], False
+    if vram >= 14 and bitsandbytes_disponivel():
+        return BASES["qwen-7b"], True
+    if vram >= 12:
+        return BASES["qwen-3b"], False
+    if vram >= 6:
+        return BASES["qwen-1.5b"], False
+    return BASES["qwen-0.5b"], False
+
+
+def carregar_base(base: str, device: str, quatro_bits: bool = False):
+    """Carrega o modelo base + tokenizador (id do Hugging Face, apelido ou pasta local)."""
     try:
         from transformers import AutoModelForCausalLM, AutoTokenizer
     except ImportError as e:  # pragma: no cover
-        raise SystemExit("o xselo-0-2 precisa de: pip install transformers peft accelerate safetensors") from e
-    dtype = torch.bfloat16 if device == "cuda" and torch.cuda.is_bf16_supported() else torch.float32
+        raise SystemExit("o xselo híbrido precisa de: pip install transformers peft accelerate safetensors") from e
+    base = BASES.get(base, base)
+    bf16 = device == "cuda" and torch.cuda.is_bf16_supported()
+    dtype = torch.bfloat16 if bf16 else (torch.float16 if device in ("cuda", "mps") else torch.float32)
+    extra = {}
+    if quatro_bits:
+        if not bitsandbytes_disponivel():
+            raise SystemExit("--4bit precisa de GPU NVIDIA e do pacote bitsandbytes (pip install bitsandbytes)")
+        from transformers import BitsAndBytesConfig
+
+        extra = {
+            "quantization_config": BitsAndBytesConfig(
+                load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_use_double_quant=True,
+                bnb_4bit_compute_dtype=torch.bfloat16 if bf16 else torch.float16),
+            "device_map": {"": 0},
+        }
     try:
         tok = AutoTokenizer.from_pretrained(base)
-        modelo = AutoModelForCausalLM.from_pretrained(base, dtype=dtype)
+        modelo = AutoModelForCausalLM.from_pretrained(base, dtype=dtype, **extra)
     except OSError as e:
         raise SystemExit(
             f"não consegui carregar o modelo base {base!r}.\n"
@@ -72,27 +163,32 @@ def carregar_base(base: str, device: str):
         ) from e
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-    return modelo.to(device), tok
+    if not quatro_bits:
+        modelo = modelo.to(device)
+    return modelo, tok
 
 
-def carregar_hibrido(pasta=PASTA_HIBRIDO, device: str = "auto", base: str | None = None):
+def carregar_hibrido(pasta=None, device: str = "auto", base: str | None = None):
     """Retorna (modelo com LoRA em modo eval, tokenizador, ratex_config)."""
     from peft import PeftModel
 
-    pasta = Path(pasta)
-    if not eh_hibrido(pasta):
-        raise FileNotFoundError(f"{pasta} não tem um xselo-0-2 treinado. Rode `python treinar_lora.py` primeiro.")
+    pasta = Path(pasta) if pasta else pasta_mais_nova()
+    if pasta is None or not eh_hibrido(pasta):
+        raise FileNotFoundError(f"{pasta} não tem um xselo híbrido treinado. Rode `python treinar_lora.py` primeiro.")
     cfg = json.loads((pasta / ARQ_RATEX).read_text(encoding="utf-8"))
     device = escolher_device(device)
-    modelo, tok = carregar_base(base or cfg["base"], device)
+    quatro_bits = bool(cfg.get("quatro_bits")) and device == "cuda" and bitsandbytes_disponivel()
+    modelo, tok = carregar_base(base or cfg["base"], device, quatro_bits=quatro_bits)
     if (pasta / "tokenizer_config.json").exists():
         from transformers import AutoTokenizer
 
         tok = AutoTokenizer.from_pretrained(pasta)
         if tok.pad_token is None:
             tok.pad_token = tok.eos_token
-    modelo = PeftModel.from_pretrained(modelo, pasta).to(device).eval()
-    return modelo, tok, cfg
+    modelo = PeftModel.from_pretrained(modelo, pasta)
+    if not quatro_bits:
+        modelo = modelo.to(device)
+    return modelo.eval(), tok, cfg
 
 
 def montar_mensagens(historico: list[dict], system_prompt: str = SYSTEM_PROMPT) -> list[dict]:
@@ -101,14 +197,14 @@ def montar_mensagens(historico: list[dict], system_prompt: str = SYSTEM_PROMPT) 
 
 @torch.no_grad()
 def responder(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PROMPT,
-              stream: bool = True, max_novos_tokens: int = 320, temperatura: float = 0.7,
+              stream: bool = True, max_novos_tokens: int = 400, temperatura: float = 0.7,
               top_k: int = 40, top_p: float = 0.9, penalidade_repeticao: float = 1.1, **_) -> str:
     """Gera a próxima resposta do Xselo para uma conversa [{role, content}, ...]."""
     from transformers import TextStreamer
 
     texto = tok.apply_chat_template(montar_mensagens(historico, system_prompt), tokenize=False,
                                     add_generation_prompt=True)
-    entrada = tok(texto, return_tensors="pt").to(modelo.device)
+    entrada = tok(texto, return_tensors="pt", add_special_tokens=False).to(modelo.device)
     streamer = TextStreamer(tok, skip_prompt=True, skip_special_tokens=True) if stream else None
     amostrar = temperatura > 0
     saida = modelo.generate(
