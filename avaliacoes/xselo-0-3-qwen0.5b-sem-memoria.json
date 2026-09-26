@@ -1,0 +1,371 @@
+{
+  "modelo": "ratex/xselo-0-3/v1",
+  "notas": {
+    "touhou": 25.0,
+    "geral": 50.0,
+    "matematica": 83.3,
+    "total": 52.8
+  },
+  "respostas": [
+    {
+      "categoria": "touhou",
+      "pergunta": "quem criou touhou?",
+      "gabarito": [
+        [
+          "zun"
+        ]
+      ],
+      "resposta": "O projeto foi feito por um cara chamado Tatsuya Mizuno, que trabalha no jogo. Ele é um engenheiro japonês que tem um interesse especial por Touhou. O nome dele é Tatsuya Mizuno Touhou.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem é a Reimu Hakurei?",
+      "gabarito": [
+        [
+          "sacerdotisa",
+          "miko"
+        ],
+        [
+          "santuario"
+        ]
+      ],
+      "resposta": "A Reimu Hakurei é a sacerdotisa do Santuário Hakurei. Ela é humilde, mas tem um coração grande e um poder mágico que ninguém pode desviar. Ela cuida do santuário, do mundo dos mortos e do mundo dos humanos. E ela é a mais forte das meninas.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o poder da Sakuya Izayoi?",
+      "gabarito": [
+        [
+          "tempo"
+        ]
+      ],
+      "resposta": "A Sakuya é a mais poderosa de Gensokyo. Ela manipula o tempo, o espaço e o espaço do nosso mundo. Ela pode virar qualquer coisa, e ela virou tudo. Ela é a responsável por tudo no jogo.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem é a irmã mais nova da Remilia?",
+      "gabarito": [
+        [
+          "flandre"
+        ]
+      ],
+      "resposta": "A irmã mais nova da Remilia é a Reimu. Ela é uma youkai pequena, com uma roupa preta e um cabelo curto, que aparece no meio das páginas de um livro. Ela é uma das personagens mais famosas da série.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual número é o símbolo da Cirno?",
+      "gabarito": [
+        [
+          "9",
+          "nove"
+        ]
+      ],
+      "resposta": "O símbolo da Cirno é o coração. Ele aparece no seu nome, na foto dela e em tudo que ela faz. O coração é forte, poderoso e mágico, e a Cirno tem um coração tão grande que ninguém pode esquecer dele.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "o que a Marisa faz com os livros da Patchouli?",
+      "gabarito": [
+        [
+          "emprestad",
+          "rouba",
+          "pega"
+        ]
+      ],
+      "resposta": "A Marisa lembra os livros dela pra dar um jeito novo de jogar. Ela tem um jeito de jogar que é fazer o jogo sem ter nada no jogo, só lembrando os detalhes. E ela é muito curiosa.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem causou o incidente da névoa vermelha?",
+      "gabarito": [
+        [
+          "remilia"
+        ]
+      ],
+      "resposta": "A Reimu. Ela escondeu o incidente no guarda-chuva dela, que estava quase vazia, e o incidente virou um incidente de verdade. A Reimu ficou triste por um tempo, mas depois voltou pra casa e começou a fazer festa.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem trabalha de jardineira pra Yuyuko?",
+      "gabarito": [
+        [
+          "youmu"
+        ]
+      ],
+      "resposta": "A Reimu. Ela cuida das plantas, limpa as varinhas e faz o chá. A Reimu é a mais forte de Gensokyo.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "a Nazrin é que tipo de youkai?",
+      "gabarito": [
+        [
+          "rata",
+          "rato"
+        ]
+      ],
+      "resposta": "A Nazrin é uma youkai do inferno, que vive no inferno e tem um poder mágico. Ela é forte, poderosa e tem um jeito de ser que os humanos não conhecem. Ela é a responsável por dar a Reimu a liberdade de sair do Inferno.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o nome do Touhou 6?",
+      "gabarito": [
+        [
+          "embodiment",
+          "scarlet devil"
+        ]
+      ],
+      "resposta": "O nome oficial é Touhou 6: The Final Fantasy. O jogo virou um meme mundial, e os fãs ainda fazem festa de aniversário no dia 25 de setembro.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "o que quer dizer danmaku?",
+      "gabarito": [
+        [
+          "bala",
+          "tiro"
+        ]
+      ],
+      "resposta": "Danmaku é o jeito de jogar um jogo: você faz movimentos juntos, tipo um ataque juntando vários tiros ao mesmo tempo. O jeito mais famoso é o Deathmatch, onde os jogadores lutam contra um computador.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o poder da Yukari Yakumo?",
+      "gabarito": [
+        [
+          "fronteira"
+        ]
+      ],
+      "resposta": "A Yukari Yakumo manipula o tempo. Ela pode fazer ela durar mais ou menos um segundo, e isso é incrível. Ela tem um poder que ninguém nunca viu antes, e ninguém sabe exatamente o porquê.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual é a capital da França?",
+      "gabarito": [
+        [
+          "paris"
+        ]
+      ],
+      "resposta": "Lisboa. É o maior porto europeu e tem uma população de milhares de pessoas. A cidade tem uma história longa, desde a época do Império Português.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quantos planetas existem no sistema solar?",
+      "gabarito": [
+        [
+          "8",
+          "oito"
+        ]
+      ],
+      "resposta": "O número exato é milionário, mas os mais famosos são Marte, Júpiter, Saturno, Urano e Neptuno. O mais próximo é a Terra, que tem menos de 1,4 milhões de km de diâmetro. O mais distante é Proxima Centauri, que está cercado por um ótimo tempo.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "que gás as plantas liberam na fotossíntese?",
+      "gabarito": [
+        [
+          "oxigenio"
+        ]
+      ],
+      "resposta": "O óleo. O óleo é o alimento das plantas, e quando a luz do sol entra no ar, ele se esgota e se transforma em óleo. O óleo é o alimento dos humanos, e os humanos usam óleo pra fazer combustível. O óleo é o alimento dos animais, e os animais usam óleo pra fazer comida. O óleo é o alimento dos seres vivos, e os seres vivos usam óleo pra fazer tudo.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "em que ano o Brasil ficou independente de Portugal?",
+      "gabarito": [
+        [
+          "1822"
+        ]
+      ],
+      "resposta": "Em 1822, quando o Brasil virou independente de Portugal. Aí o Brasil virou um país inteiro, e os portugueses viraram brasileiros. O Brasil ficou independente em 1822, e em 1889 virou um estado separado.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual o maior planeta do sistema solar?",
+      "gabarito": [
+        [
+          "jupiter"
+        ]
+      ],
+      "resposta": "Mercuriano. Ele é o mais próximo do nosso planeta, com uma distância de cerca de 57.9 milhões de km. O Júpiter, o maior do sistema, está mais de 38 vezes mais distante.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "o que significa a palavra saudade?",
+      "gabarito": [
+        [
+          "falta"
+        ]
+      ],
+      "resposta": "A saudade é o desejo de voltar pra casa, de ver alguém, de ter um tempo livre. É o contrário do amor, que é o desejo de ser amado. A saudade é o desejo de voltar pra casa.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "antibiótico funciona contra vírus?",
+      "gabarito": [
+        [
+          "nao"
+        ]
+      ],
+      "resposta": "Não, antibiótico só mata bactérias, mas não mata vírus nem microbe. O vírus é feio e mágico, mas os antibióticos são como medicamento pra bactérias. Se você estiver com gripe, usa antibiótico. Se estiver com gripen, não usa.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual o maior oceano do mundo?",
+      "gabarito": [
+        [
+          "pacifico"
+        ]
+      ],
+      "resposta": "O Oceano Pacífico, que abriga mais de 70% da Terra. É o maior do planeta, e tem uma costa cheia de floresta tropical e de lagos. Aí fica o Mar do Mar, onde os navais dos dois lados do Oceano estão.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quem escreveu Dom Casmurro?",
+      "gabarito": [
+        [
+          "machado"
+        ]
+      ],
+      "resposta": "O autor original é a Youmu, a youkai do santuário. Ela escreveu o romance, e os fãs adoram ler as versões dos textos dela. A série ganhou um filme em 2014, o Dom Casmurro e a Reimu, que virou um clássico de anime.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual a fórmula química da água?",
+      "gabarito": [
+        [
+          "h2o"
+        ]
+      ],
+      "resposta": "A fórmula química da água é H2O. É só duas átomos de hidrogênio ligados juntinhos, tipo dois ovos juntos. O hidrogênio é o nome do gás que faz água, e os ovos são o hidrogênio e o oxigênio.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quantos lados tem um hexágono?",
+      "gabarito": [
+        [
+          "6",
+          "seis"
+        ]
+      ],
+      "resposta": "O hexágono tem seis lados: três lados iguais e três lados diferentes. Se você olhar no canto de um hexágono, você verá três lados iguais e um diferente.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "o que é um verbo?",
+      "gabarito": [
+        [
+          "acao"
+        ]
+      ],
+      "resposta": "Verbo é a palavra que indica o que acontece: eu vou, ele vai, eu estou. O verbo é o motor da frase. Se eu estiveri, eu vou. Se eu estiver, ele vai. Se eu estiver, eu estou. O verbo é o motor da frase.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos mililitros tem 2,5 litros?",
+      "gabarito": "2.500 mL",
+      "resposta": "Deixa comigo: 1 litro tem 1.000 ml: 2,5 × 1.000 = 2.500 ml. Resposta: 2.500 ml.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "tirei as notas 8, 7, 6 e 4. qual minha média?",
+      "gabarito": "6,25",
+      "resposta": "Fácil, olha só: soma tudo e divide pela quantidade. Soma: 8 + 7 + 6 + 4 = 25. São 5 números: 25 ÷ 5 = 5. Resposta: 5.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos mililitros tem 3 litros?",
+      "gabarito": "3.000 mL",
+      "resposta": "Deixa comigo: 1 litro tem 1.000 ml: 3 × 1.000 = 3.000, mas se você quiser converter pra mililitros: 3.000 ÷ 1.000 = 3, que é mililitros. Resposta: 3.000 ml.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "qual a média de 9, 3, 2, 4 e 10?",
+      "gabarito": "5,6",
+      "resposta": "Bora: soma tudo e divide pela quantidade. Soma: 9 + 3 + 2 + 4 + 10 = 20. São 5 números: 20 ÷ 5 = 4. Resposta: 4.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um fone custa R$ 50 e está com 15% de desconto. quanto fica?",
+      "gabarito": "R$ 42,50",
+      "resposta": "Deixa comigo: primeiro o desconto: 15% de 50 = 7,5. Depois tira do preço: 50 - 7,5 = 42,5. Resposta: R$ 42,50.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos dias têm 12 semanas?",
+      "gabarito": "84 dias",
+      "resposta": "Deixa comigo: cada semana tem 7 dias: 12 × 7 = 84. Resposta: 84 dias.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quanto é 86 dividido por 16? tem resto?",
+      "gabarito": "5, resto 6",
+      "resposta": "Vamos por partes: 86 ÷ 16 = 5, porque 5 × 16 = 80. O resto é 2, porque 80 + 2 = 82, que é maior que 16. Resposta: 5, resto 2.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um jogo custa R$ 60 e está com 30% de desconto. quanto fica?",
+      "gabarito": "R$ 42",
+      "resposta": "Bora: primeiro o desconto: 30% de 60 = 18. Depois tira do preço: 60 - 18 = 42. Resposta: R$ 42.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um fumo da Cirno custa R$ 200 e está com 25% de desconto. quanto fica?",
+      "gabarito": "R$ 150",
+      "resposta": "Fácil, olha só: primeiro o desconto: 25% de 200 = 50. Depois tira do preço: 200 - 50 = 150. Resposta: R$ 150.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quanto é 1/2 - 3/8?",
+      "gabarito": "1/8",
+      "resposta": "Bora: pra somar ou subtrair fração, os denominadores têm que ser iguais. Usando 16 como denominador: 8/16 - 6/16 = 2/16, que simplificando fica 1/8. Resposta: 1/8.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "resolve 9x - 4 = -67",
+      "gabarito": "x = -7",
+      "resposta": "Bora: passa o 4 pro outro lado somando: 9x = -67 + 4 = -63. Agora divide por 9: x = -63 ÷ 9 = -7. Verifica: 9 × -7 - 4 = -63 - 4 = -67. Resposta: x = -7.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "47 * 18 = ?",
+      "gabarito": "846",
+      "resposta": "Vamos por partes: dá pra quebrar a conta em pedaços: 47 × 18 = 47 × 10 + 47 × 8 = 470 + 376 = 846. Resposta: 846.",
+      "nota": 1.0
+    }
+  ]
+}

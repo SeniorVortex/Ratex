@@ -1,0 +1,371 @@
+{
+  "modelo": "Qwen/Qwen2.5-1.5B-Instruct (sem LoRA) + memória",
+  "notas": {
+    "touhou": 91.7,
+    "geral": 91.7,
+    "matematica": 83.3,
+    "total": 88.9
+  },
+  "respostas": [
+    {
+      "categoria": "touhou",
+      "pergunta": "quem criou touhou?",
+      "gabarito": [
+        [
+          "zun"
+        ]
+      ],
+      "resposta": "Aqui está o passo a passo para responder:\n\n1. Primeiro, eu preciso lembrar quem é o ZUN.\n2. O ZUN é um apelido do Jun'ya Ota.\n3. Jun'ya Ota é o criador real de Touhou Project.\n4. Ele é o único membro da equipe Team Shanghai Alice.\n5. Jun'ya Ota é responsável por todas as partes do projeto: programação, desenho, composição musical e escrita da história.\n6. Portanto, a resposta é: Jun'ya Ota criou Touhou Project.\n\nResposta: Jun'ya Ota criou Touhou Project.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem é a Reimu Hakurei?",
+      "gabarito": [
+        [
+          "sacerdotisa",
+          "miko"
+        ],
+        [
+          "santuario"
+        ]
+      ],
+      "resposta": "A Reimu Hakurei é uma personagem icônica da série Touhou Project. Ela é a sacerdotisa do Santuário Hakurei, um lugar mágico onde ela vive e trabalha. Ela usa uma roupa vermelha e branca, com mangas separadas do corpo e um laçarote vermelho gigante na cabeça. Isso lhe dá o apelido de \"miko vermelha e branca\".\n\nReimu é conhecida por ser uma personagem preguiçosa e desinteressada, mas também tem um coração generoso e muita paciência. Ela é uma das principais personagens da série, e sua presença no jogo é frequentemente marcada por seus ataques de magia e suas habilidades de cura.\n\nO papel de Reimu é muito importante para a série, pois ela é responsável pela cuidado da Grande Barreira Hakurei, que serve",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o poder da Sakuya Izayoi?",
+      "gabarito": [
+        [
+          "tempo"
+        ]
+      ],
+      "resposta": "A Sakuya Izayoi tem vários poderes incríveis! Primeiro, ela pode parar o tempo, o que significa que ela pode fazer coisas como parar o tempo quando quiser, ou mesmo parar o tempo todo. Isso é muito útil para resolver problemas ou para fazer coisas que normalmente não são possíveis.\n\nOutra coisa maravilhosa que ela pode fazer é andar enquanto tudo está congelado. Isso significa que ela pode andar ou correr enquanto todos os outros estão parados. É como se ela fosse uma figura de boneca que pode mover-se rapidamente.\n\nEla também tem o poder de espalhar facas pelo ar. Isso é muito útil porque ela pode usar essas facas para cortar ou desviar ataques de inimigos. Ela também pode aumentar o espaço dentro da mansão, fazendo-a maior por dentro. Isso é muito útil para guardar muitos objetos",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem é a irmã mais nova da Remilia?",
+      "gabarito": [
+        [
+          "flandre"
+        ]
+      ],
+      "resposta": "A irmã mais nova da Remilia é a Flandre Scarlet.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual número é o símbolo da Cirno?",
+      "gabarito": [
+        [
+          "9",
+          "nove"
+        ]
+      ],
+      "resposta": "O símbolo da Cirno é o número nove. Esse número foi tão popular que virou sinônimo de \"burra\" na comunidade de Touhou Project.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "o que a Marisa faz com os livros da Patchouli?",
+      "gabarito": [
+        [
+          "emprestad",
+          "rouba",
+          "pega"
+        ]
+      ],
+      "resposta": "A Marisa rouba livros da Patchouli, mas promete devolver quando morrer. Ela acha que é uma boa ideia, pois a Patchouli vai viver séculos.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem causou o incidente da névoa vermelha?",
+      "gabarito": [
+        [
+          "remilia"
+        ]
+      ],
+      "resposta": "O incidente da névoa vermelha foi causado pelo Embodiment of Scarlet Devil, que estava em estado de emergência após um ataque. Ele usou sua habilidade de transformação para criar a névoa vermelha para ocultar Gensokyo e proteger seus segredos.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem trabalha de jardineira pra Yuyuko?",
+      "gabarito": [
+        [
+          "youmu"
+        ]
+      ],
+      "resposta": "A Youmu Konpaku é a jardineira de Yuyuko Saigyouji. Ela cuida do jardim e da floresta ao redor da mansão Hakugyokurou, que é o lar de Yuyuko no Mundo dos Mortos. Você pode pensar nela como a dona do jardim, responsável por manter tudo em ordem e dar vida à natureza ao redor da casa.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "a Nazrin é que tipo de youkai?",
+      "gabarito": [
+        [
+          "rata",
+          "rato"
+        ]
+      ],
+      "resposta": "A Nazrin é uma Youkai rata. Ela é pequena, tem orelhas redondas e é conhecida por sua habilidade em encontrar tesouros. Ela é uma espécie de guerreira dos ratos, comandando um bando de ratos que ajudam na busca por objetos perdidos.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o nome do Touhou 6?",
+      "gabarito": [
+        [
+          "embodiment",
+          "scarlet devil"
+        ]
+      ],
+      "resposta": "O nome do Touhou 6 é Embodiment of Scarlet Devil.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "o que quer dizer danmaku?",
+      "gabarito": [
+        [
+          "bala",
+          "tiro"
+        ]
+      ],
+      "resposta": "Danmaku é um tipo de jogo de ação onde a tela fica cheia de balas disparadas pela tela. Essas balas são chamadas de \"danmaku\" porque parecem uma cortina de balas quando voam na tela. No Touhou Project, esse estilo de jogo é usado para combinar as habilidades de dança e arte com a luta contra inimigos.\n\nEm um jogo de danmaku, você voa pela tela enquanto as balas caem. As balas têm diferentes formas e cores, e você precisa escolher a melhor maneira de lidar com elas. Isso pode incluir saltar, girar, ou usar suas habilidades especiais para evitar as balas.\n\nO objetivo do jogo é fazer o ataque mais bonito e difícil possível. Isso significa que você precisa ser criativo e usar suas habilidades de forma única para derrotar os inimigos. \n\nNo Touhou Project",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o poder da Yukari Yakumo?",
+      "gabarito": [
+        [
+          "fronteira"
+        ]
+      ],
+      "resposta": "A Yukari Yakumo tem um poder extremamente poderoso e multifacetado. Ela é capaz de manipular fronteiras, criando fendas no espaço que permitem sua movimentação em qualquer direção. Isso inclui a transição entre sonho e realidade, dia e noite, e até mesmo a mudança de vida para morte. Ela é praticamente uma administradora do universo, controlando esses pontos de interseção entre diferentes estados e momentos.\n\nAlém disso, ela é uma shikigami, ou espírito servindo, da Yukari. Ran Yakumo, como ela é conhecida, é uma raposa de nove caudas, uma das mais poderosas shikigamis. Ela é inteligente, calculista e excelente em matemática, fazendo todo o trabalho pesado enquanto a Yukari dorme. Portanto, seu poder está diretamente relacionado ao seu",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual é a capital da França?",
+      "gabarito": [
+        [
+          "paris"
+        ]
+      ],
+      "resposta": "A capital da França é Paris. É uma cidade incrível, cheia de história, arte e cultura. Imagine se fosse o centro de tudo! É onde você encontra os famosos arcos de Notre-Dame, o Louvre com seus tesouros, e o Champs-Élysées, famoso pela sua bela arquitetura. Paris é como um livro aberto para a história, com cada rua e praça contando uma história. É um lugar que você deve visitar pelo menos uma vez na vida! Resposta: Paris.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quantos planetas existem no sistema solar?",
+      "gabarito": [
+        [
+          "8",
+          "oito"
+        ]
+      ],
+      "resposta": "O sistema solar tem oito planetas principais. Eles são:\n\n1. Mercúrio\n2. Vênus\n3. Terra\n4. Marte\n5. Júpiter\n6. Saturno\n7. Urano\n8. Netuno\n\nAlém desses, há outros astros importantes:\n\n9. Ceres (um planeta anão)\n10. Pallas\n11. Juno\n12. Vesta\n13. Hygieia\n14. S/2004 N 1 (oupha)\n\nEsses são os planetas conhecidos no nosso sistema solar.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "que gás as plantas liberam na fotossíntese?",
+      "gabarito": [
+        [
+          "oxigenio"
+        ]
+      ],
+      "resposta": "Na fotossíntese, as plantas liberam oxigênio. Esse oxigênio é o resultado da reação entre a luz solar, água e gás carbônico. A reação é chamada de fotossíntese primária e resulta no crescimento das plantas e na produção de oxigênio para o ambiente.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "em que ano o Brasil ficou independente de Portugal?",
+      "gabarito": [
+        [
+          "1822"
+        ]
+      ],
+      "resposta": "Em 7 de setembro de 1822, o Brasil declarou a independência de Portugal. Então, o Brasil ficou independente de Portugal em 1822.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual o maior planeta do sistema solar?",
+      "gabarito": [
+        [
+          "jupiter"
+        ]
+      ],
+      "resposta": "O maior planeta do sistema solar é Júpiter! Ele é tão grande que poderia conter mais de 1000 planetas como a Terra dentro dele. Imagine se fosse um bolo gigante - Júpiter seria o bolo mais grosso e com mais recheio possível!",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "o que significa a palavra saudade?",
+      "gabarito": [
+        [
+          "falta"
+        ]
+      ],
+      "resposta": "Saudade é um sentimento muito especial que muitos de nós experimentam. Imagine que você está viajando para um lugar novo e você está se despedindo de sua família e amigos. Quando você chega lá, você se sente triste porque você não pode mais estar com eles. Isso é como sentir saudade. Você tem uma ligação emocional muito forte com essas pessoas, e quando elas estão longe, você fica triste e quer estar com elas novamente. É como se você estivesse esperando por eles, mas eles não estão lá. É uma sensação muito forte de amor e nostalgia.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "antibiótico funciona contra vírus?",
+      "gabarito": [
+        [
+          "nao"
+        ]
+      ],
+      "resposta": "Não, antibióticos funcionam contra vírus. Eles são usados para combater bactérias, não para combatê-los. É como se fosse usar um remédio para tratar um problema que não tem nada a ver com o remédio.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual o maior oceano do mundo?",
+      "gabarito": [
+        [
+          "pacifico"
+        ]
+      ],
+      "resposta": "O maior oceano do mundo é o Pacífico, seguido pelo Atlântico. Ambos são considerados os maiores oceanos do planeta.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quem escreveu Dom Casmurro?",
+      "gabarito": [
+        [
+          "machado"
+        ]
+      ],
+      "resposta": "Dom Casmurro foi escrito por Machado de Assis. Ele é considerado um dos maiores escritores brasileiros e um dos mais influentes da literatura mundial. O livro retrata a vida de um homem chamado Casmurro, que vive em uma ilha misteriosa e tem muitos segredos. A história é complexa e envolvente, explorando temas como a natureza humana, a moralidade e a existência. Machado de Assis é conhecido por suas obras profundas e sutis, e Dom Casmurro é uma das obras mais famosas dele.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual a fórmula química da água?",
+      "gabarito": [
+        [
+          "h2o"
+        ]
+      ],
+      "resposta": "A fórmula química da água é H2O. Aqui está o passo a passo:\n\n1. Começamos com dois átomos de hidrogênio (H) - esses são os \"básicos\" que formam a água.\n2. Adicionamos um átomo de oxigênio (O) ao grupo de dois átomos de hidrogênio.\n3. O átomo de oxigênio se torna o centro da molécula, conectando-se aos dois átomos de hidrogênio através de uma ligação de hélice.\n4. Essa conexão dá forma à água como um disco redondo.\n\nResposta: H2O",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quantos lados tem um hexágono?",
+      "gabarito": [
+        [
+          "6",
+          "seis"
+        ]
+      ],
+      "resposta": "Um hexágono tem seis lados. Imagine se você estivesse fazendo um hexágono com papel, você precisaria cortar e dobrar seis vezes para formar todos os lados. É como se cada lado fosse uma pedra que você juntasse para formar um hexágono grande!",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "o que é um verbo?",
+      "gabarito": [
+        [
+          "acao"
+        ]
+      ],
+      "resposta": "Um verbo é uma palavra que descreve uma ação, um estado ou uma condição. Ele pode mudar com o tempo, como quando dizemos \"eu corri\", \"eu corri\", \"eu vou correr\". Um exemplo clássico de verbo é \"correr\", que pode ser usado para descrever uma ação imediata (\"eu corri\") ou uma condição (\"eu estou correndo\").",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos mililitros tem 2,5 litros?",
+      "gabarito": "2.500 mL",
+      "resposta": "Para saber quantos mililitros estão em 2,5 litros, basta multiplicar 2,5 por 1.000, já que 1 litro é igual a 1.000 mililitros.\n\n2,5 x 1.000 = 2.500\n\nPortanto, 2,5 litros são igual a 2.500 mililitros.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "tirei as notas 8, 7, 6 e 4. qual minha média?",
+      "gabarito": "6,25",
+      "resposta": "Para calcular sua média, vamos somar todas as suas notas e dividir pelo número de notas. Vamos lá:\n\n8 + 7 + 6 + 4 = 25\n\nAgora, dividimos por 4 (o número de notas):\n\n25 ÷ 4 = 6.25\n\nPortanto, sua média é 6.25.\n\nResposta: 6.25",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos mililitros tem 3 litros?",
+      "gabarito": "3.000 mL",
+      "resposta": "3 litros são igual a 3.000 mililitros.\n\nPara entender melhor, imagine que você tem 3 garrafas de água, cada uma com 1 litro. Então, se você misturar todas essas garrafas juntas, terá 3 litros de água. Agora, se você quiser saber quantos mililitros isso equivale, basta multiplicar 3 por 1.000 (que é a quantidade de mililitros em um litro), e você vai obter 3.000 mililitros.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "qual a média de 9, 3, 2, 4 e 10?",
+      "gabarito": "5,6",
+      "resposta": "A média desses números é calculada somando todos os valores e depois dividindo por quantos valores temos. Vamos lá:\n\n9 + 3 + 2 + 4 + 10 = 30\n\nDividindo por 5 (o número de valores), temos:\n\n30 ÷ 5 = 6\n\nPortanto, a média desses números é 6.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um fone custa R$ 50 e está com 15% de desconto. quanto fica?",
+      "gabarito": "R$ 42,50",
+      "resposta": "Então, vamos lá! Imagine que você tem um fone que custava R$ 50, mas agora ele tem um desconto de 15%. Vamos fazer essa conta juntos:\n\nPrimeiro, vamos descobrir quantos reais são 15% de R$ 50:\n15% de R$ 50 é igual a R$ 7,50.\n\nAgora, vamos subtrair esse valor do preço original:\nR$ 50 - R$ 7,50 = R$ 42,50\n\nPortanto, com o desconto, o fone ficará por R$ 42,50.\n\nResposta: O fone vai custar R$ 42,50 depois do desconto.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos dias têm 12 semanas?",
+      "gabarito": "84 dias",
+      "resposta": "12 semanas são igual a 84 dias.\n\nPara entender isso, vamos dividir:\n\n1 semana = 7 dias\n12 semanas = 12 * 7 = 84 dias\n\nPortanto, 12 semanas correspondem exatamente a 84 dias.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quanto é 86 dividido por 16? tem resto?",
+      "gabarito": "5, resto 6",
+      "resposta": "Claro! Vamos resolver isso juntos.\n\n86 dividido por 16 é igual a 5 com um resto de 6.\n\nVamos ver como fica:\n\n16 x 5 = 80\n86 - 80 = 6\n\nPortanto, o resultado é 5 com um resto de 6.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um jogo custa R$ 60 e está com 30% de desconto. quanto fica?",
+      "gabarito": "R$ 42",
+      "resposta": "Então, vamos calcular isso juntos! Primeiro, precisamos entender que 30% de R$ 60 é o mesmo que 30/100 * 60 = R$ 18.\n\nAgora, para descobrir o preço final, basta subtrair esse valor do preço original:\n\nR$ 60 - R$ 18 = R$ 42\n\nPortanto, após aplicar o desconto de 30%, o jogo ficaria por R$ 42.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um fumo da Cirno custa R$ 200 e está com 25% de desconto. quanto fica?",
+      "gabarito": "R$ 150",
+      "resposta": "Entendo que você quer saber quanto custa um fumo da Cirno após aplicar o desconto. Vamos lá:\n\nO preço original de um fumo da Cirno é R$ 200.\n\nCom 25% de desconto, vamos calcular o valor final:\n\n25% de R$ 200 é igual a R$ 50 (multiplicando 25 por 200).\n\nSubtraindo esse valor do preço original:\n\nR$ 200 - R$ 50 = R$ 150\n\nPortanto, após aplicar o desconto, o preço do fumo da Cirno ficaria em R$ 150.\n\nResposta: Um fumo da Cirno, com 25% de desconto, custa R$ 150.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quanto é 1/2 - 3/8?",
+      "gabarito": "1/8",
+      "resposta": "Para resolver essa conta, vamos seguir os passos:\n\n1) Primeiro, precisamos encontrar o denominador comum dos dois números. Nesse caso, o denominador comum é 8.\n\n2) Agora, vamos converter cada fração para ter o mesmo denominador:\n   1/2 = 4/8 (porque 2 x 4 = 8)\n   3/8 já tem o mesmo denominador\n\n3) Agora que temos os mesmos denominadores, podemos subtrair os numeradores:\n   4/8 - 3/8 = 1/8\n\nPortanto, 1/2 - 3/8 = 1/8\n\nResposta: 1/8",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "resolve 9x - 4 = -67",
+      "gabarito": "x = -7",
+      "resposta": "Olá! Vamos resolver essa equação juntos:\n\n9x - 4 = -67\n\nPrimeiro, vamos adicionar 4 a ambos os lados para tirar o -4:\n\n9x - 4 + 4 = -67 + 4\n9x = -63\n\nAgora, para encontrar o valor de x, dividimos ambos os lados por 9:\n\n9x ÷ 9 = -63 ÷ 9\nx = -7\n\nPortanto, a resposta é x = -7.\n\nResposta: x = -7",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "47 * 18 = ?",
+      "gabarito": "846",
+      "resposta": "47 * 18 = 846\n\nVamos descrever o processo:\n\nPrimeiro, vamos dividir 18 em 2 e 9. Isso facilita a multiplicação.\n\n47 * 2 = 94\n47 * 9 = 423\n\nAgora, somamos esses resultados:\n94 + 423 = 517\n\nEntão, 47 * 18 = 517\n\nResposta: 517",
+      "nota": 1.0
+    }
+  ]
+}

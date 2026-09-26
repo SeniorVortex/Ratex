@@ -21,6 +21,7 @@ em cache), ou pode ser apontado para uma pasta local com --base.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import torch
@@ -109,13 +110,30 @@ def bitsandbytes_disponivel() -> bool:
     return torch.cuda.is_available()
 
 
+def ram_gb() -> float:
+    try:
+        return os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES") / 2**30
+    except (ValueError, OSError, AttributeError):  # pragma: no cover (Windows)
+        return 8.0
+
+
+def lote_padrao(base: str, device: str) -> tuple[int, int]:
+    """(batch_size, acumulação) que cabem na memória; o lote efetivo fica em 8.
+    Na CPU, lote 4 de conversas longas estoura 15 GB de RAM já com o Qwen 0.5B."""
+    if device == "cuda":
+        return 4, 2
+    pequeno = any(t in base.lower() for t in ("0.5b", "135m", "360m"))
+    return (2, 4) if pequeno else (1, 8)
+
+
 def resolver_base(base: str, device: str) -> tuple[str, bool]:
     """Troca apelidos pelo id do Hugging Face e resolve 'auto' pelo hardware.
     Retorna (id_ou_pasta, usar_4bit_sugerido)."""
     if base != "auto":
         return BASES.get(base, base), False
     if device == "cpu":
-        return BASES["qwen-0.5b"], False
+        # o 1.5B treina na CPU com ~12 GB de RAM (lote 1); com menos, fica no 0.5B
+        return (BASES["qwen-1.5b"] if ram_gb() >= 14 else BASES["qwen-0.5b"]), False
     if device == "mps":
         return BASES["qwen-1.5b"], False
     vram = torch.cuda.get_device_properties(0).total_memory / 2**30

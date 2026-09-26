@@ -24,7 +24,7 @@ O modelo que está no repositório tem **3,2 M de parâmetros**. Foi treinado **
 |---|---|---|
 | `ratex/xselo-0-1/v1` | micro-Transformer de 3,2 M feito do zero, só Touhou | treinado: nota **8,3**/100 na prova |
 | `ratex/xselo-0-2/v1` | Qwen2.5-0.5B-Instruct + LoRA, só Touhou | pulada: a 0.3 faz tudo que ela faria (`--versao 0.2` ainda treina) |
-| `ratex/xselo-0-3/v1` | **o grande update**: Qwen + LoRA com Touhou, assuntos gerais e matemática, + memória de consulta | **treinado** no Qwen2.5-0.5B: nota **83,3**/100 na prova |
+| `ratex/xselo-0-3/v1` | **o grande update**: Qwen + LoRA com Touhou, assuntos gerais e matemática, + memória de consulta | **treinado** no Qwen2.5-1.5B: nota **91,7**/100 na prova |
 
 ## `ratex/xselo-0-3/v1`: saindo da bolha
 
@@ -34,7 +34,8 @@ A ideia é juntar dois mundos:
 
   | onde roda | base escolhida pelo `auto` |
   |---|---|
-  | CPU | `Qwen2.5-0.5B-Instruct` |
+  | CPU com 14 GB+ de RAM | `Qwen2.5-1.5B-Instruct` (o que está no repositório) |
+  | CPU com menos RAM | `Qwen2.5-0.5B-Instruct` |
   | Mac (MPS) | `Qwen2.5-1.5B-Instruct` |
   | GPU de 6 a 12 GB | `Qwen2.5-1.5B-Instruct` |
   | GPU de 12 a 14 GB | `Qwen2.5-3B-Instruct` |
@@ -60,16 +61,18 @@ python gerar.py --chat                              # conversa com o híbrido ma
 python gerar.py --modelo 0.2 --chat                 # escolhe a versão: 0.1, 0.2 ou 0.3
 ```
 
-| tempo estimado (3 épocas) | CPU (4 núcleos) | GPU boa (ex.: RTX 3090/4090, A100) |
+| tempo medido/estimado (1 época, o padrão) | CPU (4 núcleos) | GPU boa (ex.: RTX 3090/4090, A100) |
 |---|---|---|
-| 0.3 com `qwen-0.5b` | ~2,5 h | ~5 min |
-| 0.3 com `qwen-1.5b` | ~7 h | ~10 min |
-| 0.3 com `qwen-7b --4bit` | inviável | ~30-60 min |
+| 0.3 com `qwen-0.5b` | ~1 h (medido) | ~2 min |
+| 0.3 com `qwen-1.5b` | ~2 h 10 min (medido, pico de 12 GB de RAM) | ~5 min |
+| 0.3 com `qwen-7b --4bit` | inviável | ~20-30 min |
+
+O tamanho do lote se ajusta sozinho à memória (lote efetivo de 8). Uma época basta com o dataset atual: nas duas bases testadas, a validação piorou a partir da segunda.
 
 Opções úteis:
 
 ```bash
-python treinar_lora.py --epocas 5 --rank 32               # treino mais forte
+python treinar_lora.py --epocas 2 --rank 32               # treino mais forte (vale quando o dataset crescer)
 python treinar_lora.py --matematica 1000                  # mais exercícios de matemática
 python treinar_lora.py --tempo-max 60                     # para e salva em 60 minutos
 python treinar_lora.py --mesclar                          # também salva o modelo completo (base+LoRA) em .../mesclado
@@ -90,13 +93,28 @@ python avaliar.py --modelo 0.3 --salvar avaliacoes/xselo-0-3-v1.json --mostrar
 
 | modelo | touhou | geral | matemática | total |
 |---|---:|---:|---:|---:|
-| xselo 0.1 (feito do zero) | 16,7 | 8,3 | 0 | 8,3 |
+| xselo 0.1 (feito do zero, 3 M) | 16,7 | 8,3 | 0 | 8,3 |
 | Qwen 0.5B puro | 0 | 66,7 | 33,3 | 33,3 |
 | Qwen 0.5B puro + memória | 83,3 | 66,7 | 33,3 | 61,1 |
-| xselo 0.3 sem memória | 25,0 | 50,0 | 83,3 | 52,8 |
-| **xselo 0.3 + memória** | **83,3** | **83,3** | **83,3** | **83,3** |
+| xselo 0.3 no Qwen 0.5B, sem memória | 25,0 | 50,0 | 83,3 | 52,8 |
+| xselo 0.3 no Qwen 0.5B + memória | 83,3 | 83,3 | 83,3 | 83,3 |
+| Qwen 1.5B puro + memória | 91,7 | 91,7 | 83,3 | 88,9 |
+| xselo 0.3 no Qwen 1.5B, sem memória | 41,7 | 83,3 | 91,7 | 72,2 |
+| **xselo 0.3 no Qwen 1.5B + memória** (o atual) | **91,7** | **91,7** | **91,7** | **91,7** |
 
-A correção é por palavra-chave e número certo, então é uma régua simples: serve para comparar versões, não para medir inteligência de forma absoluta. Ela também é **generosa**. Lendo uma a uma as respostas do 0.3 + memória, a nota rigorosa fica em Touhou 10/12, geral 6/12 e matemática 10/12, porque várias respostas gerais trazem a palavra certa junto com um erro. Os relatórios com todas as respostas ficam em `avaliacoes/`.
+A correção é por palavra-chave e número certo, então é uma régua simples: serve para comparar versões, não para medir inteligência de forma absoluta. Ela também é **generosa**, porque conta acerto quando a palavra certa aparece, mesmo com erro junto. Lendo resposta por resposta (acertos de 12):
+
+| modelo | Touhou | geral | matemática |
+|---|---:|---:|---:|
+| xselo 0.3 no Qwen 0.5B + memória | 10 | 6 | 10 |
+| **xselo 0.3 no Qwen 1.5B + memória** | **11** | **10** | **11** |
+
+O que a tabela ensina:
+- a **memória** resolve Touhou;
+- a **base maior** segura o conhecimento geral: o 0.5B com LoRA chegava a responder "Lisboa" para a capital da França;
+- o **LoRA** dá a matemática e o jeito do Xselo.
+
+No 1.5B, o Qwen puro com memória já chega perto (88,9), então daqui pra frente o que mais rende é base maior e dataset maior. Os relatórios com todas as respostas ficam em `avaliacoes/`.
 
 ## A memória de consulta (RAG)
 
@@ -308,9 +326,10 @@ Detalhes e otimizações:
 - [x] Ajuste fino em diálogos em cima de um modelo base (0.2, LoRA)
 - [x] Sair da bolha: assuntos gerais + matemática com passo a passo (0.3)
 - [x] Prova fixa para comparar versões (`avaliar.py`)
-- [x] Treinar a 0.3 (Qwen2.5-0.5B, CPU)
+- [x] Treinar a 0.3 (Qwen2.5-0.5B e depois Qwen2.5-1.5B, na CPU)
 - [x] RAG: o Xselo consulta o próprio dataset antes de responder
-- [ ] Treinar a 0.3 no Qwen 1.5B/3B/7B (7B numa GPU: Colab ou GPU alugada)
+- [ ] Treinar no Qwen 3B/7B (7B numa GPU: Colab ou GPU alugada)
+- [ ] Memória por significado (embeddings) em vez de só por palavra: "pisou" achar "pisar"
 - [ ] Mais dataset: mais conversas gerais e de Touhou no tom do Xselo (a melhoria com melhor custo-benefício)
 - [ ] Segurar o conhecimento geral da base no LoRA (lr menor, mais conversas gerais)
 - [ ] Memória de conversa mais longa no `gerar.py --chat` (resumo das falas antigas)

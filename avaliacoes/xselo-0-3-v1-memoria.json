@@ -1,10 +1,10 @@
 {
   "modelo": "ratex/xselo-0-3/v1 + memória",
   "notas": {
-    "touhou": 83.3,
-    "geral": 83.3,
-    "matematica": 83.3,
-    "total": 83.3
+    "touhou": 91.7,
+    "geral": 91.7,
+    "matematica": 91.7,
+    "total": 91.7
   },
   "respostas": [
     {
@@ -15,7 +15,7 @@
           "zun"
         ]
       ],
-      "resposta": "O ZUN, apelido do Jun'ya Ota. Ele faz tudo sozinho: programa, desenha, compõe as músicas e escreve a história. A equipe dele se chama Team Shanghai Alice, mas na prática é ele e a cerveja dele.",
+      "resposta": "Foi o ZUN, apelido do Jun'ya Ota. Ele faz tudo sozinho: programa, desenha, compõe as músicas e escreve a história. A equipe dele se chama Team Shanghai Alice, mas na prática é ele e a cerveja dele.",
       "nota": 1.0
     },
     {
@@ -30,7 +30,7 @@
           "santuario"
         ]
       ],
-      "resposta": "A Reimu Hakurei é a sacerdotisa do Santuário Hakurei. Ela é a miko vermelha e branca, e a responsabilidade dela é cuidar da barreira mágica. Ela tem um carro veloz e um laçarote vermelho gigante no braço, e ela é a responsável por tudo.",
+      "resposta": "A Reimu Hakurei é a sacerdotisa do Santuário Hakurei, a garota vermelha e branca. Ela é a protagonista principal de Touhou, e o trabalho dela é cuidar da Grande Barreira Hakurei, que separa Gensokyo do nosso mundo. Ela é preguiçosa, mas tem um laçarote gigante na cabeça que serve como arma.",
       "nota": 1.0
     },
     {
@@ -41,7 +41,7 @@
           "tempo"
         ]
       ],
-      "resposta": "A Sakuya manipula o tempo e o espaço. Ela pode parar o tempo, espalhar facas no ar e até mesmo aumentar o espaço dentro da mansão. Ela é a responsável pela manchete da Reimu.",
+      "resposta": "A Sakuya manipula o tempo e o espaço. Ela pode parar o tempo, espalhar facas pelo ar, e expandir a mansão. Ela também é humana, então ela tem que comer.",
       "nota": 1.0
     },
     {
@@ -52,7 +52,7 @@
           "flandre"
         ]
       ],
-      "resposta": "A irmã mais nova da Remilia é a Flandre Scarlet. Ela tem quase quinhentos anos, mas é a mais forte. Ela é misteriosa, mágica e mala.",
+      "resposta": "A irmã mais nova da Remilia é a Flandre Scarlet. Ela vive trancada no porão, onde ela passou quase quinhentos anos, porque o poder dela é destruir qualquer coisa. Ela encontra o ponto fraco de um objeto, puxa pra mão e esmaga. Fofa, inocente e absolutamente perigosa.",
       "nota": 1.0
     },
     {
@@ -64,7 +64,7 @@
           "nove"
         ]
       ],
-      "resposta": "O símbolo da Cirno é o nove. No manual de um jogo antigo, a Cirno aparecia marcada com um nove, e isso virou sinônimo de burra, de besta, de tonta.",
+      "resposta": "O símbolo da Cirno é o nove. Em Touhou, o nove virou sinônimo de burra.",
       "nota": 1.0
     },
     {
@@ -77,8 +77,8 @@
           "pega"
         ]
       ],
-      "resposta": "A Marisa faz mukyu. Ela enxerga a Patchouli rolando pelos livros e dizendo que é pra ler. A Patchouli não aceita, porque ela é humana e a Marisa é humilde. A Patchouli resolveu dar um jeito de ser humilde, então ela resolveu dar um jeito de ser humilde e mukyu.",
-      "nota": 0.0
+      "resposta": "Elas são roubadas. A Marisa diz que é emprestado, mas ninguém acredita nisso. Ela tem uma mansão cheia de livros, e a Patchouli fica furiosa.",
+      "nota": 1.0
     },
     {
       "categoria": "touhou",
@@ -88,7 +88,7 @@
           "remilia"
         ]
       ],
-      "resposta": "O incidente foi o incidente da névoa vermelha. Aí começou o jogo. O incidente foi o incidente da névoa vermelha. Aí começou o jogo.",
+      "resposta": "O incidente da névoa vermelha foi causado pelo Youmu. Ela usou a magia do Sol e do Lua pra esconder o sol, e a névoa vermelha foi o resultado.",
       "nota": 0.0
     },
     {
@@ -99,7 +99,7 @@
           "youmu"
         ]
       ],
-      "resposta": "A Youmu Konpaku. Ela é metade humana e metade fantasma, e a metade fantasma fica flutuando do lado dela feito uma nuvenzinha. Ela carrega duas espadas e acredita que dá pra entender qualquer coisa cortando.",
+      "resposta": "A Youmu Konpaku. Ela é a jardineira espadachim da Yuyuko, e ela carrega duas espadas. Ela é metade humana e metade fantasma, e a metade fantasma fica flutuando do lado dela feito uma nuvenzinha. Ela é séria, esforçada e sempre cansada.",
       "nota": 1.0
     },
     {
@@ -111,7 +111,7 @@
           "rato"
         ]
       ],
-      "resposta": "A Nazrin é uma youkai rata, tipo a youkai do jogo Star Wars. Ela tem uma varinha de radiestesia e um pêndulo, e ela é a responsável por resolver tudo pra Shou.",
+      "resposta": "A Nazrin é uma youkai rata. Ela tem asas de ratinho, olhos de ratinho e anda de rodinha. É tipo um ratinho gigante que anda de moto.",
       "nota": 1.0
     },
     {
@@ -123,7 +123,7 @@
           "scarlet devil"
         ]
       ],
-      "resposta": "O nome oficial é Embodiment of Scarlet Devil, ou EoSD. O jogo virou um meme de Touhou, e ele continua sendo o mais vendido.",
+      "resposta": "O nome oficial é Embodiment of Scarlet Devil, ou EoSD. Mas ele é conhecido como o Embodiment of Scarlet Devil, ou EoSD, por ser o nome do personagem principal, a Youmu.",
       "nota": 1.0
     },
     {
@@ -135,7 +135,7 @@
           "tiro"
         ]
       ],
-      "resposta": "Danmaku quer dizer cortina de balas. É tipo uma tela cheia de tiros formando padrões, tipo um jogo de balas. Na internet dizendo que é lunatic é uma forma de dizer que é impossível.",
+      "resposta": "Danmaku quer dizer cortina de balas. É o nome do estilo de jogo onde a tela fica cheia de tiros formando padrões. Na gringa chamam de bullet hell, inferno de balas. Em Touhou, danmaku também é o jeito de duelar em Gensokyo: quem faz o ataque mais bonito e difícil ganha respeito.",
       "nota": 1.0
     },
     {
@@ -157,8 +157,8 @@
           "paris"
         ]
       ],
-      "resposta": "Lisboa. É o maior porto europeu e tem uma população de milhares de pessoas. A cidade tem uma história longa, desde a época do Império Português.",
-      "nota": 0.0
+      "resposta": "Paris! É lá que fica a Catedral de Notre-Dame, o Louvre e a Biblioteca Nacional. A cidade tem mais de 2 milhões de habitantes e é famosa por ser cheia de vida noturna.",
+      "nota": 1.0
     },
     {
       "categoria": "geral",
@@ -169,7 +169,7 @@
           "oito"
         ]
       ],
-      "resposta": "Oito: Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano e Netuno. Oito planetas é o maior número possível, mas os fãs adoram fazer piada sobre o nono, o Plutão.",
+      "resposta": "Oito: Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano e Netuno. Plutão foi o nono, mas em 2006 os astrônomos rebaixaram ele pra planeta anão. Até hoje tem gente de luto pelo Plutão.",
       "nota": 1.0
     },
     {
@@ -180,7 +180,7 @@
           "oxigenio"
         ]
       ],
-      "resposta": "O gás carbônico. O oxigênio é o resultado, mas ele vem do ar. A planta usa esse oxigênio pra fazer sua comida.",
+      "resposta": "O oxigênio. A planta libera oxigênio no processo, então o oxigênio que você respira vem da fotossíntese.",
       "nota": 1.0
     },
     {
@@ -191,7 +191,7 @@
           "1822"
         ]
       ],
-      "resposta": "Em 7 de setembro de 1822. O incidente foi o Ipiranga, um sinal de independência do Brasil. O dom Pedro, que era o presidente, gritou e os brasileiros viraram fãs.",
+      "resposta": "Em 7 de setembro de 1822, com o grito do Ipiranga, quando o Dom Pedro declarou a independência de Portugal.",
       "nota": 1.0
     },
     {
@@ -202,7 +202,7 @@
           "jupiter"
         ]
       ],
-      "resposta": "O maior é Marte, seguido de Júpiter, que é o maior do nosso sistema. O menor é o Siderúrgico, o planeta mais pequeno do nosso mundo, que tem menos de 5% da massa do nosso sol.",
+      "resposta": "O maior é Júpiter, com mais de 400 mil vezes a massa da Terra. Ele tem uma atmosfera quente e densa, e uma quantidade gigante de gás no meio. É tipo um fogareiro gigante.",
       "nota": 1.0
     },
     {
@@ -213,7 +213,7 @@
           "falta"
         ]
       ],
-      "resposta": "Saudade é o aperto no peito quando você sente falta de alguém, de um lugar ou de uma época boa que passou. É uma mistura de carinho com vontade de ter de volta. Dizem que é uma palavra difícil de traduzir pra outras línguas, e os brasileiros têm orgulho disso.",
+      "resposta": "Saudade é aquele aperto no peito quando você sente falta de alguém, de um lugar ou de uma época boa que passou. É uma mistura de carinho com vontade de ter de volta. Dizem que é uma palavra difícil de traduzir pra outras línguas, e os brasileiros têm orgulho disso.",
       "nota": 1.0
     },
     {
@@ -224,7 +224,7 @@
           "nao"
         ]
       ],
-      "resposta": "Sim, ele mata bactéria, mas não mata vírus. Se você estiver com gripe, o antibiótico vai te ajudar, mas não vai virar bacteira.",
+      "resposta": "Não, antibiótico é pra bactéria, que é um ser vivo completo. Viral é diferente: tem vírus de gripe, vírus de febre, vírus de herpes, vírus de HIV. Antibiótico não mata vírus, ele só deixa o vírus morrer no corpo, porque o vírus precisa de proteínas do nosso corpo pra se reproduzir. Então se você tomar antibiótico pra gripe, você está tentando matar o vírus que está dentro do seu corpo, e isso não serve pra nada. É tipo usar remédio pra dor de cabeça quando você está com gripe.",
       "nota": 1.0
     },
     {
@@ -235,7 +235,7 @@
           "pacifico"
         ]
       ],
-      "resposta": "O maior do mundo é o Atlântico, que abriga todo o planeta. O Brasil fica de frente pro Atlântico, então é o maior no nosso horizonte. Mas o Oceano Pacífico é o maior do mundo inteiro, mesmo que não seja o maior do mundo.",
+      "resposta": "O maior oceano do mundo é o Pacífico, seguido pelo Atlântico. O Pacífico tem mais de 500 mil quilômetros de comprimento, e ele é o maior de todos, maior até que todos os continentes juntos. O Brasil fica de frente pro Atlântico.",
       "nota": 1.0
     },
     {
@@ -246,8 +246,8 @@
           "machado"
         ]
       ],
-      "resposta": "O autor original é a Youmu, a youkai do santuário. Ela escreveu o romance, e os fãs adoram ler as versões dos textos dela. A série ganhou um filme em 2014, o Dom Casmurro e a Reimu, que virou um clássico de anime.",
-      "nota": 0.0
+      "resposta": "Dom Casmurro foi escrito por Machado de Assis. É um dos livros mais famosos do brasileiro, e ele é conhecido por ser um livro difícil de ler, que parece ter sido escrito em português antigo.",
+      "nota": 1.0
     },
     {
       "categoria": "geral",
@@ -257,7 +257,7 @@
           "h2o"
         ]
       ],
-      "resposta": "A fórmula química da água é H2O. É só duas átomos de hidrogênio ligados juntinhos, tipo dois ovos juntos. O hidrogênio é o nome do gás que faz água, e os ovos são o hidrogênio e o oxigênio.",
+      "resposta": "H2O. A H representa hidrogênio, o O representa oxigênio e o número 2 e 1 diz quantos gásinhos tem. É tipo uma receita de bolo: batede, amassada, enfarinha, coloque no forno.",
       "nota": 1.0
     },
     {
@@ -269,7 +269,7 @@
           "seis"
         ]
       ],
-      "resposta": "O hexágono tem seis lados: três lados iguais e três lados diferentes. Se você olhar no canto de um hexágono, você verá três lados iguais e um diferente.",
+      "resposta": "Sete! Hexágono tem seis lados iguais, e cada lado tem dois ângulos. Hexágono é o nome de um polígono com sete lados.",
       "nota": 1.0
     },
     {
@@ -280,91 +280,91 @@
           "acao"
         ]
       ],
-      "resposta": "Verbo é a palavra de ação ou de estado: correr, comer, ser, estar, desviar. É a palavra que muda com o tempo: eu desvio, eu desviei, eu vou desviar. Se você consegue falar ontem eu na frente, provavelmente é verbo.",
-      "nota": 1.0
+      "resposta": "Verbo é a palavra que diz o que está acontecendo: andar, comer, dormir, correr. É a palavra que muda com o tempo: eu ando, eu andei, eu vou andar. Se você consegue falar eu ando, eu andei, eu vou andar, provavelmente é verbo.",
+      "nota": 0.0
     },
     {
       "categoria": "matematica",
       "pergunta": "quantos mililitros tem 2,5 litros?",
       "gabarito": "2.500 mL",
-      "resposta": "Deixa comigo: 1 litro tem 1.000 ml: 2,5 × 1.000 = 2.500 ml. Resposta: 2.500 ml.",
+      "resposta": "Fácil, olha só: 1 litro tem 1.000 ml: 1.000 × 2,5 = 2.500. Resposta: 2.500 ml.",
       "nota": 1.0
     },
     {
       "categoria": "matematica",
       "pergunta": "tirei as notas 8, 7, 6 e 4. qual minha média?",
       "gabarito": "6,25",
-      "resposta": "Fácil, olha só: soma tudo e divide pela quantidade. Soma: 8 + 7 + 6 + 4 = 25. São 5 números: 25 ÷ 5 = 5. Resposta: 5.",
-      "nota": 0.0
+      "resposta": "Simbora: soma tudo e divide pela quantidade. Soma: 8 + 7 + 6 + 4 = 25. São 4 números: 25 ÷ 4 = 6,25. Resposta: 6,25.",
+      "nota": 1.0
     },
     {
       "categoria": "matematica",
       "pergunta": "quantos mililitros tem 3 litros?",
       "gabarito": "3.000 mL",
-      "resposta": "Deixa comigo: 1 litro tem 1.000 ml: 3 × 1.000 = 3.000, mas se você quiser converter pra mililitros: 3.000 ÷ 1.000 = 3, que é mililitros. Resposta: 3.000 ml.",
+      "resposta": "Fácil, olha só: 1 litro tem 1.000 ml: 1.000 × 3 = 3.000. Resposta: 3.000 ml.",
       "nota": 1.0
     },
     {
       "categoria": "matematica",
       "pergunta": "qual a média de 9, 3, 2, 4 e 10?",
       "gabarito": "5,6",
-      "resposta": "Bora: soma tudo e divide pela quantidade. Soma: 9 + 3 + 2 + 4 + 10 = 20. São 5 números: 20 ÷ 5 = 4. Resposta: 4.",
-      "nota": 0.0
+      "resposta": "Simbora: soma tudo e divide pela quantidade. Soma: 9 + 3 + 2 + 4 + 10 = 28. São 5 números: 28 ÷ 5 = 5,6. Resposta: 5,6.",
+      "nota": 1.0
     },
     {
       "categoria": "matematica",
       "pergunta": "um fone custa R$ 50 e está com 15% de desconto. quanto fica?",
       "gabarito": "R$ 42,50",
-      "resposta": "Deixa comigo: primeiro o desconto: 15% de 50 = 7,5. Depois tira do preço: 50 - 7,5 = 42,5. Resposta: R$ 42,50.",
+      "resposta": "Bora: primeiro o desconto: 15% de 50 = 7,5. Depois tira do preço: 50 - 7,5 = 42,5. Resposta: R$ 42,50.",
       "nota": 1.0
     },
     {
       "categoria": "matematica",
       "pergunta": "quantos dias têm 12 semanas?",
       "gabarito": "84 dias",
-      "resposta": "Deixa comigo: cada semana tem 7 dias: 12 × 7 = 84. Resposta: 84 dias.",
+      "resposta": "Simbora: cada semana tem 7 dias: 12 × 7 = 84. Resposta: 84 dias.",
       "nota": 1.0
     },
     {
       "categoria": "matematica",
       "pergunta": "quanto é 86 dividido por 16? tem resto?",
       "gabarito": "5, resto 6",
-      "resposta": "Vamos por partes: 86 ÷ 16 = 5, porque 5 × 16 = 80. O resto é 2, porque 80 + 2 = 82, que é maior que 16. Resposta: 5, resto 2.",
+      "resposta": "Simbora: 86 ÷ 16 = 5, porque 5 × 16 = 80, e 86 - 80 = 6. Então dá 5 e sobra 6. Resposta: 5, resto 6.",
       "nota": 1.0
     },
     {
       "categoria": "matematica",
       "pergunta": "um jogo custa R$ 60 e está com 30% de desconto. quanto fica?",
       "gabarito": "R$ 42",
-      "resposta": "Bora: primeiro o desconto: 30% de 60 = 18. Depois tira do preço: 60 - 18 = 42. Resposta: R$ 42.",
+      "resposta": "Simbora: primeiro o desconto: 30% de 60 = 18. Depois tira do preço: 60 - 18 = 42. Resposta: R$ 42.",
       "nota": 1.0
     },
     {
       "categoria": "matematica",
       "pergunta": "um fumo da Cirno custa R$ 200 e está com 25% de desconto. quanto fica?",
       "gabarito": "R$ 150",
-      "resposta": "Fácil, olha só: primeiro o desconto: 25% de 200 = 50. Depois tira do preço: 200 - 50 = 150. Resposta: R$ 150.",
+      "resposta": "Bora: primeiro o desconto: 25% de 200 = 50. Depois tira do preço: 200 - 50 = 150. Resposta: R$ 150.",
       "nota": 1.0
     },
     {
       "categoria": "matematica",
       "pergunta": "quanto é 1/2 - 3/8?",
       "gabarito": "1/8",
-      "resposta": "Bora: pra somar ou subtrair fração, os denominadores têm que ser iguais. Usando 16 como denominador: 8/16 - 6/16 = 2/16, que simplificando fica 1/8. Resposta: 1/8.",
+      "resposta": "Simbora: pra somar ou subtrair fração, os denominadores têm que ser iguais. Usando 8 como denominador: 4/8 - 3/8 = 1/8. Resposta: 1/8.",
       "nota": 1.0
     },
     {
       "categoria": "matematica",
       "pergunta": "resolve 9x - 4 = -67",
       "gabarito": "x = -7",
-      "resposta": "Bora: passa o 4 pro outro lado somando: 9x = -67 + 4 = -63. Agora divide por 9: x = -63 ÷ 9 = -7. Verifica: 9 × -7 - 4 = -63 - 4 = -67. Resposta: x = -7.",
-      "nota": 1.0
+      "resposta": "Vamos por partes: regra de sinais: -4 + 67 = 63. Então 9x = 63. Dividindo por 9: x = 63 ÷ 9 = 7. Resposta: x = 7.",
+      "nota": 0.0
     },
     {
       "categoria": "matematica",
       "pergunta": "47 * 18 = ?",
       "gabarito": "846",
-      "resposta": "Vamos por partes: dá pra quebrar a conta em pedaços: 47 × 18 = 47 × 10 + 47 × 8 = 470 + 376 = 846. Resposta: 846.",
+      "resposta": "Simbora: dá pra quebrar a conta em pedaços: 47 × 18 = 47 × 10 + 47 × 8 = 470 + 376 = 846. Resposta: 846.",
       "nota": 1.0
     }
   ]

@@ -39,6 +39,7 @@ from nucleo.hibrido import (
     VERSOES,
     carregar_base,
     escolher_device,
+    lote_padrao,
     montar_mensagens,
     pasta_da_versao,
     resolver_base,
@@ -61,10 +62,11 @@ def args_cli() -> argparse.Namespace:
     p.add_argument("--dados", nargs="+", help="arquivos/pastas de texto. Padrão: o da versão")
     p.add_argument("--matematica", type=int, help="quantos exercícios de matemática gerados entram. Padrão: o da versão")
     p.add_argument("--saida", help="pasta de saída. Padrão: ratex/xselo-<versão>/v1")
-    p.add_argument("--epocas", type=float, default=3)
+    p.add_argument("--epocas", type=float, default=1,
+                   help="passadas pelo dataset. Com o dataset atual, a 1ª época é a melhor; depois o modelo só decora")
     p.add_argument("--lr", type=float, default=2e-4)
-    p.add_argument("--batch-size", type=int, default=4)
-    p.add_argument("--acumular", type=int, default=2, help="passos de acumulação de gradiente")
+    p.add_argument("--batch-size", type=int, help="conversas por passo. Padrão: o que cabe na memória (lote efetivo 8)")
+    p.add_argument("--acumular", type=int, help="passos de acumulação de gradiente. Padrão: automático")
     p.add_argument("--max-tokens", type=int, default=512, help="tamanho máximo de cada conversa em tokens")
     p.add_argument("--rank", type=int, default=16, help="rank do LoRA")
     p.add_argument("--alpha", type=int, default=32)
@@ -179,6 +181,9 @@ def main() -> None:
     device = escolher_device(args.device)
     base, sugere_4bit = resolver_base(args.base or v["base"], device)
     quatro_bits = args.quatro_bits or sugere_4bit
+    lote, acumular = lote_padrao(base, device)
+    args.batch_size = args.batch_size or lote
+    args.acumular = args.acumular or acumular
     print(f"== Ratex :: {v['nome']} (LoRA) ==")
     print(f"base: {base}{' (4 bits)' if quatro_bits else ''} | device: {device} | torch {torch.__version__}")
     print(f"dados: {len(arquivos)} arquivo(s), {len(texto):,} caracteres -> {len(conversas)} conversas {mistura}")
@@ -219,7 +224,8 @@ def main() -> None:
     print(f"exemplos: treino {len(treino)} | validação {len(val)} | {n_tokens:,} tokens por época")
 
     otim = torch.optim.AdamW([p for p in modelo.parameters() if p.requires_grad], lr=args.lr, weight_decay=0.0)
-    passos_epoca = math.ceil(len(treino) / args.batch_size / args.acumular)
+    # só conta grupos completos de acumulação: o resto de cada época é descartado
+    passos_epoca = max(1, math.ceil(len(treino) / args.batch_size) // args.acumular)
     total_passos = max(1, int(passos_epoca * args.epocas))
     aquecimento = max(1, total_passos // 20)
 
@@ -276,6 +282,7 @@ def main() -> None:
     parar = False
     while passo < total_passos and not parar:
         epoca += 1
+        otim.zero_grad(set_to_none=True)
         acumulado, n_micro, t_log = 0.0, 0, time.time()
         for k, (ids, labels, mask) in enumerate(lotes(treino, args.batch_size, tok.pad_token_id, True, rnd)):
             with torch.autocast("cuda", dtype=torch.bfloat16, enabled=usar_bf16):
