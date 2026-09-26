@@ -151,12 +151,20 @@ No 1.5B, o Qwen puro com memória já chega perto (88,9), então daqui pra frent
 
 ## A memória de consulta (RAG)
 
-Um modelo pequeno não decora todos os fatos de Touhou só com o LoRA. Por isso, antes de responder, o Xselo **consulta o próprio dataset** (`nucleo/memoria.py`): uma busca BM25 em Python puro sobre cada parágrafo e cada diálogo de `dataset.txt`, `dados_extras/` e `dados_gerais/`. Os trechos mais relevantes entram no prompt como "anotações do caderno".
+Um modelo pequeno não decora todos os fatos de Touhou só com o LoRA. Por isso, antes de responder, o Xselo **consulta o próprio dataset** (`nucleo/memoria.py`), procurando em cada parágrafo e cada diálogo de `dataset.txt`, `dados_extras/` e `dados_gerais/`. Os trechos mais relevantes entram no prompt como "anotações do caderno".
+
+A busca junta dois jeitos:
+
+- **por significado:** um modelo pequeno de embeddings multilíngue (`intfloat/multilingual-e5-small`, ~120 MB, baixado na primeira vez e guardado em cache). Ele entende que "o ser mais **poderoso** de Touhou" é a mesma pergunta que "a mais **forte**", e que "quem **pisou** na Lua" é "o primeiro homem a **pisar**". Antes, a busca só por palavra errava esses casos, e o modelo acabava inventando;
+- **por palavra** (BM25): boa pra nomes próprios e números ("Nazrin", "Touhou 6").
 
 - Foi a peça que mais subiu a nota de Touhou: de 25 para 83,3.
 - A busca **não devolve nada** quando o assunto não está nas anotações (ex.: "capital da França"). Assim ele não é confundido por um trecho parecido e responde com o que o modelo base sabe.
 - **Texto novo colado em `dados_extras/` já vale na hora**, sem retreinar.
 - Vem ligada no `gerar.py` e no `avaliar.py`; para desligar, use `--sem-memoria` ou `--memoria nao`.
+- **Corrigiu o Xselo numa conversa?** Anote a pergunta e a resposta certa num `.txt` em `dados_extras/` ou `dados_gerais/`. A memória passa a usar na hora, e o próximo treino aprende. Foi assim com `dados_gerais/05_correcoes_e_curiosidades.txt`: Luna Child, Hecatia, teorema de Tales, Vantablack, raiva.
+
+Com a memória por significado, a 0.3 tirou 88,9 na prova (antes, 91,7). O ponto perdido é a pergunta da Marisa: a resposta nova continua certa ("ela leva pra casa e diz que devolve quando morrer"), mas não usa as palavras-chave que a correção automática procura.
 
 Como o dataset vira conversa (`nucleo/dados_chat.py`):
 
@@ -364,7 +372,7 @@ Detalhes e otimizações:
 - [x] RAG: o Xselo consulta o próprio dataset antes de responder
 - [x] 0.4: lote de prosa, pesos por fonte, respostas com vários parágrafos, prova de escrita
 - [ ] Treinar a 0.4 no Qwen 32B no Colab (A100) e comparar os textos com a 0.3
-- [ ] Memória por significado (embeddings) em vez de só por palavra: "pisou" achar "pisar"
+- [x] Memória por significado (embeddings) junto com a busca por palavra
 - [ ] Mais dataset: mais conversas gerais e de Touhou no tom do Xselo (a melhoria com melhor custo-benefício)
 - [ ] Segurar o conhecimento geral da base no LoRA (lr menor, mais conversas gerais)
 - [ ] Memória de conversa mais longa no `gerar.py --chat` (resumo das falas antigas)

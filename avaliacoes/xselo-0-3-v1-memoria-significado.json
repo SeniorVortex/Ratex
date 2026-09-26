@@ -1,0 +1,373 @@
+{
+  "modelo": "ratex/xselo-0-3/v1 + memória",
+  "notas": {
+    "touhou": 83.3,
+    "geral": 91.7,
+    "matematica": 91.7,
+    "total": 88.9
+  },
+  "respostas": [
+    {
+      "categoria": "touhou",
+      "pergunta": "quem criou touhou?",
+      "gabarito": [
+        [
+          "zun"
+        ]
+      ],
+      "resposta": "Foi o ZUN, apelido do Jun'ya Ota. Ele faz tudo sozinho: programa, desenha, compõe as músicas e escreve a história. A equipe dele se chama Team Shanghai Alice, mas na prática é ele e a cerveja dele.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem é a Reimu Hakurei?",
+      "gabarito": [
+        [
+          "sacerdotisa",
+          "miko"
+        ],
+        [
+          "santuario"
+        ]
+      ],
+      "resposta": "A Reimu Hakurei é a sacerdotisa do Santuário Hakurei, a miko vermelha e branca. Ela cuida da Grande Barreira Hakurei, que separa Gensokyo do nosso mundo. Ela é humana, mas tem um poder mágico absurdo. Ela é preguiçosa, mas resolve incidentes.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o poder da Sakuya Izayoi?",
+      "gabarito": [
+        [
+          "tempo"
+        ]
+      ],
+      "resposta": "A Sakuya manipula o tempo e o espaço. Ela para o tempo, anda enquanto tudo está congelado e espalha facas no ar. Ela também aumenta o espaço dentro da mansão, por isso a Mansão Scarlet Devil é maior por dentro do que por fora.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem é a irmã mais nova da Remilia?",
+      "gabarito": [
+        [
+          "flandre"
+        ]
+      ],
+      "resposta": "A irmã mais nova da Remilia é a Flandre Scarlet. Ela é uma vampira que vive presa no porão, onde ela passou quase quinhentos anos. Ela é forte, mas inocente e perigosa ao mesmo tempo.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual número é o símbolo da Cirno?",
+      "gabarito": [
+        [
+          "9",
+          "nove"
+        ]
+      ],
+      "resposta": "O símbolo da Cirno é o nove. É tipo o número da burrice, só que a burrice da Cirno é fofa.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "o que a Marisa faz com os livros da Patchouli?",
+      "gabarito": [
+        [
+          "emprestad",
+          "rouba",
+          "pega"
+        ]
+      ],
+      "resposta": "Elas são suas. Ela leva pra casa, guarda lá e depois volta pra Patchouli. Ela diz que vai devolver quando morrer, mas ninguém acredita nisso. A Patchouli fica furiosa, mas a Marisa diz que é uma promessa justa.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem causou o incidente da névoa vermelha?",
+      "gabarito": [
+        [
+          "remilia"
+        ]
+      ],
+      "resposta": "O incidente da névoa vermelha foi causado pelo Youmu. Ela usou a magia do Sol e do Lua pra esconder o sol, e a névoa vermelha foi o resultado.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem trabalha de jardineira pra Yuyuko?",
+      "gabarito": [
+        [
+          "youmu"
+        ]
+      ],
+      "resposta": "A Youmu Konpaku. Ela é metade humana e metade fantasma, então ela tem duas personalidades: humana e fantasma. A fantasma é a Youmu, a jardineira. Ela anda sempre acompanhada da metade fantasma dela, que parece uma nuvenzinha branca flutuante.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "a Nazrin é que tipo de youkai?",
+      "gabarito": [
+        [
+          "rata",
+          "rato"
+        ]
+      ],
+      "resposta": "A Nazrin é uma youkai rata. Ela tem orelhas redondas de rato, um rabo fino, duas varinhas de radiestesia, um pêndulo e uma cestinha onde às vezes vai um rato de estimação. Ela é pequena, mas muito rápida e esperta.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o nome do Touhou 6?",
+      "gabarito": [
+        [
+          "embodiment",
+          "scarlet devil"
+        ]
+      ],
+      "resposta": "O nome oficial é Embodiment of Scarlet Devil, ou EoSD. Mas os fãs chamam de Embodiment of Scarlet Devil, or EoSD, porque é o nome do jogo.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "o que quer dizer danmaku?",
+      "gabarito": [
+        [
+          "bala",
+          "tiro"
+        ]
+      ],
+      "resposta": "Danmaku quer dizer cortina de balas. É o nome do estilo de jogo onde a tela fica cheia de tiros formando padrões. Em Touhou, danmaku também é o jeito de duelar em Gensokyo: quem faz o ataque mais bonito e difícil ganha respeito.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o poder da Yukari Yakumo?",
+      "gabarito": [
+        [
+          "fronteira"
+        ]
+      ],
+      "resposta": "A Yukari manipula fronteiras. Ela abre fendas no espaço pra ir a qualquer lugar e mexe na fronteira entre qualquer coisa: dia e noite, sonho e realidade, vida e morte. É praticamente um poder de administradora do universo.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual é a capital da França?",
+      "gabarito": [
+        [
+          "paris"
+        ]
+      ],
+      "resposta": "Paris! É lá que fica a Catedral de Notre-Dame, o Louvre e a Biblioteca Nacional. A cidade tem mais de 2 milhões de habitantes e é famosa por ser cheia de vida noturna.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quantos planetas existem no sistema solar?",
+      "gabarito": [
+        [
+          "8",
+          "oito"
+        ]
+      ],
+      "resposta": "Oito: Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano e Netuno. Plutão foi o nono, mas em 2006 os astrônomos rebaixaram ele pra planeta anão. Até hoje tem gente de luto pelo Plutão.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "que gás as plantas liberam na fotossíntese?",
+      "gabarito": [
+        [
+          "oxigenio"
+        ]
+      ],
+      "resposta": "O oxigênio. A planta libera oxigênio no processo, então o oxigênio que você respira vem da fotossíntese.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "em que ano o Brasil ficou independente de Portugal?",
+      "gabarito": [
+        [
+          "1822"
+        ]
+      ],
+      "resposta": "Em 7 de setembro de 1822, com o grito do Ipiranga, quando o Dom Pedro declarou a independência de Portugal.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual o maior planeta do sistema solar?",
+      "gabarito": [
+        [
+          "jupiter"
+        ]
+      ],
+      "resposta": "Júpiter! Ele é quase três vezes maior que a Terra e tem uma tempestade gigante chamada Grande Mancha Vermelha, maior que o próprio planeta.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "o que significa a palavra saudade?",
+      "gabarito": [
+        [
+          "falta"
+        ]
+      ],
+      "resposta": "Saudade é aquele aperto no peito quando você sente falta de alguém, de um lugar ou de uma época boa que passou. É uma mistura de carinho com vontade de ter de volta. Dizem que é uma palavra difícil de traduzir pra outras línguas, e os brasileiros têm orgulho disso.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "antibiótico funciona contra vírus?",
+      "gabarito": [
+        [
+          "nao"
+        ]
+      ],
+      "resposta": "Não, antibiótico é pra bactéria, que é um ser vivo completo. Viral é diferente: tem vírus de gripe, vírus de febre, vírus de herpes, vírus de HIV. Antibiótico não mata vírus, ele só deixa o vírus morrer no corpo, porque o vírus precisa de proteínas do nosso corpo pra se reproduzir. Então se você tomar antibiótico pra gripe, você está tentando matar o vírus que está dentro do seu corpo, e isso não serve pra nada. É tipo usar remédio pra dor de cabeça quando você está com gripe.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual o maior oceano do mundo?",
+      "gabarito": [
+        [
+          "pacifico"
+        ]
+      ],
+      "resposta": "O maior oceano do mundo é o Pacífico, seguido pelo Atlântico. O Pacífico tem mais de 500 mil quilômetros de comprimento, e ele é o maior de todos, maior até que todos os continentes juntos. O Brasil fica de frente pro Atlântico.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quem escreveu Dom Casmurro?",
+      "gabarito": [
+        [
+          "machado"
+        ]
+      ],
+      "resposta": "Dom Casmurro foi escrito por Machado de Assis. É um dos livros mais famosos do brasileiro, e ele é conhecido por ser um livro difícil de ler, que parece ter sido escrito em português antigo.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual a fórmula química da água?",
+      "gabarito": [
+        [
+          "h2o"
+        ]
+      ],
+      "resposta": "H2O. A H representa hidrogênio, o O representa oxigênio e o número 2 e 1 diz quantos gásinhos tem. É tipo uma receita de bolo: batede, amassada, enfarinha, coloque no forno.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quantos lados tem um hexágono?",
+      "gabarito": [
+        [
+          "6",
+          "seis"
+        ]
+      ],
+      "resposta": "Sete! Hexágono tem seis lados iguais, e cada lado tem dois ângulos. Hexágono é o nome de um polígono com sete lados.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "o que é um verbo?",
+      "gabarito": [
+        [
+          "acao"
+        ]
+      ],
+      "resposta": "Verbo é a palavra que diz o que está acontecendo: andar, comer, dormir, correr. É a palavra que muda com o tempo: eu ando, eu andei, eu vou andar. Se você consegue falar eu ando, eu andei, eu vou andar, provavelmente é verbo.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos mililitros tem 2,5 litros?",
+      "gabarito": "2.500 mL",
+      "resposta": "Fácil, olha só: 1 litro tem 1.000 ml: 1.000 × 2,5 = 2.500. Resposta: 2.500 ml.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "tirei as notas 8, 7, 6 e 4. qual minha média?",
+      "gabarito": "6,25",
+      "resposta": "Simbora: soma tudo e divide pela quantidade. Soma: 8 + 7 + 6 + 4 = 25. São 4 números: 25 ÷ 4 = 6,25. Resposta: 6,25.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos mililitros tem 3 litros?",
+      "gabarito": "3.000 mL",
+      "resposta": "Fácil, olha só: 1 litro tem 1.000 ml: 1.000 × 3 = 3.000. Resposta: 3.000 ml.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "qual a média de 9, 3, 2, 4 e 10?",
+      "gabarito": "5,6",
+      "resposta": "Simbora: soma tudo e divide pela quantidade. Soma: 9 + 3 + 2 + 4 + 10 = 28. São 5 números: 28 ÷ 5 = 5,6. Resposta: 5,6.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um fone custa R$ 50 e está com 15% de desconto. quanto fica?",
+      "gabarito": "R$ 42,50",
+      "resposta": "Bora: primeiro o desconto: 15% de 50 é 7,5. Depois tira do preço: 50 - 7,5 = 42,5. Resposta: R$ 42,50.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos dias têm 12 semanas?",
+      "gabarito": "84 dias",
+      "resposta": "Simbora: cada semana tem 7 dias: 12 × 7 = 84. Resposta: 84 dias.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quanto é 86 dividido por 16? tem resto?",
+      "gabarito": "5, resto 6",
+      "resposta": "Simbora: 86 ÷ 16 = 5, porque 5 × 16 = 80, e 86 - 80 = 6. Então dá 5 e sobra 6. Resposta: 5, resto 6.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um jogo custa R$ 60 e está com 30% de desconto. quanto fica?",
+      "gabarito": "R$ 42",
+      "resposta": "Simbora: primeiro o desconto: 30% de 60 = 18. Depois tira do preço: 60 - 18 = 42. Resposta: R$ 42.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um fumo da Cirno custa R$ 200 e está com 25% de desconto. quanto fica?",
+      "gabarito": "R$ 150",
+      "resposta": "Bora: primeiro o desconto: 25% de 200 = 50. Depois tira do preço: 200 - 50 = 150. Resposta: R$ 150.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quanto é 1/2 - 3/8?",
+      "gabarito": "1/8",
+      "resposta": "Simbora: pra somar ou subtrair fração, os denominadores têm que ser iguais. Usando 8 como denominador: 4/8 - 3/8 = 1/8. Resposta: 1/8.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "resolve 9x - 4 = -67",
+      "gabarito": "x = -7",
+      "resposta": "Vamos por partes: regra de sinais: -4 + 67 = 63. Então 9x = 63. Dividindo por 9: x = 63 ÷ 9 = 7. Resposta: x = 7.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "47 * 18 = ?",
+      "gabarito": "846",
+      "resposta": "Simbora: dá pra quebrar a conta em pedaços: 47 × 18 = 47 × 10 + 47 × 8 = 470 + 376 = 846. Resposta: 846.",
+      "nota": 1.0
+    }
+  ],
+  "prosa_resumo": {},
+  "prosa": []
+}
