@@ -1,9 +1,14 @@
 torch>=2.1
 numpy
-# xselo-0-2 (modelo base + LoRA)
-transformers>=4.45
-peft>=0.13
+# xselo híbrido (modelo base + LoRA). As bases de 2026 (Gemma 4, Qwen3.5/3.8) pedem transformers 5
+transformers>=5.0
+peft>=0.17
 accelerate
 safetensors
-# opcional, só GPU NVIDIA: QLoRA em 4 bits para bases grandes (--4bit, qwen-7b)
+# imagens (Xselo 0.5+)
+pillow
+torchvision
+# opcional, só GPU NVIDIA: QLoRA em 4 bits para bases grandes (--4bit)
 # bitsandbytes
+# opcional: o bot do Discord (bot_discord.py)
+# discord.py>=2.4
