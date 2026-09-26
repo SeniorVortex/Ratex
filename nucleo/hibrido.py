@@ -4,8 +4,10 @@ treinado com a prosa do Xselo.
 
 Versões:
     0.2  ratex/xselo-0-2/v1  Qwen2.5-0.5B-Instruct + LoRA, só o dataset de Touhou do v1
-    0.3  ratex/xselo-0-3/v1  base escolhida pelo hardware (até Qwen2.5-7B) + LoRA com
-                             Touhou + assuntos gerais (dados_gerais/) + matemática gerada
+    0.3  ratex/xselo-0-3/v1  Qwen2.5-1.5B + LoRA com Touhou + assuntos gerais (dados_gerais/)
+                             + matemática gerada
+    0.4  ratex/xselo-0-4/v1  Qwen2.5-32B + LoRA com a prosa como ponto forte (dados_prosa/),
+                             assuntos gerais com mais peso e Touhou como um dos temas
 
 A pasta de cada versão guarda só o que é nosso:
 
@@ -26,7 +28,7 @@ from pathlib import Path
 
 import torch
 
-from .dados_chat import SYSTEM_PROMPT, SYSTEM_PROMPT_03
+from .dados_chat import SYSTEM_PROMPT, SYSTEM_PROMPT_03, SYSTEM_PROMPT_04
 
 RAIZ = Path(__file__).resolve().parent.parent
 ARQ_RATEX = "ratex_config.json"
@@ -37,6 +39,8 @@ BASES = {
     "qwen-1.5b": "Qwen/Qwen2.5-1.5B-Instruct",
     "qwen-3b": "Qwen/Qwen2.5-3B-Instruct",
     "qwen-7b": "Qwen/Qwen2.5-7B-Instruct",
+    "qwen-14b": "Qwen/Qwen2.5-14B-Instruct",
+    "qwen-32b": "Qwen/Qwen2.5-32B-Instruct",
     "smollm-135m": "HuggingFaceTB/SmolLM-135M-Instruct",
     "smollm2-1.7b": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
 }
@@ -58,8 +62,19 @@ VERSOES = {
         "geral": True,
         "system_prompt": SYSTEM_PROMPT_03,
     },
+    "0.4": {
+        "nome": "ratex/xselo-0-4/v1",
+        "base": "qwen-32b",
+        "dados": ["dataset.txt", "dados_extras", "dados_gerais", "dados_prosa"],
+        # quantas vezes cada fonte entra por época: a prosa é o ponto forte, Touhou vira só um dos assuntos
+        "pesos": {"dataset.txt": 0.6, "dados_gerais": 2, "dados_prosa": 3},
+        "matematica": 200,
+        "max_tokens": 1024,  # texto caprichado é mais comprido
+        "geral": True,
+        "system_prompt": SYSTEM_PROMPT_04,
+    },
 }
-VERSAO_PADRAO = "0.3"
+VERSAO_PADRAO = "0.4"
 
 # compatibilidade com o código do 0.2
 NOME_HIBRIDO = VERSOES["0.2"]["nome"]

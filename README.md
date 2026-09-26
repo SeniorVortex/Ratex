@@ -25,6 +25,21 @@ O modelo que está no repositório tem **3,2 M de parâmetros**. Foi treinado **
 | `ratex/xselo-0-1/v1` | micro-Transformer de 3,2 M feito do zero, só Touhou | treinado: nota **8,3**/100 na prova |
 | `ratex/xselo-0-2/v1` | Qwen2.5-0.5B-Instruct + LoRA, só Touhou | pulada: a 0.3 faz tudo que ela faria (`--versao 0.2` ainda treina) |
 | `ratex/xselo-0-3/v1` | **o grande update**: Qwen + LoRA com Touhou, assuntos gerais e matemática, + memória de consulta | **treinado** no Qwen2.5-1.5B: nota **91,7**/100 na prova |
+| `ratex/xselo-0-4/v1` | **a prosa como ponto forte**: Qwen2.5-32B + LoRA com escrita caprichada e muitos assuntos; Touhou vira um dos temas | dados e código prontos; **treinar no Colab** (A100) |
+
+## `ratex/xselo-0-4/v1`: a prosa como ponto forte
+
+Touhou foi o nicho que fez o Xselo nascer, mas não precisa ser a jaula dele. A 0.4 muda o foco para **escrever bem sobre qualquer coisa**:
+
+- **`dados_prosa/`**: 105 conversas escritas com capricho, incluindo crônica, conto, poema, carta, explicação de ciência com ritmo, conselho sem autoajuda barata, games, anime, futebol, mitologia, reescrita de texto, resumo, mudança de tom e respostas curtas que são curtas de propósito. As respostas agora podem ter **vários parágrafos** (veja `dados_prosa/LEIA-ME.md`).
+- **Pesos por fonte:** por época, a prosa entra 3×, os assuntos gerais 2×, e o Touhou 0,6×. Touhou passa a ser ~30% dos exemplos, não mais a maioria.
+- **Base Qwen2.5-32B:** o teto que dá pra treinar numa A100 de 40 GB (em 4 bits). É o que traz a inteligência: conhecimento geral, raciocínio e vocabulário.
+- **System prompt novo:** escrita como ponto forte, tamanho e tom ajustados ao pedido, imagens concretas, ritmo variado, sem clichê e sem jeito de robô.
+- **A prova ganhou uma parte de prosa:** 8 pedidos de escrita que não estão no treino.
+
+Para treinar: abra o [notebook no Colab](https://colab.research.google.com/github/SeniorVortex/Ratex/blob/main/notebooks/treinar_no_colab.ipynb), escolha a **A100** e rode as células (versão 0.4 e Qwen 32B já vêm selecionados). Estimativa: ~45–90 min de treino. Na CPU, o script para com um aviso em vez de tentar.
+
+Pra rodar em casa depois: um 32B em 4 bits ocupa ~20 GB. Numa placa de 16 GB ele roda com parte na RAM, mais devagar. Se ficar lento demais, dá pra treinar a mesma 0.4 no 14B (cabe inteiro em 16 GB), trocando o modelo na primeira célula do notebook.
 
 ## `ratex/xselo-0-3/v1`: saindo da bolha
 
@@ -53,12 +68,12 @@ O LoRA treina só ~1 a 2% dos pesos e deixa a base congelada, então o Xselo gan
 
 ```bash
 pip install -r requirements.txt
-python treinar_lora.py                              # 0.3 com a base automática
-python treinar_lora.py --base qwen-7b --4bit        # 0.3 no Qwen 7B (GPU NVIDIA ~16 GB + pip install bitsandbytes)
-python treinar_lora.py --base qwen-3b --checkpointing  # menos memória, um pouco mais lento
+python treinar_lora.py --versao 0.3                 # 0.3 com a base automática
+python treinar_lora.py --versao 0.3 --base qwen-7b --4bit     # 0.3 no Qwen 7B (GPU NVIDIA ~16 GB + pip install bitsandbytes)
+python treinar_lora.py --versao 0.3 --base qwen-3b --checkpointing  # menos memória, um pouco mais lento
 python treinar_lora.py --versao 0.2                 # a 0.2 (só Touhou, Qwen 0.5B)
 python gerar.py --chat                              # conversa com o híbrido mais novo treinado
-python gerar.py --modelo 0.2 --chat                 # escolhe a versão: 0.1, 0.2 ou 0.3
+python gerar.py --modelo 0.3 --chat                 # escolhe a versão: 0.1, 0.2, 0.3 ou 0.4
 ```
 
 | tempo medido/estimado (1 época, o padrão) | CPU (4 núcleos) | GPU boa (ex.: RTX 3090/4090, A100) |
@@ -101,6 +116,8 @@ Ele confere a GPU, decide sozinho entre bf16 e 4 bits, treina, roda a prova, dei
 ## A prova: `python avaliar.py`
 
 Para saber se uma versão nova é melhor de verdade, todas passam pela mesma prova de 36 perguntas: 12 de Touhou, 12 de conhecimento geral e 12 contas de matemática que **não** aparecem no treino.
+
+Nos modelos híbridos, a prova também pede **8 textos** (crônica, poema, conselho, descrição, reescrita...) que não estão no treino. Isso não vira nota, mas mede sintomas de texto ruim: **repetição** de trechos, **vocabulário** pobre, **ritmo** monótono (frases todas do mesmo tamanho) e **clichês** de robô ("é importante ressaltar", "espero ter ajudado"). Essas métricas só valem pra texto coerente, porque até palavras aleatórias "têm vocabulário variado". Quem julga a prosa de verdade é a leitura humana, e os textos ficam salvos no relatório.
 
 ```bash
 python avaliar.py --modelo 0.1                      # nota do v1
@@ -157,6 +174,7 @@ Ratex/
 ├── dataset.txt            # o texto de treino (Touhou explicado na linguagem da rua)
 ├── dados_extras/          # cole aqui mais .txt; eles entram no treino automaticamente
 ├── dados_gerais/          # 0.3: conversas sobre ciência, português, matemática, tecnologia, dia a dia
+├── dados_prosa/           # 0.4: escrita caprichada (crônica, poema, explicação, conselho, reescrita...)
 ├── treinar.py             # v1: treina o micro-Transformer do zero -> ratex/xselo-0-1/v1/
 ├── treinar_lora.py        # 0.2/0.3: treina o LoRA em cima do modelo base -> ratex/xselo-0-X/v1/
 ├── gerar.py               # conversa / gera texto (híbrido mais novo se existir, senão v1)
@@ -344,7 +362,8 @@ Detalhes e otimizações:
 - [x] Prova fixa para comparar versões (`avaliar.py`)
 - [x] Treinar a 0.3 (Qwen2.5-0.5B e depois Qwen2.5-1.5B, na CPU)
 - [x] RAG: o Xselo consulta o próprio dataset antes de responder
-- [ ] Treinar no Qwen 3B/7B (7B numa GPU: Colab ou GPU alugada)
+- [x] 0.4: lote de prosa, pesos por fonte, respostas com vários parágrafos, prova de escrita
+- [ ] Treinar a 0.4 no Qwen 32B no Colab (A100) e comparar os textos com a 0.3
 - [ ] Memória por significado (embeddings) em vez de só por palavra: "pisou" achar "pisar"
 - [ ] Mais dataset: mais conversas gerais e de Touhou no tom do Xselo (a melhoria com melhor custo-benefício)
 - [ ] Segurar o conhecimento geral da base no LoRA (lr menor, mais conversas gerais)

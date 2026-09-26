@@ -16,4 +16,6 @@ Dicas:
   ```
 
   e deixe uma linha em branco entre uma conversa e outra.
+- Uma resposta pode ter **vários parágrafos**: o parágrafo que vem depois de uma fala do
+  Xselo e não começa com `Pessoa:` continua a resposta. Veja `dados_prosa/LEIA-ME.md`.
 - Este `LEIA-ME.md` não entra no treino (só arquivos `.txt` entram).

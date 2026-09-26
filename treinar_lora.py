@@ -2,13 +2,16 @@
 """
 Treina o Xselo híbrido: um adaptador LoRA em cima de um modelo base instruído.
 
-    --versao 0.3 (padrão)  ratex/xselo-0-3/v1: Touhou + assuntos gerais + matemática,
+    --versao 0.4 (padrão)  ratex/xselo-0-4/v1: a prosa como ponto forte, no Qwen2.5-32B
+                           (numa GPU: use notebooks/treinar_no_colab.ipynb)
+    --versao 0.3           ratex/xselo-0-3/v1: Touhou + assuntos gerais + matemática,
                            base escolhida pelo hardware (Qwen2.5 de 0.5B até 7B)
     --versao 0.2           ratex/xselo-0-2/v1: só Touhou, em cima do Qwen2.5-0.5B-Instruct
 
 Uso rápido:
-    python treinar_lora.py                                  # 0.3, base automática
-    python treinar_lora.py --base qwen-7b --4bit            # 0.3 no Qwen2.5-7B com QLoRA (GPU com ~16 GB)
+    python treinar_lora.py --base qwen-32b --4bit --checkpointing   # 0.4 numa A100 (é o que o notebook faz)
+    python treinar_lora.py --versao 0.3                     # 0.3, base automática
+    python treinar_lora.py --versao 0.3 --base qwen-7b --4bit   # 0.3 no Qwen2.5-7B com QLoRA (GPU com ~16 GB)
     python treinar_lora.py --base qwen-1.5b                 # apelidos: qwen-0.5b/1.5b/3b/7b, smollm2-1.7b...
     python treinar_lora.py --versao 0.2                     # a versão anterior, só Touhou
     python treinar_lora.py --exportar-conversas conv.jsonl  # só mostra os dados de chat
@@ -22,6 +25,7 @@ import argparse
 import json
 import math
 import random
+import re
 import sys
 import time
 from collections import Counter
@@ -67,7 +71,7 @@ def args_cli() -> argparse.Namespace:
     p.add_argument("--lr", type=float, default=2e-4)
     p.add_argument("--batch-size", type=int, help="conversas por passo. Padrão: o que cabe na memória (lote efetivo 8)")
     p.add_argument("--acumular", type=int, help="passos de acumulação de gradiente. Padrão: automático")
-    p.add_argument("--max-tokens", type=int, default=512, help="tamanho máximo de cada conversa em tokens")
+    p.add_argument("--max-tokens", type=int, help="tamanho máximo de cada conversa em tokens. Padrão: o da versão (512 ou 1024)")
     p.add_argument("--rank", type=int, default=16, help="rank do LoRA")
     p.add_argument("--alpha", type=int, default=32)
     p.add_argument("--lora-dropout", type=float, default=0.05)
@@ -166,27 +170,45 @@ def main() -> None:
     args.dados = args.dados or v["dados"]
     args.saida = args.saida or str(pasta_da_versao(args.versao))
     n_mat = v["matematica"] if args.matematica is None else args.matematica
+    args.max_tokens = args.max_tokens or v.get("max_tokens", 512)
+    pesos_fonte = v.get("pesos", {})
 
-    texto, arquivos = ler_textos(args.dados, RAIZ)
-    conversas = construir_conversas_com_origem(texto, seed=args.seed, nome_modelo=v["nome"], geral=v["geral"])
-    conversas += conversas_de_matematica(n_mat, seed=args.seed)
-    mistura = dict(sorted(Counter(o for _, o in conversas).items()))
+    # cada fonte vira conversas com o seu peso (quantas vezes entra por época no treino)
+    conversas, arquivos, n_chars = [], [], 0
+    for fonte in args.dados:
+        texto_fonte, arqs = ler_textos([fonte], RAIZ)
+        if not arqs:
+            continue
+        arquivos += arqs
+        n_chars += len(texto_fonte)
+        peso = pesos_fonte.get(fonte, 1.0)
+        conversas += [(c, o, peso) for c, o in construir_conversas_com_origem(
+            texto_fonte, seed=args.seed, nome_modelo=v["nome"], geral=v["geral"])]
+    conversas += [(c, o, 1.0) for c, o in conversas_de_matematica(n_mat, seed=args.seed)]
+    mistura = dict(sorted(Counter(o for _, o, _ in conversas).items()))
     if args.exportar_conversas:
         with open(args.exportar_conversas, "w", encoding="utf-8") as f:
-            for c, origem in conversas:
-                f.write(json.dumps({"origem": origem, "messages": montar_mensagens(c, system)}, ensure_ascii=False) + "\n")
+            for c, origem, peso in conversas:
+                f.write(json.dumps({"origem": origem, "peso": peso, "messages": montar_mensagens(c, system)},
+                                   ensure_ascii=False) + "\n")
         print(f"{len(conversas)} conversas salvas em {args.exportar_conversas} {mistura}")
         return
 
     device = escolher_device(args.device)
     base, sugere_4bit = resolver_base(args.base or v["base"], device)
     quatro_bits = args.quatro_bits or sugere_4bit
+    tamanho = re.search(r"(\d+(?:\.\d+)?)B", base)
+    if device == "cpu" and tamanho and float(tamanho.group(1)) >= 7:
+        raise SystemExit(f"{base} é grande demais pra treinar na CPU. Use o notebook do Colab "
+                         "(notebooks/treinar_no_colab.ipynb) ou uma base menor, ex.: --base qwen-1.5b")
     lote, acumular = lote_padrao(base, device)
     args.batch_size = args.batch_size or lote
     args.acumular = args.acumular or acumular
     print(f"== Ratex :: {v['nome']} (LoRA) ==")
     print(f"base: {base}{' (4 bits)' if quatro_bits else ''} | device: {device} | torch {torch.__version__}")
-    print(f"dados: {len(arquivos)} arquivo(s), {len(texto):,} caracteres -> {len(conversas)} conversas {mistura}")
+    print(f"dados: {len(arquivos)} arquivo(s), {n_chars:,} caracteres -> {len(conversas)} conversas {mistura}")
+    if pesos_fonte:
+        print(f"pesos por fonte: {pesos_fonte}")
 
     from peft import LoraConfig, get_peft_model
 
@@ -212,8 +234,15 @@ def main() -> None:
     if args.max_conversas:
         conversas = conversas[: args.max_conversas]
     n_val = max(1, int(len(conversas) * args.fracao_validacao))
-    val_conv, treino_conv = conversas[:n_val], conversas[n_val:]
-    treino_conv += [(c, o) for c, o in treino_conv if o == "dialogo"] * (args.repetir_dialogos - 1)
+    val_conv = [(c, o) for c, o, _ in conversas[:n_val]]
+    treino_conv = []
+    for c, o, peso in conversas[n_val:]:
+        vezes = int(peso)
+        if peso != vezes and rnd.random() < peso - vezes:  # peso 0.6: entra em ~60% das vezes
+            vezes += 1
+        treino_conv += [(c, o)] * vezes
+    if not pesos_fonte:
+        treino_conv += [(c, o) for c, o in treino_conv if o == "dialogo"] * (args.repetir_dialogos - 1)
 
     def preparar(lista):
         exemplos = [tokenizar(tok, c, args.max_tokens, system) for c, _ in lista]
@@ -318,7 +347,7 @@ def main() -> None:
             melhor = min(melhor, perda)
             info.update({
                 "epocas": epoca, "passos": passo, "loss_validacao": round(perda, 4), "criterio": args.criterio,
-                "loss_validacao_antes": round(perda_inicial, 4), "conversas": len(conversas), "mistura": mistura,
+                "loss_validacao_antes": round(perda_inicial, 4), "conversas": len(conversas), "mistura": mistura, "pesos_fonte": pesos_fonte,
                 "exemplos_treino": len(treino), "tokens_por_epoca": n_tokens, "lr": args.lr,
                 "batch_efetivo": args.batch_size * args.acumular, "max_tokens": args.max_tokens,
                 "device": device, "minutos": round((time.time() - t0) / 60, 1),

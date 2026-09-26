@@ -40,6 +40,18 @@ SYSTEM_PROMPT_03 = (
     "recomende procurar uma fonte confiável ou um profissional."
 )
 
+SYSTEM_PROMPT_04 = (
+    "Você é o Xselo, a inteligência artificial da Ratex (modelo ratex/xselo-0-4/v1). Seu ponto forte é a "
+    "escrita: você escreve em português do Brasil com prosa fluida, viva e precisa, do papo descontraído à "
+    "crônica, ao conto e ao poema. Conversa sobre qualquer assunto, de ciência e história a games, cultura e "
+    "vida, e tem um carinho especial por Touhou Project, o nicho onde nasceu, sem forçar o assunto quando ele "
+    "não cabe. Ajuste o tamanho e o tom ao pedido: curto quando a pergunta é simples, caprichado quando pedem "
+    "texto. Prefira imagens concretas a abstrações, varie o ritmo das frases e fuja de clichês, enrolação e "
+    "jeito de robô. Em contas, mostre o passo a passo e termine com 'Resposta: ...'. Se não souber algo, diga "
+    "com honestidade em vez de inventar; em saúde, dinheiro ou lei, recomende uma fonte confiável ou um "
+    "profissional."
+)
+
 _TITULO = re.compile(r"^==\s*(.+?)\s*==\s*$")
 _FICHA = re.compile(r"^([0-9A-ZÀ-Ú][^:\n]{0,59}):\s+(\S.*)$", re.S)
 _NAO_E_NOME = ("A personalidade", "Analogia", "Meme", "Memes", "O meme", "Outro meme", "Pra ", "Resumindo", "Spoiler")
@@ -186,16 +198,38 @@ def _conversa(pergunta: str, resposta: str) -> list[dict]:
     return [{"role": "user", "content": pergunta}, {"role": "assistant", "content": resposta}]
 
 
-def _dialogos(bloco: str) -> list[list[dict]]:
-    """Linhas 'Pessoa: ...' / 'Xselo: ...' -> uma conversa (lista de mensagens)."""
+def turnos(bloco: str) -> list[dict]:
+    """Linhas 'Pessoa: ...' / 'Xselo: ...' -> mensagens. Linhas sem marcador (inclusive em
+    branco) continuam a fala anterior, então uma resposta pode ter vários parágrafos,
+    versos de poema, listas etc."""
     msgs: list[dict] = []
     for linha in bloco.splitlines():
-        linha = linha.strip()
-        if linha.startswith("Pessoa:"):
-            msgs.append({"role": "user", "content": linha[len("Pessoa:"):].strip()})
-        elif linha.startswith("Xselo:") and msgs and msgs[-1]["role"] == "user":
-            msgs.append({"role": "assistant", "content": linha[len("Xselo:"):].strip()})
+        limpa = linha.strip()
+        if limpa.startswith("Pessoa:"):
+            msgs.append({"role": "user", "content": limpa[len("Pessoa:"):].strip()})
+        elif limpa.startswith("Xselo:"):
+            msgs.append({"role": "assistant", "content": limpa[len("Xselo:"):].strip()})
+        elif msgs:
+            msgs[-1]["content"] += "\n" + limpa
+    for m in msgs:
+        m["content"] = re.sub(r"\n{3,}", "\n\n", m["content"]).strip()
+    return msgs
+
+
+def _dialogos(bloco: str) -> list[list[dict]]:
+    """Um bloco de diálogo -> uma conversa (lista de mensagens alternando usuário/Xselo)."""
+    msgs: list[dict] = []
+    for m in turnos(bloco):
+        if m["role"] == "user" or (msgs and msgs[-1]["role"] == "user"):
+            if msgs and msgs[-1]["role"] == m["role"] == "user":
+                msgs[-1] = m  # duas falas seguidas da pessoa: fica a última
+            else:
+                msgs.append(m)
     return [msgs] if len(msgs) >= 2 and msgs[-1]["role"] == "assistant" else []
+
+
+def _eh_dialogo(bloco: str) -> bool:
+    return "Pessoa:" in bloco and "Xselo:" in bloco
 
 
 def _secoes(texto: str):
@@ -205,6 +239,10 @@ def _secoes(texto: str):
         if not bloco:
             continue
         m = _TITULO.match(bloco.splitlines()[0])
+        if not m and paragrafos and _eh_dialogo(paragrafos[-1]) and not bloco.startswith(("Pessoa:", "Xselo:")):
+            # parágrafo solto logo depois de um diálogo: continua a última resposta
+            paragrafos[-1] += "\n\n" + bloco
+            continue
         if m:
             if paragrafos:
                 yield titulo, paragrafos

@@ -13,6 +13,9 @@ Categorias:
     geral       conhecimento geral básico (perguntas diferentes das do treino)
     matematica  contas geradas com uma semente diferente da do treino; acerto = número
                 certo na resposta
+    prosa       (só nos híbridos) 8 pedidos de escrita que não estão no treino. Não vira nota:
+                mede sintomas de texto ruim (repetição, vocabulário pobre, ritmo monótono,
+                clichês de robô) e guarda os textos pra leitura humana
 
 É uma prova simples, por palavra-chave: serve para comparar versões entre si, não
 para medir "inteligência" de forma absoluta.
@@ -61,6 +64,39 @@ PROVA = {
     ],
 }
 N_MATEMATICA = 12
+
+PROSA = [
+    "escreve uma crônica curta sobre a vida num prédio de apartamentos",
+    "me explica por que o fogo é quente, de um jeito bonito mas sem mentir",
+    "faz um poema sobre o primeiro dia de aula",
+    "tô nervoso porque começo num emprego novo amanhã",
+    "descreve o cheiro e o barulho de uma feira livre",
+    "melhora esse texto: 'o jogo foi muito bom e muito legal e eu gostei muito do final que foi muito emocionante'",
+    "me conta como a Reimu passaria um dia de chuva no santuário",
+    "explica o que é um buraco negro pra uma criança de oito anos",
+]
+CLICHES = ["é importante ressaltar", "vale ressaltar", "é importante lembrar", "em resumo", "em suma",
+           "espero ter ajudado", "nos dias de hoje", "no mundo atual", "desempenha um papel",
+           "em conclusão", "é fundamental", "de forma geral", "como uma ia", "como modelo de linguagem"]
+
+
+def metricas_prosa(texto: str) -> dict:
+    """Sintomas de texto ruim, de 0 a 1 (menos é melhor em repetição e clichês)."""
+    from statistics import mean, pstdev
+
+    palavras = re.findall(r"\w+", texto.lower())
+    bigramas = list(zip(palavras, palavras[1:]))
+    quadrigramas = list(zip(*(palavras[i:] for i in range(4))))
+    frases = [f for f in re.split(r"(?<=[.!?])\s+|\n+", texto.strip()) if re.search(r"\w", f)]
+    tamanhos = [len(re.findall(r"\w+", f)) for f in frases]
+    minusculo = texto.lower()
+    return {
+        "palavras": len(palavras),
+        "vocabulario": round(len(set(bigramas)) / max(len(bigramas), 1), 3),        # pares distintos
+        "repeticao": round(1 - len(set(quadrigramas)) / max(len(quadrigramas), 1), 3),  # trechos de 4 repetidos
+        "ritmo": round(pstdev(tamanhos) / mean(tamanhos), 3) if len(tamanhos) > 1 else 0.0,  # variação das frases
+        "cliches": sum(minusculo.count(c) for c in CLICHES),
+    }
 SEMENTE_PROVA = 4242
 
 
@@ -117,6 +153,15 @@ class ModeloHibrido:
                          system_prompt=self.cfg.get("system_prompt"), stream=False, temperatura=0,
                          max_novos_tokens=200, penalidade_repeticao=1.05, memoria=self.memoria)
 
+    def escrever(self, pedido: str) -> str:
+        """Pedido de escrita: com sorteio (temperatura 0.7), como numa conversa de verdade."""
+        from nucleo.hibrido import responder
+
+        return responder(self.modelo, self.tok, [{"role": "user", "content": pedido}],
+                         system_prompt=self.cfg.get("system_prompt"), stream=False, temperatura=0.7,
+                         top_k=40, top_p=0.9, max_novos_tokens=450, penalidade_repeticao=1.05,
+                         memoria=self.memoria)
+
 
 class ModeloBase(ModeloHibrido):
     """O modelo base sem LoRA, com o mesmo system prompt da 0.3: mostra o que o LoRA acrescentou."""
@@ -158,6 +203,7 @@ def main() -> None:
                    help="consulta o dataset antes de responder (RAG). auto = sim nos híbridos, não na base pura")
     p.add_argument("--salvar", help="salva as respostas e as notas neste .json")
     p.add_argument("--mostrar", action="store_true", help="imprime cada pergunta e resposta")
+    p.add_argument("--sem-prosa", action="store_true", help="pula a parte de escrita (mais rápido)")
     args = p.parse_args()
 
     if args.modelo == "auto":
@@ -208,9 +254,28 @@ def main() -> None:
         print(f"  {cat:<11} {n:5.1f}  {'#' * int(n // 5)}")
     print(f"({len(itens)} perguntas em {time.time() - t0:.0f}s)")
 
+    prosa, resumo_prosa = [], {}
+    if isinstance(modelo, ModeloHibrido) and not args.sem_prosa:
+        torch.manual_seed(1234)
+        for i, pedido in enumerate(PROSA, 1):
+            texto = modelo.escrever(pedido)
+            prosa.append({"pedido": pedido, "texto": texto, "metricas": metricas_prosa(texto)})
+            if args.mostrar:
+                print(f"\n[prosa] {pedido}\n{texto}\n  {prosa[-1]['metricas']}")
+            else:
+                print(f"\r{i}/{len(PROSA)} pedidos de escrita", end="", file=sys.stderr, flush=True)
+        print(file=sys.stderr)
+        for chave in ("palavras", "vocabulario", "repeticao", "ritmo", "cliches"):
+            valores = [p["metricas"][chave] for p in prosa]
+            resumo_prosa[chave] = round(sum(valores) / len(valores), 3)
+        print(f"\nprosa (média de {len(PROSA)} textos): {resumo_prosa['palavras']:.0f} palavras | "
+              f"vocabulário {resumo_prosa['vocabulario']:.2f} (↑) | repetição {resumo_prosa['repeticao']:.3f} (↓) | "
+              f"ritmo {resumo_prosa['ritmo']:.2f} (↑) | clichês {resumo_prosa['cliches']:.2f} (↓)")
+
     if args.salvar:
         Path(args.salvar).parent.mkdir(parents=True, exist_ok=True)
-        Path(args.salvar).write_text(json.dumps({"modelo": modelo.nome, "notas": notas, "respostas": resultados},
+        Path(args.salvar).write_text(json.dumps({"modelo": modelo.nome, "notas": notas, "respostas": resultados,
+                                                 "prosa_resumo": resumo_prosa, "prosa": prosa},
                                                 ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"relatório salvo em {args.salvar}")
 

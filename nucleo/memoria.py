@@ -20,7 +20,7 @@ import unicodedata
 from collections import Counter
 from pathlib import Path
 
-from .dados_chat import _secoes, ler_textos
+from .dados_chat import _eh_dialogo, _secoes, ler_textos, turnos
 from .tokenizador import normalizar_texto
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -55,14 +55,13 @@ def _trechos(texto: str) -> list[str]:
     trechos = []
     for titulo, paragrafos in _secoes(normalizar_texto(texto)):
         for p in paragrafos:
-            if "Pessoa:" in p and "Xselo:" in p:
+            if _eh_dialogo(p):
                 pergunta = None
-                for linha in p.splitlines():
-                    linha = linha.strip()
-                    if linha.startswith("Pessoa:"):
-                        pergunta = linha[len("Pessoa:"):].strip()
-                    elif linha.startswith("Xselo:") and pergunta:
-                        trechos.append(f"Pergunta: {pergunta}\nResposta: {linha[len('Xselo:'):].strip()}")
+                for m in turnos(p):
+                    if m["role"] == "user":
+                        pergunta = m["content"]
+                    elif pergunta:
+                        trechos.append(f"Pergunta: {pergunta}\nResposta: {m['content']}")
                         pergunta = None
             else:
                 trechos.append(f"[{titulo}] {p}" if titulo else p)
