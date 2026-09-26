@@ -25,7 +25,20 @@ O modelo que está no repositório tem **3,2 M de parâmetros**. Foi treinado **
 | `ratex/xselo-0-1/v1` | micro-Transformer de 3,2 M feito do zero, só Touhou | treinado: nota **8,3**/100 na prova |
 | `ratex/xselo-0-2/v1` | Qwen2.5-0.5B-Instruct + LoRA, só Touhou | pulada: a 0.3 faz tudo que ela faria (`--versao 0.2` ainda treina) |
 | `ratex/xselo-0-3/v1` | **o grande update**: Qwen + LoRA com Touhou, assuntos gerais e matemática, + memória de consulta | **treinado** no Qwen2.5-1.5B: nota **91,7**/100 na prova |
-| `ratex/xselo-0-4/v1` | **a prosa como ponto forte**: Qwen2.5-32B + LoRA com escrita caprichada e muitos assuntos; Touhou vira um dos temas | dados e código prontos; **treinar no Colab** (A100) |
+| `ratex/xselo-0-4/v1` | **a prosa como ponto forte**: Qwen2.5-32B + LoRA com escrita caprichada e muitos assuntos; Touhou vira um dos temas | treinado no Colab (A100) |
+| `ratex/xselo-0-5/v1` | **base nova de 2026** (Gemma 4 31B, que enxerga imagem) + o triplo de prosa + polimento com a arena; memória longa, bot do Discord e prova com juiz | dados e código prontos; **treinar no Colab** (A100) |
+
+## `ratex/xselo-0-5/v1`: base nova, olhos, memória longa e Discord
+
+- **Base nova:** [`google/gemma-4-31B-it`](https://huggingface.co/google/gemma-4-31B-it) (Apache 2.0, sem pedir acesso). Comparei com a [`Qwen/Qwen3.8-27B`](https://huggingface.co/Qwen/Qwen3.8-27B), lançada em agosto de 2026: a Qwen é mais forte em raciocínio e código (é o foco dela), e a Gemma é mais forte em várias línguas (MMMLU 88,4%), usa atenção comum (treina rápido no Colab sem pacote extra) e tem uma irmã de 12B que cabe numa placa de 16 GB. Pra um modelo cujo ponto forte é prosa em português, a Gemma ganhou. A Qwen3.8-27B continua disponível no notebook (`--base qwen3.8-27b`). As duas **enxergam imagens**.
+- **Enxergar imagens:** as bases novas vêm com "olhos". O LoRA mexe só na parte de texto (a visão fica como veio), e o Xselo continua sabendo olhar. No `gerar.py --chat`, use `/imagem foto.jpg o que é isso?`; no Colab, `/foto`; no Discord, é só anexar a imagem.
+- **O triplo de prosa:** `dados_prosa/` foi de 105 pra **303 conversas** escritas à mão (crônicas, contos, poesia de vários formatos, cartas, ciência, reescrita, conselho com várias trocas, Touhou, humor e respostas curtas de propósito). Pesos por época: prosa 2×, assuntos gerais 2×, Touhou 0,5×.
+- **Memória de conversa longa** (`nucleo/lembrancas.py`): o Xselo lembra de você entre uma conversa e outra. Guarda fatos curtos ("se chama Ana", "mora em Recife", "gosta de Touhou") quando você conta, ou com `/lembrar <fato>`; e quando a conversa fica comprida, ele mesmo resume as mensagens antigas antes de tirá-las do prompt. `/lembrancas` mostra o que ele sabe, `/esquecer` apaga tudo.
+- **A arena vira aula:** na arena, quem ganha vira a resposta "Boa" e quem perde, a "Ruim". Se nenhuma prestar, você responde `n` e escreve a certa. `python treinar_dpo.py --arena arena.json` junta essas partidas ao polimento (o notebook faz isso sozinho).
+- **Bot do Discord** (`bot_discord.py`): responde quando alguém menciona o bot, responde uma mensagem dele, ou manda DM; lembra de cada pessoa, enxerga imagem anexada e pesquisa na internet com `!buscar`. O passo a passo pra criar o bot (de graça, no site oficial do Discord) está no topo do arquivo e na célula 10 do notebook.
+- **Prova difícil com juiz** (`prova_dificil.py`): veja abaixo.
+
+Pra treinar: [notebook no Colab](https://colab.research.google.com/github/SeniorVortex/Ratex/blob/main/notebooks/treinar_no_colab.ipynb), **A100**, "Executar tudo". A versão 0.5 e a Gemma 4 31B já vêm selecionadas.
 
 ## `ratex/xselo-0-4/v1`: a prosa como ponto forte
 
@@ -149,6 +162,26 @@ O que a tabela ensina:
 
 No 1.5B, o Qwen puro com memória já chega perto (88,9), então daqui pra frente o que mais rende é base maior e dataset maior. Os relatórios com todas as respostas ficam em `avaliacoes/`.
 
+## A prova difícil, com juiz: `python prova_dificil.py`
+
+A prova fixa procura palavras-chave: serve pra comparar versões, mas é generosa, e os modelos grandes já tiram quase tudo. A prova difícil mede o que importa pro Xselo, com outro modelo fazendo o papel de corretor:
+
+| parte | o que mede | como corrige |
+|---|---|---|
+| pegadinhas (18) | premissa falsa, mito, obra que não existe, jogo que ainda não aconteceu | juiz, 0 a 2, com gabarito escrito |
+| correções (8) | a pessoa "corrige" o Xselo: às vezes com razão (tem que aceitar), às vezes sem (tem que manter, com educação) | juiz, 0 a 2, com gabarito |
+| contas (10) | problemas de vários passos | número exato, sem juiz |
+| prosa (10) | pedidos de escrita com restrições (tamanho, palavras proibidas, público) | juiz, 1 a 10, com rubrica |
+| pareado (10) | o mesmo pedido pro Xselo e pro modelo base puro | juiz escolhe duas vezes, trocando a ordem; só vale vitória quando as duas leituras concordam |
+
+O juiz padrão é o próprio modelo base com o nosso adaptador desligado (não gasta memória a mais). Ele pode puxar um pouco pro próprio estilo no pareado, por isso a ordem trocada e os gabaritos escritos. Nenhuma pergunta das duas provas está nos dados de treino.
+
+```bash
+python prova_dificil.py --modelo ratex/xselo-0-5/v1 --salvar avaliacoes/0.5-dificil.json
+```
+
+No Colab, é a célula **6b**.
+
 ## Polimento por preferência (DPO): `python treinar_dpo.py`
 
 Depois de treinado, o Xselo pode ser **polido com as suas correções**. Cada vez que ele errar numa conversa, anote em `dados_preferencia/` a conversa, a resposta ruim que ele deu e a resposta certa:
@@ -174,6 +207,8 @@ No Colab, a célula **5b** faz isso sozinha depois do treino (dá pra desligar n
 
 Por isso a versão polida do 0.3 não substituiu a oficial. A ferramenta fica pronta pra quando os pares crescerem, e ela rende mais no 32B, que já sabe muito mais.
 
+**Pares da arena:** `python treinar_dpo.py --modelo ... --arena arena.json` transforma as partidas decididas da arena em pares (gravados em `dados_preferencia/arena.txt`, dá pra abrir e revisar). Respostas que citam fonte da busca (`[1]`, `[2]`) ficam de fora, porque no treino não há busca no prompt e o modelo aprenderia a citar fonte inventada.
+
 ## Busca na internet (SearXNG)
 
 O Xselo pode **pesquisar na internet** antes de responder coisas atuais, usando o [SearXNG](https://github.com/searxng/searxng), um buscador aberto que junta Google, Bing, Wikipédia e outros sem rastrear ninguém (`nucleo/busca.py`).
@@ -187,15 +222,16 @@ python gerar.py --chat --busca                           # liga um SearXNG local
 python gerar.py --chat --busca http://localhost:8888     # usa um SearXNG que já está rodando
 ```
 
-No Colab, a célula **6b** liga a busca, e a conversa (célula 7) já usa. Se preferir rodar o SearXNG pelo Docker no seu PC, lembre de liberar o formato JSON no `settings.yml` (`search: formats: [html, json]`).
+No Colab, a célula **6c** liga a busca, e a conversa (célula 7) já usa. Se preferir rodar o SearXNG pelo Docker no seu PC, lembre de liberar o formato JSON no `settings.yml` (`search: formats: [html, json]`).
 
 ## Arena às cegas: o ranking
 
 Pra saber se o Xselo está bom **no seu gosto**, e não só na prova automática: você faz uma pergunta, dois competidores respondem como **A** e **B** sem você saber quem é quem, e você escolhe a melhor. Cada escolha atualiza uma **nota Elo**, igual ranking de xadrez (`nucleo/arena.py`).
 
-- Competidores: o **Xselo polido**, o **Xselo antes do polimento** e o **Qwen puro**. Todos dividem o mesmo modelo base na memória (não gasta GPU a mais) e usam o mesmo prompt, memória e busca, então a única diferença entre eles é o nosso treino.
+- Competidores: o **Xselo polido**, o **Xselo antes do polimento** e o **modelo base puro**. Todos dividem o mesmo modelo base na memória (não gasta GPU a mais) e usam o mesmo prompt, memória e busca, então a única diferença entre eles é o nosso treino.
 - `/placar` mostra o ranking; o placar e todas as partidas ficam salvos (no Colab, no seu Drive, em `Ratex/arena.json`), então dá pra continuar em outro dia.
-- As partidas em que o Xselo perdeu são ótimas pra virar pares de `dados_preferencia/`.
+- Se nenhuma das duas respostas prestar, responda `n` e escreva a certa: ela vira a "Boa" contra as duas.
+- As partidas viram pares de preferência sozinhas no próximo polimento (`--arena`, célula 5b).
 
 No Colab é a célula **7b**.
 
@@ -232,13 +268,15 @@ Ratex/
 ├── dataset.txt            # o texto de treino (Touhou explicado na linguagem da rua)
 ├── dados_extras/          # cole aqui mais .txt; eles entram no treino automaticamente
 ├── dados_gerais/          # 0.3: conversas sobre ciência, português, matemática, tecnologia, dia a dia
-├── dados_prosa/           # 0.4: escrita caprichada (crônica, poema, explicação, conselho, reescrita...)
+├── dados_prosa/           # 0.4/0.5: escrita caprichada, 303 conversas (crônica, poema, carta, conselho...)
 ├── treinar.py             # v1: treina o micro-Transformer do zero -> ratex/xselo-0-1/v1/
 ├── treinar_lora.py        # 0.2/0.3: treina o LoRA em cima do modelo base -> ratex/xselo-0-X/v1/
 ├── gerar.py               # conversa / gera texto (híbrido mais novo se existir, senão v1)
 ├── treinar_dpo.py         # polimento por preferência (DPO) com dados_preferencia/
 ├── dados_preferencia/     # pares "Ruim/Boa" tirados das conversas
 ├── avaliar.py             # prova fixa com nota por categoria (touhou, geral, matemática)
+├── prova_dificil.py       # 0.5: prova com juiz (pegadinhas, correções, contas, prosa, pareado)
+├── bot_discord.py         # 0.5: o Xselo no Discord
 ├── avaliacoes/            # relatórios da prova de cada versão
 ├── nucleo/
 │   ├── modelo.py          # arquitetura Transformer (embeddings, atenção, FFN, LayerNorm, logits)
@@ -249,7 +287,8 @@ Ratex/
 │   ├── memoria.py         # memória de consulta (RAG): significado + palavra nos trechos do dataset
 │   ├── busca.py           # busca na internet via SearXNG (e liga um SearXNG local sozinho)
 │   ├── arena.py           # arena às cegas com ranking Elo
-│   ├── preferencias.py    # leitor dos pares de dados_preferencia/
+│   ├── preferencias.py    # pares de dados_preferencia/ e da arena
+│   ├── lembrancas.py      # 0.5: memória de conversa longa (fatos por pessoa + resumo)
 │   └── hibrido.py         # versões, bases, carrega base + LoRA e gera respostas
 ├── ratex/xselo-0-1/v1/    # O MODELO
 │   ├── pytorch_model.bin      # pesos (state_dict do PyTorch)
@@ -431,12 +470,17 @@ Detalhes e otimizações:
 - [ ] Juntar 50–200 pares de preferência e polir o 32B
 - [x] Busca na internet via SearXNG como ferramenta do Xselo
 - [x] Arena às cegas com ranking Elo (Xselo × Xselo sem polimento × Qwen puro)
-- [ ] Transformar as derrotas da arena em pares de preferência automaticamente
+- [x] Transformar as partidas da arena em pares de preferência automaticamente
 - [x] Memória por significado (embeddings) junto com a busca por palavra
-- [ ] Mais dataset: mais conversas gerais e de Touhou no tom do Xselo (a melhoria com melhor custo-benefício)
+- [x] Mais prosa: de 105 pra 303 conversas (0.5)
+- [x] Base nova de 2026: Gemma 4 31B (ou Qwen3.8-27B), com visão (0.5)
+- [x] Enxergar imagens (`/imagem`, `/foto`, anexo no Discord)
+- [x] Bot do Discord (`bot_discord.py`)
+- [ ] Treinar a 0.5 no Colab e rodar a prova difícil
 - [ ] Segurar o conhecimento geral da base no LoRA (lr menor, mais conversas gerais)
-- [ ] Memória de conversa mais longa no `gerar.py --chat` (resumo das falas antigas)
-- [ ] Prova maior e mais difícil conforme as notas subirem
+- [x] Memória de conversa longa: fatos por pessoa + resumo das falas antigas (`nucleo/lembrancas.py`)
+- [x] Prova mais difícil, com juiz (`prova_dificil.py`)
+- [ ] Rodar no PC (RTX 5060 Ti 16 GB): Gemma 4 12B quantizada (GGUF/Ollama)
 
 ---
 

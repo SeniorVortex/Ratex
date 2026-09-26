@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -164,7 +165,10 @@ def lote_padrao(base: str, device: str) -> tuple[int, int]:
     """(batch_size, acumulação) que cabem na memória; o lote efetivo fica em 8.
     Na CPU, lote 4 de conversas longas estoura 15 GB de RAM já com o Qwen 0.5B."""
     if device == "cuda":
-        return 4, 2
+        # bases de 20B+ (e a Gemma, com vocabulário de 262 mil tokens) gastam muita memória nos logits
+        tamanho = re.search(r"(\d+(?:\.\d+)?)B", base)
+        grande = (tamanho and float(tamanho.group(1)) >= 20) or "gemma" in base.lower()
+        return (2, 4) if grande else (4, 2)
     pequeno = any(t in base.lower() for t in ("0.5b", "0.8b", "135m", "360m"))
     return (2, 4) if pequeno else (1, 8)
 

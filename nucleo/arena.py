@@ -4,7 +4,7 @@ sem mostrar quem é quem), você escolhe a melhor, e cada escolha atualiza uma n
 igual ranking de xadrez. Com o tempo, o placar mostra quem é melhor de verdade no seu gosto.
 
 Os competidores podem dividir o mesmo modelo base na memória: o Xselo (com o LoRA), o
-Xselo antes do polimento (outro LoRA) e o Qwen puro (LoRA desligado). Todos usam o mesmo
+Xselo antes do polimento (outro LoRA) e o modelo base puro (LoRA desligado). Todos usam o mesmo
 system prompt, a mesma memória e a mesma busca, então a única diferença é o treino.
 """
 
@@ -105,7 +105,7 @@ class Arena:
 def competidores_do_xselo(modelo, tok, cfg: dict, memoria=None, busca=None,
                           outros_adaptadores: dict[str, str] | None = None, max_novos_tokens: int = 500) -> dict:
     """Competidores que dividem o mesmo modelo base: o Xselo carregado, outros adaptadores
-    (ex.: {"Xselo sem polimento": "/pasta"}) e o Qwen puro (adaptador desligado)."""
+    (ex.: {"Xselo sem polimento": "/pasta"}) e o modelo base puro (adaptador desligado)."""
     from .hibrido import responder
 
     ger = dict(cfg.get("geracao", {}), max_novos_tokens=max_novos_tokens)
@@ -120,7 +120,7 @@ def competidores_do_xselo(modelo, tok, cfg: dict, memoria=None, busca=None,
                              stream=False, **ger)
         return responder_com
 
-    def qwen_puro(conversa):
+    def base_pura(conversa):
         with modelo.disable_adapter():
             return responder(modelo, tok, conversa, system_prompt=system, memoria=memoria, busca=busca,
                              stream=False, **ger)
@@ -132,5 +132,5 @@ def competidores_do_xselo(modelo, tok, cfg: dict, memoria=None, busca=None,
             modelo.load_adapter(pasta, adapter_name=apelido)
             competidores[nome] = com_adaptador(apelido)
     modelo.set_adapter(ativo)
-    competidores[f"Qwen puro ({Path(cfg['base']).name})"] = qwen_puro
+    competidores[f"{Path(cfg['base']).name} puro"] = base_pura
     return competidores
