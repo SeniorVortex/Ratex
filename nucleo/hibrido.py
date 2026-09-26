@@ -8,6 +8,8 @@ Versões:
                              + matemática gerada
     0.4  ratex/xselo-0-4/v1  Qwen2.5-32B + LoRA com a prosa como ponto forte (dados_prosa/),
                              assuntos gerais com mais peso e Touhou como um dos temas
+    0.5  ratex/xselo-0-5/v1  base nova de 2026 (Qwen3.8-27B ou Gemma 4 31B, que também enxergam
+                             imagem) + muito mais prosa + correções vindas da arena
 
 A pasta de cada versão guarda só o que é nosso:
 
@@ -29,7 +31,7 @@ from pathlib import Path
 
 import torch
 
-from .dados_chat import SYSTEM_PROMPT, SYSTEM_PROMPT_03, SYSTEM_PROMPT_04
+from .dados_chat import SYSTEM_PROMPT, SYSTEM_PROMPT_03, SYSTEM_PROMPT_04, SYSTEM_PROMPT_05
 
 RAIZ = Path(__file__).resolve().parent.parent
 ARQ_RATEX = "ratex_config.json"
@@ -44,7 +46,22 @@ BASES = {
     "qwen-32b": "Qwen/Qwen2.5-32B-Instruct",
     "smollm-135m": "HuggingFaceTB/SmolLM-135M-Instruct",
     "smollm2-1.7b": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+    # geração 2026: multimodais (texto + imagem), Apache-2.0, sem pedir acesso
+    "qwen3.8-27b": "Qwen/Qwen3.8-27B",
+    "qwen3.5-0.8b": "Qwen/Qwen3.5-0.8B",
+    "qwen3.5-2b": "Qwen/Qwen3.5-2B",
+    "qwen3.5-4b": "Qwen/Qwen3.5-4B",
+    "qwen3.5-9b": "Qwen/Qwen3.5-9B",
+    "gemma4-31b": "google/gemma-4-31B-it",
+    "gemma4-12b": "google/gemma-4-12B-it",
+    "gemma4-e4b": "google/gemma-4-E4B-it",
+    "gemma4-e2b": "google/gemma-4-E2B-it",
 }
+
+# nos modelos que enxergam imagem, o LoRA mexe só na parte de texto: os "olhos" ficam como vieram
+MODULOS_FORA_DO_LORA = r".*(visual|vision|audio|multi_modal_projector|embed_vision|embed_audio).*"
+_FORA_DO_4BIT = ["lm_head", "visual", "vision_tower", "audio_tower", "multi_modal_projector",
+                 "embed_vision", "embed_audio"]
 
 VERSOES = {
     "0.2": {
@@ -74,8 +91,18 @@ VERSOES = {
         "geral": True,
         "system_prompt": SYSTEM_PROMPT_04,
     },
+    "0.5": {
+        "nome": "ratex/xselo-0-5/v1",
+        "base": "gemma4-31b",
+        "dados": ["dataset.txt", "dados_extras", "dados_gerais", "dados_prosa"],
+        "pesos": {"dataset.txt": 0.5, "dados_gerais": 2, "dados_prosa": 2},
+        "matematica": 200,
+        "max_tokens": 1024,
+        "geral": True,
+        "system_prompt": SYSTEM_PROMPT_05,
+    },
 }
-VERSAO_PADRAO = "0.4"
+VERSAO_PADRAO = "0.5"
 
 # compatibilidade com o código do 0.2
 NOME_HIBRIDO = VERSOES["0.2"]["nome"]
@@ -138,7 +165,7 @@ def lote_padrao(base: str, device: str) -> tuple[int, int]:
     Na CPU, lote 4 de conversas longas estoura 15 GB de RAM já com o Qwen 0.5B."""
     if device == "cuda":
         return 4, 2
-    pequeno = any(t in base.lower() for t in ("0.5b", "135m", "360m"))
+    pequeno = any(t in base.lower() for t in ("0.5b", "0.8b", "135m", "360m"))
     return (2, 4) if pequeno else (1, 8)
 
 
@@ -164,15 +191,29 @@ def resolver_base(base: str, device: str) -> tuple[str, bool]:
     return BASES["qwen-0.5b"], False
 
 
-def carregar_base(base: str, device: str, quatro_bits: bool = False):
-    """Carrega o modelo base + tokenizador (id do Hugging Face, apelido ou pasta local)."""
+def eh_multimodal(base: str) -> bool:
+    """O modelo base também enxerga imagem? (Qwen3.5/3.8, Gemma 4...)"""
+    from transformers import AutoConfig
+
     try:
-        from transformers import AutoModelForCausalLM, AutoTokenizer
+        return getattr(AutoConfig.from_pretrained(BASES.get(base, base)), "vision_config", None) is not None
+    except (OSError, ValueError):
+        return False
+
+
+def carregar_base(base: str, device: str, quatro_bits: bool = False):
+    """Carrega o modelo base + tokenizador (id do Hugging Face, apelido ou pasta local).
+    Modelos que enxergam imagem são carregados inteiros (texto + visão), sempre na mesma
+    classe, pra que o LoRA treinado sirva tanto pra conversa quanto pra imagem."""
+    try:
+        from transformers import AutoModelForCausalLM, AutoModelForImageTextToText, AutoTokenizer
     except ImportError as e:  # pragma: no cover
-        raise SystemExit("o xselo híbrido precisa de: pip install transformers peft accelerate safetensors") from e
+        raise SystemExit("o xselo híbrido precisa de: pip install -U transformers peft accelerate safetensors") from e
     base = BASES.get(base, base)
     bf16 = device == "cuda" and torch.cuda.is_bf16_supported()
     dtype = torch.bfloat16 if bf16 else (torch.float16 if device in ("cuda", "mps") else torch.float32)
+    if os.environ.get("XSELO_DTYPE"):  # ex.: XSELO_DTYPE=bfloat16 pra caber um modelo maior na RAM da CPU
+        dtype = getattr(torch, os.environ["XSELO_DTYPE"])
     extra = {}
     if quatro_bits:
         if not bitsandbytes_disponivel():
@@ -182,12 +223,14 @@ def carregar_base(base: str, device: str, quatro_bits: bool = False):
         extra = {
             "quantization_config": BitsAndBytesConfig(
                 load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_use_double_quant=True,
-                bnb_4bit_compute_dtype=torch.bfloat16 if bf16 else torch.float16),
+                bnb_4bit_compute_dtype=torch.bfloat16 if bf16 else torch.float16,
+                llm_int8_skip_modules=_FORA_DO_4BIT),
             "device_map": {"": 0},
         }
     try:
         tok = AutoTokenizer.from_pretrained(base)
-        modelo = AutoModelForCausalLM.from_pretrained(base, dtype=dtype, **extra)
+        classe = AutoModelForImageTextToText if eh_multimodal(base) else AutoModelForCausalLM
+        modelo = classe.from_pretrained(base, dtype=dtype, **extra)
     except OSError as e:
         raise SystemExit(
             f"não consegui carregar o modelo base {base!r}.\n"
@@ -222,11 +265,72 @@ def carregar_hibrido(pasta=None, device: str = "auto", base: str | None = None):
     modelo = PeftModel.from_pretrained(modelo, pasta)
     if not quatro_bits:
         modelo = modelo.to(device)
+    anexar_processador(modelo, base or cfg["base"])
     return modelo.eval(), tok, cfg
+
+
+def anexar_processador(modelo, base: str):
+    """Nos modelos que enxergam, guarda junto do modelo o "processador" (o que transforma a
+    imagem em números). Sem ele, o Xselo só conversa por texto."""
+    if eh_multimodal(base):
+        from transformers import AutoProcessor
+
+        modelo._xselo_processador = AutoProcessor.from_pretrained(BASES.get(base, base))
+    return modelo
+
+
+def enxerga(modelo) -> bool:
+    return getattr(modelo, "_xselo_processador", None) is not None
+
+
+def abrir_imagem(imagem):
+    """Caminho, link (http...) ou imagem PIL -> imagem PIL em RGB."""
+    from transformers.image_utils import load_image
+
+    return load_image(imagem).convert("RGB")
+
+
+def _entrada_com_imagens(modelo, mensagens: list[dict]):
+    """Tokeniza a conversa com as imagens (campo "imagens" das mensagens) pelo processador."""
+    conteudo = []
+    for m in mensagens:
+        imagens = [abrir_imagem(i) for i in m.get("imagens") or []]
+        if imagens:
+            partes = [{"type": "image", "image": i} for i in imagens] + [{"type": "text", "text": m["content"]}]
+            conteudo.append({"role": m["role"], "content": partes})
+        else:
+            conteudo.append({"role": m["role"], "content": [{"type": "text", "text": m["content"]}]})
+    entrada = modelo._xselo_processador.apply_chat_template(
+        conteudo, add_generation_prompt=True, tokenize=True, return_dict=True, return_tensors="pt",
+        enable_thinking=False)
+    tipo = modelo.get_input_embeddings().weight.dtype
+    return {k: (v.to(modelo.device, dtype=tipo) if v.is_floating_point() else v.to(modelo.device))
+            for k, v in entrada.items()}
 
 
 def montar_mensagens(historico: list[dict], system_prompt: str = SYSTEM_PROMPT) -> list[dict]:
     return [{"role": "system", "content": system_prompt}, *historico]
+
+
+def texto_do_chat(tok, mensagens: list[dict], gerar: bool = False) -> str:
+    """Aplica o chat template do modelo base. enable_thinking=False desliga o "modo pensar"
+    dos modelos novos (Qwen3.x): o Xselo responde direto, sem rascunho escondido.
+    Templates que não conhecem essa opção simplesmente a ignoram."""
+    return tok.apply_chat_template(mensagens, tokenize=False, add_generation_prompt=gerar, enable_thinking=False)
+
+
+def texto_da_conversa(tok, mensagens: list[dict]) -> str:
+    """A conversa inteira, terminando numa resposta do Xselo, com a última resposta no mesmo
+    formato que o modelo vê na hora de gerar. Quase sempre é só o template; mas no Gemma 4
+    o início da resposta ganha um marcador (canal de pensamento vazio) que só aparece quando
+    se pede pra gerar. Aqui ele é enxertado, pra treino e uso ficarem iguais."""
+    completo = texto_do_chat(tok, mensagens)
+    if not mensagens or mensagens[-1]["role"] != "assistant":
+        return completo
+    prompt = texto_do_chat(tok, mensagens[:-1], gerar=True)
+    if completo.startswith(prompt):
+        return completo
+    return prompt + completo[len(os.path.commonprefix([prompt, completo])):]
 
 
 def buscar_na_conversa(memoria, historico: list[dict]) -> list[str]:
@@ -247,6 +351,7 @@ def responder(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PR
               top_k: int = 40, top_p: float = 0.9, penalidade_repeticao: float = 1.1,
               memoria=None, busca=None, **_) -> str:
     """Gera a próxima resposta do Xselo para uma conversa [{role, content}, ...].
+    Uma mensagem pode trazer "imagens": [caminho, link ou imagem PIL, ...] se o modelo enxerga.
     Com `memoria` (nucleo.memoria.Memoria), os trechos relevantes do dataset entram no prompt.
     Com `busca` (nucleo.busca.Busca), perguntas sobre coisa atual (ou que começam com /buscar)
     são pesquisadas na internet antes, e os resultados entram no prompt com as fontes."""
@@ -269,9 +374,14 @@ def responder(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PR
             if resultados:
                 print(f"(pesquisei na internet: {len(resultados)} fontes)", file=sys.stderr)
             system_prompt = prompt_com_busca(system_prompt, resultados)
-    texto = tok.apply_chat_template(montar_mensagens(historico, system_prompt), tokenize=False,
-                                    add_generation_prompt=True)
-    entrada = tok(texto, return_tensors="pt", add_special_tokens=False).to(modelo.device)
+    mensagens = montar_mensagens(historico, system_prompt)
+    if any(m.get("imagens") for m in historico):
+        if not enxerga(modelo):
+            raise ValueError("este modelo base não enxerga imagens: use uma base como a Gemma 4 ou a Qwen3.5+")
+        entrada = _entrada_com_imagens(modelo, mensagens)
+    else:
+        texto = texto_do_chat(tok, [{"role": m["role"], "content": m["content"]} for m in mensagens], gerar=True)
+        entrada = tok(texto, return_tensors="pt", add_special_tokens=False).to(modelo.device)
     streamer = TextStreamer(tok, skip_prompt=True, skip_special_tokens=True) if stream else None
     amostrar = temperatura > 0
     saida = modelo.generate(

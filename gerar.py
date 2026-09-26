@@ -47,6 +47,10 @@ def args_cli() -> argparse.Namespace:
     p.add_argument("--busca", nargs="?", const="auto", metavar="URL",
                    help="xselo híbrido: pesquisa na internet via SearXNG quando a pergunta é sobre coisa atual "
                         "(ou começa com /buscar). Sem URL, liga um SearXNG local sozinho")
+    p.add_argument("--imagem", action="append", default=[], metavar="ARQUIVO_OU_LINK",
+                   help="xselo 0.5+: manda uma imagem junto do prompt (pode repetir)")
+    p.add_argument("--pessoa", default="voce", help="de quem são as lembranças de longo prazo (nome ou apelido)")
+    p.add_argument("--sem-lembrancas", action="store_true", help="não lembra de você entre uma conversa e outra")
     p.add_argument("--sem-memoria", action="store_true",
                    help="xselo híbrido: não consulta o dataset antes de responder (desliga o RAG)")
     p.add_argument("--tokens", type=int, help="máximo de tokens novos por geração")
@@ -206,9 +210,18 @@ def main_hibrido(args, pasta: Path) -> None:
         busca = Busca(url)
         print(f"[busca na internet: SearXNG em {url}; use /buscar pra forçar uma pesquisa]", file=sys.stderr)
 
-    def perguntar(historico: list[dict]) -> str:
+    from nucleo.hibrido import enxerga
+    from nucleo.lembrancas import Conversa, Lembrancas, resumidor
+
+    lembrancas = Lembrancas(None if args.sem_lembrancas else Lembrancas().arquivo)
+    conversa = Conversa(args.pessoa, lembrancas, resumir=resumidor(modelo, tok))
+    if enxerga(modelo):
+        print("[este Xselo enxerga imagens: /imagem <arquivo ou link> <pergunta>]", file=sys.stderr)
+
+    def perguntar(historico: list[dict], system_prompt: str | None = None) -> str:
         print("xselo> ", end="", flush=True)
-        return responder(modelo, tok, historico, system_prompt=system, memoria=memoria, busca=busca, **ger)
+        return responder(modelo, tok, historico, system_prompt=system_prompt or system, memoria=memoria,
+                         busca=busca, **ger)
 
     prompt = args.prompt or args.prompt_posicional
     if prompt and not args.chat:
@@ -216,11 +229,13 @@ def main_hibrido(args, pasta: Path) -> None:
             if args.amostras > 1:
                 print(f"\n----- amostra {i + 1}/{args.amostras} -----")
             print(f"você> {prompt}")
-            perguntar([{"role": "user", "content": prompt}])
+            msg = {"role": "user", "content": prompt, **({"imagens": args.imagem} if args.imagem else {})}
+            perguntar([msg])
         return
 
-    print(f"Papo com o Xselo {cfg.get('versao', '0.2')}. Comandos: /novo (esquece a conversa), /sair")
-    historico: list[dict] = []
+    print(f"Papo com o Xselo {cfg.get('versao', '0.2')}. Comandos: /novo (esquece a conversa), "
+          "/lembrar <fato>, /lembrancas, /esquecer (apaga o que ele lembra de você), /sair")
+    imagens = list(args.imagem)
     while True:
         msg = prompt if prompt else ler_linha("\nvocê> ")
         prompt = None
@@ -228,13 +243,23 @@ def main_hibrido(args, pasta: Path) -> None:
             return
         if not msg:
             continue
-        if msg == "/novo":
-            historico.clear()
-            print("(conversa zerada)")
+        aviso = conversa.comando(msg)
+        if aviso:
+            print(aviso)
             continue
-        historico.append({"role": "user", "content": msg})
-        historico.append({"role": "assistant", "content": perguntar(historico)})
-        historico[:] = historico[-12:]  # memória: as últimas 6 trocas
+        if msg.startswith("/imagem "):
+            caminho, _, resto = msg[len("/imagem "):].strip().partition(" ")
+            imagens.append(caminho)
+            msg = resto.strip() or "O que você vê nessa imagem?"
+        conversa.usuario(msg, imagens)
+        imagens = []
+        try:
+            resposta = perguntar(conversa.historico, conversa.system(system))
+        except ValueError as erro:  # ex.: imagem num modelo que não enxerga
+            print(f"({erro})")
+            conversa.historico.pop()
+            continue
+        conversa.xselo(resposta)
 
 
 def main() -> None:

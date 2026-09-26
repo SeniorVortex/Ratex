@@ -39,6 +39,7 @@ from nucleo.hibrido import (
     ARQ_RATEX,
     BASES,
     GERACAO_HIBRIDO,
+    MODULOS_FORA_DO_LORA,
     VERSAO_PADRAO,
     VERSOES,
     carregar_base,
@@ -48,6 +49,7 @@ from nucleo.hibrido import (
     pasta_da_versao,
     resolver_base,
     responder,
+    texto_da_conversa,
 )
 
 RAIZ = Path(__file__).resolve().parent
@@ -94,7 +96,7 @@ def args_cli() -> argparse.Namespace:
 def tokenizar(tok, conversa: list[dict], max_tokens: int, system_prompt: str):
     """Tokeniza a conversa com o chat template do modelo base. Só as respostas do
     Xselo (e o token de fim de turno) entram na loss; system e usuário ficam -100."""
-    texto = tok.apply_chat_template(montar_mensagens(conversa, system_prompt), tokenize=False)
+    texto = texto_da_conversa(tok, montar_mensagens(conversa, system_prompt))
     enc = tok(texto, return_offsets_mapping=True, add_special_tokens=False)
     ids, offsets = enc["input_ids"], enc["offset_mapping"]
 
@@ -222,7 +224,7 @@ def main() -> None:
         modelo.gradient_checkpointing_enable()
         modelo.enable_input_require_grads()
     lora = LoraConfig(r=args.rank, lora_alpha=args.alpha, lora_dropout=args.lora_dropout,
-                      target_modules="all-linear", task_type="CAUSAL_LM")
+                      target_modules="all-linear", exclude_modules=MODULOS_FORA_DO_LORA, task_type="CAUSAL_LM")
     modelo = get_peft_model(modelo, lora)
     treinaveis = sum(p.numel() for p in modelo.parameters() if p.requires_grad)
     total = sum(p.numel() for p in modelo.parameters())

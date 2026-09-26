@@ -34,8 +34,9 @@ from pathlib import Path
 import torch
 import torch.nn.functional as F
 
-from nucleo.hibrido import ARQ_RATEX, GERACAO_HIBRIDO, carregar_base, escolher_device, montar_mensagens, responder
-from nucleo.preferencias import ler_pares
+from nucleo.hibrido import (ARQ_RATEX, GERACAO_HIBRIDO, carregar_base, escolher_device, montar_mensagens, responder,
+                            texto_da_conversa, texto_do_chat)
+from nucleo.preferencias import arena_para_arquivo, ler_pares
 
 RAIZ = Path(__file__).resolve().parent
 
@@ -45,6 +46,8 @@ def args_cli() -> argparse.Namespace:
                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     p.add_argument("--modelo", required=True, help="pasta do Xselo já treinado (adaptador LoRA + ratex_config.json)")
     p.add_argument("--dados", nargs="+", default=["dados_preferencia"], help="arquivos/pastas com os pares")
+    p.add_argument("--arena", help="arena.json da arena às cegas: as partidas decididas viram pares também "
+                   "(gravados em dados_preferencia/arena.txt)")
     p.add_argument("--saida", help="pasta do modelo polido. Padrão: <modelo>-dpo")
     p.add_argument("--base", help="modelo base alternativo (ex.: pasta local já baixada)")
     p.add_argument("--epocas", type=int, default=3)
@@ -63,9 +66,8 @@ def args_cli() -> argparse.Namespace:
 
 def tokenizar_par(tok, system: str, conversa: list[dict], resposta: str, max_tokens: int):
     """(ids, n_prompt): a conversa + a resposta, e onde a resposta começa."""
-    prompt = tok.apply_chat_template(montar_mensagens(conversa, system), tokenize=False, add_generation_prompt=True)
-    completo = tok.apply_chat_template(montar_mensagens(conversa + [{"role": "assistant", "content": resposta}], system),
-                                       tokenize=False)
+    prompt = texto_do_chat(tok, montar_mensagens(conversa, system), gerar=True)
+    completo = texto_da_conversa(tok, montar_mensagens(conversa + [{"role": "assistant", "content": resposta}], system))
     if not completo.startswith(prompt):
         raise ValueError("o chat template não produz o prompt como prefixo da conversa completa")
     ids_prompt = tok(prompt, add_special_tokens=False)["input_ids"]
@@ -96,6 +98,9 @@ def main() -> None:
     system = cfg["system_prompt"]
     base = args.base or cfg["base"]
 
+    if args.arena and Path(args.arena).exists():
+        n = arena_para_arquivo(args.arena, RAIZ / "dados_preferencia" / "arena.txt")
+        print(f"arena: {n} pares novos a partir de {args.arena} -> dados_preferencia/arena.txt")
     pares, arquivos = ler_pares(args.dados, RAIZ)
     if not pares:
         sys.exit(f"nenhum par Pessoa/Ruim/Boa encontrado em {args.dados}")

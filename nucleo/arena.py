@@ -34,8 +34,10 @@ class Arena:
             dados = json.loads(self.arquivo.read_text(encoding="utf-8"))
             self.notas, self.partidas = dados.get("notas", {}), dados.get("partidas", [])
 
-    def registrar(self, a: str, b: str, resultado: str, pergunta: str = "", respostas: tuple = ("", "")) -> None:
-        """resultado: 'a', 'b' ou 'empate'."""
+    def registrar(self, a: str, b: str, resultado: str, pergunta: str = "", respostas: tuple = ("", ""),
+                  correcao: str = "") -> None:
+        """resultado: 'a', 'b' ou 'empate'. `correcao`: a resposta certa escrita por você, quando
+        nenhuma das duas prestou (conta como empate no Elo, e as duas viram exemplo do que não fazer)."""
         ra, rb = self.notas.setdefault(a, ELO_INICIAL), self.notas.setdefault(b, ELO_INICIAL)
         placar_a = {"a": 1.0, "b": 0.0, "empate": 0.5}[resultado]
         ea = esperado(ra, rb)
@@ -43,6 +45,7 @@ class Arena:
         self.notas[b] = rb + K * ((1 - placar_a) - (1 - ea))
         self.partidas.append({"a": a, "b": b, "resultado": resultado, "pergunta": pergunta,
                               "resposta_a": respostas[0], "resposta_b": respostas[1],
+                              **({"correcao": correcao} if correcao else {}),
                               "data": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
         self.salvar()
 
@@ -73,7 +76,8 @@ class Arena:
         if len(nomes) < 2:
             raise ValueError("a arena precisa de pelo menos 2 competidores")
         print(f"🏆 Arena às cegas com {len(nomes)} competidores. Digite uma pergunta ou pedido.")
-        print("   Comandos: /placar (ranking), /sair (parar).\n")
+        print("   Comandos: /placar (ranking), /sair (parar).")
+        print("   Se nenhuma das duas prestar, responda 'n' e escreva a resposta certa: ela vira aula pro Xselo.\n")
         while True:
             pergunta = entrada("você> ").strip()
             if pergunta in ("", "/sair", "sair"):
@@ -86,12 +90,15 @@ class Arena:
             resp_a, resp_b = competidores[a](conversa), competidores[b](conversa)
             print(f"\n──── A ────\n{resp_a}\n\n──── B ────\n{resp_b}\n")
             escolha = ""
-            while escolha not in ("a", "b", "e"):
-                escolha = entrada("qual foi melhor? [a / b / e = empate] ").strip().lower()[:1]
-            resultado = {"a": "a", "b": "b", "e": "empate"}[escolha]
-            self.registrar(a, b, resultado, pergunta, (resp_a, resp_b))
+            while escolha not in ("a", "b", "e", "n"):
+                escolha = entrada("qual foi melhor? [a / b / e = empate / n = nenhuma, eu escrevo a certa] ").strip().lower()[:1]
+            correcao = entrada("resposta certa> ").strip() if escolha == "n" else ""
+            resultado = {"a": "a", "b": "b"}.get(escolha, "empate")
+            self.registrar(a, b, resultado, pergunta, (resp_a, resp_b), correcao)
             vencedor = {"a": a, "b": b}.get(resultado, "empate")
-            print(f"   A era {a}, B era {b}. {'Empate!' if vencedor == 'empate' else f'Ponto pro {vencedor}!'}\n")
+            fim = "Anotado, sua resposta vira aula!" if correcao else (
+                "Empate!" if vencedor == "empate" else f"Ponto pro {vencedor}!")
+            print(f"   A era {a}, B era {b}. {fim}\n")
         print("\n" + self.placar())
 
 
