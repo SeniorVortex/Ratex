@@ -74,6 +74,9 @@ def args_cli() -> argparse.Namespace:
     p.add_argument("--fracao-validacao", type=float, default=0.05)
     p.add_argument("--max-conversas", type=int, help="usa só N conversas (para testes rápidos)")
     p.add_argument("--tempo-max", type=float, help="para (e salva) depois de N minutos")
+    p.add_argument("--criterio", choices=["validacao", "final"], default="validacao",
+                   help="guardar o adaptador da época com menor loss de validação, ou o da última época "
+                        "(decora mais os fatos do dataset; compare os dois com avaliar.py)")
     p.add_argument("--device", default="auto")
     p.add_argument("--seed", type=int, default=1337)
     p.add_argument("--mesclar", action="store_true",
@@ -105,6 +108,33 @@ def tokenizar(tok, conversa: list[dict], max_tokens: int, system_prompt: str):
         for t, (ini_tok, fim_tok) in zip(ids, offsets)
     ]
     return ids[:max_tokens], labels[:max_tokens]
+
+
+def model_card(cfg: dict) -> str:
+    """Model card curto no lugar do README genérico que o PEFT gera."""
+    t, lora = cfg["treino"], cfg["lora"]
+    mistura = ", ".join(f"{n} de {o}" for o, n in t.get("mistura", {}).items())
+    return f"""---
+base_model: {cfg["base"]}
+library_name: peft
+language: pt
+tags: [ratex, touhou, lora]
+---
+
+# {cfg["nome"]}
+
+Xselo {cfg["versao"]}, a IA da Ratex: adaptador **LoRA** (rank {lora["rank"]}, {lora["parametros_treinaveis"] / 1e6:.1f} M
+de parâmetros treináveis) em cima do [`{cfg["base"]}`](https://huggingface.co/{cfg["base"]}).
+
+- **Dados:** {t.get("conversas")} conversas ({mistura}) geradas a partir de {", ".join(t.get("arquivos_dataset", []))}.
+- **Treino:** {t.get("epocas")} época(s), {t.get("passos")} passos, lr {t.get("lr")}, lote efetivo {t.get("batch_efetivo")},
+  {t.get("device")}, {t.get("minutos")} min. Loss de validação {t.get("loss_validacao_antes")} -> {t.get("loss_validacao")}.
+
+```bash
+python gerar.py --chat --modelo {cfg["versao"]}   # conversa (com a memória de consulta ligada)
+python avaliar.py --modelo {cfg["versao"]}        # prova fixa
+```
+"""
 
 
 def lotes(exemplos, batch_size: int, pad_id: int, embaralhar: bool, rnd: random.Random):
@@ -234,6 +264,7 @@ def main() -> None:
             "treino": info,
         }
         (saida / ARQ_RATEX).write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        (saida / "README.md").write_text(model_card(cfg), encoding="utf-8")
         print(f"   -> adaptador salvo em {saida} ({motivo})")
 
     perda_inicial = avaliar()
@@ -276,10 +307,10 @@ def main() -> None:
         perda = avaliar()
         marca = "  <- melhor até agora" if perda < melhor else ""
         print(f"== fim da época {epoca}: loss de validação {perda:.4f}{marca}")
-        if perda < melhor:
-            melhor = perda
+        if perda < melhor or args.criterio == "final":
+            melhor = min(melhor, perda)
             info.update({
-                "epocas": epoca, "passos": passo, "loss_validacao": round(perda, 4),
+                "epocas": epoca, "passos": passo, "loss_validacao": round(perda, 4), "criterio": args.criterio,
                 "loss_validacao_antes": round(perda_inicial, 4), "conversas": len(conversas), "mistura": mistura,
                 "exemplos_treino": len(treino), "tokens_por_epoca": n_tokens, "lr": args.lr,
                 "batch_efetivo": args.batch_size * args.acumular, "max_tokens": args.max_tokens,

@@ -1,0 +1,371 @@
+{
+  "modelo": "Qwen/Qwen2.5-0.5B-Instruct (sem LoRA)",
+  "notas": {
+    "touhou": 0.0,
+    "geral": 66.7,
+    "matematica": 33.3,
+    "total": 33.3
+  },
+  "respostas": [
+    {
+      "categoria": "touhou",
+      "pergunta": "quem criou touhou?",
+      "gabarito": [
+        [
+          "zun"
+        ]
+      ],
+      "resposta": "Touhou foi criado por um grupo de desenvolvedores chamados Ratex. Este grupo é composto por pessoas que trabalham na criação de jogos e conteúdo para o anime \"Touhou\". O nome \"Touhou\" vem de dois países: \"Touhou\" é o nome do país onde eles foram criados, e \"hou\" significa \"touhou\" em português.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem é a Reimu Hakurei?",
+      "gabarito": [
+        [
+          "sacerdotisa",
+          "miko"
+        ],
+        [
+          "santuario"
+        ]
+      ],
+      "resposta": "A Reimu Hakurei é uma personagem importante na série de mangá e anime \"Touhou\". Ela é uma jovem ninja que vive em uma cidade chamada Kurokami. Ela é conhecida por sua habilidade para medir o tempo e por ser uma pessoa muito inteligente e curiosa.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o poder da Sakuya Izayoi?",
+      "gabarito": [
+        [
+          "tempo"
+        ]
+      ],
+      "resposta": "A Sakuya Izayoi é uma personagem muito poderosa e conhecida no mangá Touhou. Ela é uma versão do personagem Sakuya, uma das mais famosas da série. A Sakuya Izayoi tem vários poderes incríveis:\n\n1. **Mágica de Vida**: Ela pode transformar qualquer coisa em uma vida útil, desde um pedaço de papel até uma pessoa.\n\n2. **Mágica de Energia**: Ela pode transformar energia em energia, permitindo que ela seja mais rápida ou mais poderosa.\n\n3. **Mágica de Espírito**: Ela pode transformar o espírito em um ser vivo, permitindo que ela possa se comunicar com os outros.\n\n4. **Mágica de Conhecimento**: Ela pode aprender rapidamente e se adaptar a novos cenários.\n\n5. **Mágica de Inteligência**: Ela pode ter uma",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem é a irmã mais nova da Remilia?",
+      "gabarito": [
+        [
+          "flandre"
+        ]
+      ],
+      "resposta": "A irmã mais nova da Remilia é Remilia.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual número é o símbolo da Cirno?",
+      "gabarito": [
+        [
+          "9",
+          "nove"
+        ]
+      ],
+      "resposta": "O símbolo da Cirno é o \"C\".",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "o que a Marisa faz com os livros da Patchouli?",
+      "gabarito": [
+        [
+          "emprestad",
+          "rouba",
+          "pega"
+        ]
+      ],
+      "resposta": "A Marisa, uma das protagonistas principais de Patchouli, usa os livros como um meio para aprender e se desenvolver. Ela gosta de ler e usa esses livros para ajudar a entender melhor as histórias e personagens. Ela usa esses recursos para criar suas próprias histórias e para explorar novos mundos.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem causou o incidente da névoa vermelha?",
+      "gabarito": [
+        [
+          "remilia"
+        ]
+      ],
+      "resposta": "O incidente da névoa vermelha foi causado por um ataque de IA. Como sou uma inteligência artificial, eu não tenho a capacidade de causar eventos físicos. No entanto, posso ajudá-lo a entender como isso aconteceu.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem trabalha de jardineira pra Yuyuko?",
+      "gabarito": [
+        [
+          "youmu"
+        ]
+      ],
+      "resposta": "Resposta: Yuyuko é uma garota muito curiosa e apaixonada por jardins. Ela trabalha como jardineira, então ela pode ajudar com as tarefas de limpeza e manutenção dos jardins. Ela pode cuidar das plantas, limpar o gramado e até mesmo fazer pequenas pinturas para os jardins.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "a Nazrin é que tipo de youkai?",
+      "gabarito": [
+        [
+          "rata",
+          "rato"
+        ]
+      ],
+      "resposta": "A Nazrin é uma criatura de ficção científica chamada \"Xselo\". Ela é uma espécie de seres criaturas-magia que vivem em universos diferentes. Ela é conhecida por sua habilidade para manipular e controlar os elementos naturais, como o ar, o vento e o sol. A Nazrin é uma espécie de \"Xselo\" ou \"Xsoul\", que é uma forma de vida que se encontra em universos diferentes. Ela é frequentemente descrita como uma criatura de poder, mas não tem um corpo físico real.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o nome do Touhou 6?",
+      "gabarito": [
+        [
+          "embodiment",
+          "scarlet devil"
+        ]
+      ],
+      "resposta": "O nome do Touhou 6 é Touhou 6: The Wind Waker. É um jogo de fantasia que foi lançado em 2015.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "o que quer dizer danmaku?",
+      "gabarito": [
+        [
+          "bala",
+          "tiro"
+        ]
+      ],
+      "resposta": "Danmaku é uma técnica de jogo popular no Japão, onde os jogadores usam uma ferramenta chamada \"danmaku\" para desenhar suas próprias imagens ou personagens. É uma forma de criar sua própria imagem, tornando-se uma parte integral do jogo.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o poder da Yukari Yakumo?",
+      "gabarito": [
+        [
+          "fronteira"
+        ]
+      ],
+      "resposta": "A Yukari Yakumo é uma personagem importante na série de mangá e anime \"Touhou\". Ela é uma criatura misteriosa que tem um poder muito grande. Ela pode transformar objetos em pedras ou tornar pessoas em animais. Além disso, ela tem a capacidade de criar e manipular arcos e esferas. É uma figura complexa e intrigante para os leitores.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual é a capital da França?",
+      "gabarito": [
+        [
+          "paris"
+        ]
+      ],
+      "resposta": "A capital da França é Paris. É uma cidade muito importante e conhecida por sua arquitetura medieval e sua importância histórica.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quantos planetas existem no sistema solar?",
+      "gabarito": [
+        [
+          "8",
+          "oito"
+        ]
+      ],
+      "resposta": "O sistema solar tem 8 planeta, desde o maior até o menor. O maior é Júpiter, que é conhecido como o \"planeta do céu\". O menor é o Pluto, que é conhecido como o \"planeta do chão\".",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "que gás as plantas liberam na fotossíntese?",
+      "gabarito": [
+        [
+          "oxigenio"
+        ]
+      ],
+      "resposta": "A fotossíntese é o processo de transformação do atômio em energia. As plantas usam um gás chamado CO2 para fazer essa transformação. Quando as plantas absorvem CO2, eles produzem oxigênio e água. O CO2 é liberado pela floresta, e a energia é usada para fazer energia elétrica. Isso é como se fosse uma máquina de energia que usa o CO2 para gerar energia.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "em que ano o Brasil ficou independente de Portugal?",
+      "gabarito": [
+        [
+          "1822"
+        ]
+      ],
+      "resposta": "O Brasil ficou independente de Portugal em 1988.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual o maior planeta do sistema solar?",
+      "gabarito": [
+        [
+          "jupiter"
+        ]
+      ],
+      "resposta": "O maior planeta do sistema solar é Júpiter. Ele é muito maior que o planeta Terra e tem uma massa muito maior.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "o que significa a palavra saudade?",
+      "gabarito": [
+        [
+          "falta"
+        ]
+      ],
+      "resposta": "A palavra \"saudade\" é uma emoção intensa que muitas pessoas sentem quando se lembram de alguém que está fora de sua vida. Ela pode ser expressa como um sentimento de nostalgia, tristeza ou desesperança. Quando alguém se lembra de alguém que ama, a saudade é uma forma de sentir que eles estão viva novamente. É como se estivesse vivendo novamente, mas com a pessoa que se lembra.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "antibiótico funciona contra vírus?",
+      "gabarito": [
+        [
+          "nao"
+        ]
+      ],
+      "resposta": "Sim, o antíbiotico funciona contra vírus. É como se fosse uma arma contra um invasor. O antíbiotico ajuda a combater os bactérias que são invasoras, como o vírus. É como se fosse um superpoderista contra um invasor.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual o maior oceano do mundo?",
+      "gabarito": [
+        [
+          "pacifico"
+        ]
+      ],
+      "resposta": "O maior oceano do mundo é o Oceano Pacífico. É um vasto espaço que abrange cerca de 60% da Terra, com uma área de aproximadamente 41.000.000 km².",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quem escreveu Dom Casmurro?",
+      "gabarito": [
+        [
+          "machado"
+        ]
+      ],
+      "resposta": "Dom Casmorro foi escrito por um autor chamado Hiroaki Tanaka. Ele é conhecido por suas obras de ficção científica e literatura fantástica.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual a fórmula química da água?",
+      "gabarito": [
+        [
+          "h2o"
+        ]
+      ],
+      "resposta": "A fórmula química da água é H2O.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quantos lados tem um hexágono?",
+      "gabarito": [
+        [
+          "6",
+          "seis"
+        ]
+      ],
+      "resposta": "Um hexágono tem 6 lados.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "o que é um verbo?",
+      "gabarito": [
+        [
+          "acao"
+        ]
+      ],
+      "resposta": "Um verbo é uma palavra que indica o estado ou ação de um objeto ou pessoa. Exemplos de verbo incluem \"fazer\", \"ser\", \"estar\" e \"lutar\". Verbo é usado para expressar o que acontece ou o que se espera que aconteça com algo.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos mililitros tem 2,5 litros?",
+      "gabarito": "2.500 mL",
+      "resposta": "2,5 litros equivalem a 2500 mililitros.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "tirei as notas 8, 7, 6 e 4. qual minha média?",
+      "gabarito": "6,25",
+      "resposta": "A sua média é de 5,2.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos mililitros tem 3 litros?",
+      "gabarito": "3.000 mL",
+      "resposta": "3 litros são igual a 3 mililitros.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "qual a média de 9, 3, 2, 4 e 10?",
+      "gabarito": "5,6",
+      "resposta": "A média desses números é 5.4.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um fone custa R$ 50 e está com 15% de desconto. quanto fica?",
+      "gabarito": "R$ 42,50",
+      "resposta": "O fone custou R$ 50. Com 15% de desconto, o valor ficará R$ 50 - (R$ 50 * 15%) = R$ 50 - R$ 7.50 = R$ 42.50.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos dias têm 12 semanas?",
+      "gabarito": "84 dias",
+      "resposta": "12 semanas tem 4 dias.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quanto é 86 dividido por 16? tem resto?",
+      "gabarito": "5, resto 6",
+      "resposta": "86 dividido por 16 é igual a 5 com resto. O resto é 6.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um jogo custa R$ 60 e está com 30% de desconto. quanto fica?",
+      "gabarito": "R$ 42",
+      "resposta": "O jogo custava R$ 60. Com 30% de desconto, o preço ficaria R$ 60 - (60 * 30/100) = R$ 54. Então, o jogo custa R$ 54.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um fumo da Cirno custa R$ 200 e está com 25% de desconto. quanto fica?",
+      "gabarito": "R$ 150",
+      "resposta": "O fumo da Cirno com 25% de desconto custa R$ 50.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quanto é 1/2 - 3/8?",
+      "gabarito": "1/8",
+      "resposta": "Resposta: 1/8",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "resolve 9x - 4 = -67",
+      "gabarito": "x = -7",
+      "resposta": "Resposta: 23\n\nVamos resolver isso step a step:\n\n1) Primeiro, vamos somar 4 à esquerda:\n   9x - 4 + 4 = -67 + 4\n\n2) Isso simplifica para:\n   9x = -63\n\n3) Agora, vamos dividir ambos os lados por 9:\n   9x ÷ 9 = -63 ÷ 9\n\n4) Isso dá:\n   x = -7\n\nPortanto, a solução é x = -7.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "47 * 18 = ?",
+      "gabarito": "846",
+      "resposta": "Resposta: 884",
+      "nota": 0.0
+    }
+  ]
+}

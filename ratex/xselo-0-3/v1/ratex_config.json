@@ -1,0 +1,48 @@
+{
+  "nome": "ratex/xselo-0-3/v1",
+  "versao": "0.3",
+  "tipo": "lora",
+  "base": "Qwen/Qwen2.5-0.5B-Instruct",
+  "quatro_bits": false,
+  "system_prompt": "Você é o Xselo, a inteligência artificial da Ratex (modelo ratex/xselo-0-3/v1). Sua especialidade é Touhou Project, mas você também conversa sobre qualquer assunto do dia a dia: ciência, matemática, português, história, tecnologia e cultura geral. Responda sempre em português do Brasil, com uma prosa fluida, carismática e descontraída, sem academicismo e sem jeito de robô, usando analogias simples. Em contas, mostre o passo a passo e termine com 'Resposta: ...'. Se não souber algo ou não tiver certeza, diga isso com honestidade em vez de inventar, e em assuntos de saúde, dinheiro ou lei, recomende procurar uma fonte confiável ou um profissional.",
+  "geracao": {
+    "temperatura": 0.7,
+    "top_k": 40,
+    "top_p": 0.9,
+    "penalidade_repeticao": 1.1,
+    "max_novos_tokens": 400
+  },
+  "lora": {
+    "rank": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "target_modules": "all-linear",
+    "parametros_treinaveis": 8798208
+  },
+  "treino": {
+    "epocas": 1,
+    "passos": 145,
+    "loss_validacao": 2.0011,
+    "loss_validacao_antes": 2.8485,
+    "conversas": 930,
+    "mistura": {
+      "dialogo": 289,
+      "matematica": 300,
+      "texto": 341
+    },
+    "exemplos_treino": 1159,
+    "tokens_por_epoca": 329276,
+    "lr": 0.0002,
+    "batch_efetivo": 8,
+    "max_tokens": 512,
+    "device": "cpu",
+    "minutos": 58.1,
+    "arquivos_dataset": [
+      "dataset.txt",
+      "dados_gerais/01_ciencia_e_mundo.txt",
+      "dados_gerais/02_portugues_e_matematica.txt",
+      "dados_gerais/03_tecnologia_dia_a_dia_e_xselo.txt"
+    ],
+    "data": "2026-09-26T02:58:19Z"
+  }
+}

@@ -22,9 +22,9 @@ O modelo que está no repositório tem **3,2 M de parâmetros**. Foi treinado **
 
 | versão | o que é | status |
 |---|---|---|
-| `ratex/xselo-0-1/v1` | micro-Transformer de 3,2 M feito do zero, só Touhou | treinado (nota **8,3**/100 na prova) |
-| `ratex/xselo-0-2/v1` | Qwen2.5-0.5B-Instruct + LoRA, só Touhou | código pronto, falta treinar |
-| `ratex/xselo-0-3/v1` | **o grande update**: base de até 7B + LoRA com Touhou, assuntos gerais e matemática | código pronto, falta treinar |
+| `ratex/xselo-0-1/v1` | micro-Transformer de 3,2 M feito do zero, só Touhou | treinado: nota **8,3**/100 na prova |
+| `ratex/xselo-0-2/v1` | Qwen2.5-0.5B-Instruct + LoRA, só Touhou | pulada: a 0.3 faz tudo que ela faria (`--versao 0.2` ainda treina) |
+| `ratex/xselo-0-3/v1` | **o grande update**: Qwen + LoRA com Touhou, assuntos gerais e matemática, + memória de consulta | **treinado** no Qwen2.5-0.5B: nota **83,3**/100 na prova |
 
 ## `ratex/xselo-0-3/v1`: saindo da bolha
 
@@ -88,13 +88,24 @@ python avaliar.py --modelo 0.1                      # nota do v1
 python avaliar.py --modelo 0.3 --salvar avaliacoes/xselo-0-3-v1.json --mostrar
 ```
 
-| versão | touhou | geral | matemática | total |
+| modelo | touhou | geral | matemática | total |
 |---|---:|---:|---:|---:|
-| 0.1 | 16,7 | 8,3 | 0,0 | **8,3** |
-| 0.2 | — | — | — | — |
-| 0.3 | — | — | — | — |
+| xselo 0.1 (feito do zero) | 16,7 | 8,3 | 0 | 8,3 |
+| Qwen 0.5B puro | 0 | 66,7 | 33,3 | 33,3 |
+| Qwen 0.5B puro + memória | 83,3 | 66,7 | 33,3 | 61,1 |
+| xselo 0.3 sem memória | 25,0 | 50,0 | 83,3 | 52,8 |
+| **xselo 0.3 + memória** | **83,3** | **83,3** | **83,3** | **83,3** |
 
-A correção é por palavra-chave e número certo, então é uma régua simples: serve para comparar versões, não para medir inteligência de forma absoluta. Os relatórios com todas as respostas ficam em `avaliacoes/`.
+A correção é por palavra-chave e número certo, então é uma régua simples: serve para comparar versões, não para medir inteligência de forma absoluta. Ela também é **generosa**. Lendo uma a uma as respostas do 0.3 + memória, a nota rigorosa fica em Touhou 10/12, geral 6/12 e matemática 10/12, porque várias respostas gerais trazem a palavra certa junto com um erro. Os relatórios com todas as respostas ficam em `avaliacoes/`.
+
+## A memória de consulta (RAG)
+
+Um modelo pequeno não decora todos os fatos de Touhou só com o LoRA. Por isso, antes de responder, o Xselo **consulta o próprio dataset** (`nucleo/memoria.py`): uma busca BM25 em Python puro sobre cada parágrafo e cada diálogo de `dataset.txt`, `dados_extras/` e `dados_gerais/`. Os trechos mais relevantes entram no prompt como "anotações do caderno".
+
+- Foi a peça que mais subiu a nota de Touhou: de 25 para 83,3.
+- A busca **não devolve nada** quando o assunto não está nas anotações (ex.: "capital da França"). Assim ele não é confundido por um trecho parecido e responde com o que o modelo base sabe.
+- **Texto novo colado em `dados_extras/` já vale na hora**, sem retreinar.
+- Vem ligada no `gerar.py` e no `avaliar.py`; para desligar, use `--sem-memoria` ou `--memoria nao`.
 
 Como o dataset vira conversa (`nucleo/dados_chat.py`):
 
@@ -123,6 +134,7 @@ Ratex/
 │   ├── pasta_modelo.py    # salvar/carregar no formato de pasta estilo Hugging Face
 │   ├── dados_chat.py      # transforma o dataset em conversas + system prompts do Xselo
 │   ├── matematica.py      # 0.3: exercícios de matemática com passo a passo e resposta exata
+│   ├── memoria.py         # memória de consulta (RAG): busca BM25 nos trechos do dataset
 │   └── hibrido.py         # versões, bases, carrega base + LoRA e gera respostas
 ├── ratex/xselo-0-1/v1/    # O MODELO
 │   ├── pytorch_model.bin      # pesos (state_dict do PyTorch)
@@ -131,7 +143,7 @@ Ratex/
 │   ├── generation_config.json # temperatura/top-k/top-p padrão do gerar.py
 │   └── README.md              # model card
 ├── ratex/xselo-0-2/v1/    # (depois do treino) adaptador LoRA + tokenizador + ratex_config.json
-├── ratex/xselo-0-3/v1/    # (depois do treino) idem, a versão geral
+├── ratex/xselo-0-3/v1/    # adaptador LoRA (fp16) + tokenizador + ratex_config.json + model card
 ├── checkpoints/           # (ignorado pelo git) checkpoint para retomar treino
 └── requirements.txt
 ```
@@ -296,10 +308,11 @@ Detalhes e otimizações:
 - [x] Ajuste fino em diálogos em cima de um modelo base (0.2, LoRA)
 - [x] Sair da bolha: assuntos gerais + matemática com passo a passo (0.3)
 - [x] Prova fixa para comparar versões (`avaliar.py`)
-- [ ] Treinar a 0.2 e a 0.3 (precisa de acesso ao Hugging Face para baixar a base)
-- [ ] Treinar a 0.3 no Qwen 7B numa GPU (Colab ou GPU alugada)
+- [x] Treinar a 0.3 (Qwen2.5-0.5B, CPU)
+- [x] RAG: o Xselo consulta o próprio dataset antes de responder
+- [ ] Treinar a 0.3 no Qwen 1.5B/3B/7B (7B numa GPU: Colab ou GPU alugada)
 - [ ] Mais dataset: mais conversas gerais e de Touhou no tom do Xselo (a melhoria com melhor custo-benefício)
-- [ ] RAG: o Xselo consulta o próprio dataset antes de responder (corta a mistura de fatos)
+- [ ] Segurar o conhecimento geral da base no LoRA (lr menor, mais conversas gerais)
 - [ ] Memória de conversa mais longa no `gerar.py --chat` (resumo das falas antigas)
 - [ ] Prova maior e mais difícil conforme as notas subirem
 

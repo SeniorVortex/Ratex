@@ -6,6 +6,7 @@ Prova fixa do Xselo: as mesmas perguntas para todas as versões, com nota por ca
     python avaliar.py --modelo 0.1         # o micro-Transformer feito do zero
     python avaliar.py --modelo 0.3 --salvar avaliacoes/0.3.json
     python avaliar.py --mostrar            # imprime cada resposta
+    python avaliar.py --modelo base:qwen-0.5b   # o modelo base puro, sem o LoRA (comparação)
 
 Categorias:
     touhou      fatos de Touhou (palavras-chave esperadas na resposta)
@@ -101,6 +102,8 @@ def nota_conta(resposta: str, esperado: str) -> float:
 
 
 class ModeloHibrido:
+    memoria = None
+
     def __init__(self, pasta, device):
         from nucleo.hibrido import carregar_hibrido
 
@@ -112,7 +115,22 @@ class ModeloHibrido:
 
         return responder(self.modelo, self.tok, [{"role": "user", "content": pergunta}],
                          system_prompt=self.cfg.get("system_prompt"), stream=False, temperatura=0,
-                         max_novos_tokens=200, penalidade_repeticao=1.05)
+                         max_novos_tokens=200, penalidade_repeticao=1.05, memoria=self.memoria)
+
+
+class ModeloBase(ModeloHibrido):
+    """O modelo base sem LoRA, com o mesmo system prompt da 0.3: mostra o que o LoRA acrescentou."""
+
+    def __init__(self, base, device):
+        from nucleo.dados_chat import SYSTEM_PROMPT_03
+        from nucleo.hibrido import carregar_base, escolher_device, resolver_base
+
+        device = escolher_device(device)
+        base, _ = resolver_base(base, device)
+        self.modelo, self.tok = carregar_base(base, device)
+        self.modelo.eval()
+        self.cfg = {"system_prompt": SYSTEM_PROMPT_03}
+        self.nome = f"{base} (sem LoRA)"
 
 
 class ModeloV1:
@@ -134,8 +152,10 @@ def main() -> None:
     from nucleo.hibrido import VERSOES, eh_hibrido, pasta_da_versao, pasta_mais_nova
 
     p = argparse.ArgumentParser(description="Prova fixa do Xselo.")
-    p.add_argument("--modelo", default="auto", help="auto, 0.1, 0.2, 0.3 ou uma pasta")
+    p.add_argument("--modelo", default="auto", help="auto, 0.1, 0.2, 0.3, uma pasta, ou base:<modelo> (base pura)")
     p.add_argument("--device", default="auto")
+    p.add_argument("--memoria", choices=["auto", "sim", "nao"], default="auto",
+                   help="consulta o dataset antes de responder (RAG). auto = sim nos híbridos, não na base pura")
     p.add_argument("--salvar", help="salva as respostas e as notas neste .json")
     p.add_argument("--mostrar", action="store_true", help="imprime cada pergunta e resposta")
     args = p.parse_args()
@@ -149,7 +169,19 @@ def main() -> None:
     else:
         pasta = Path(args.modelo)
     torch.manual_seed(0)
-    modelo = ModeloHibrido(pasta, args.device) if eh_hibrido(pasta) else ModeloV1(pasta)
+    if args.modelo.startswith("base:"):
+        modelo = ModeloBase(args.modelo[len("base:"):], args.device)
+    elif eh_hibrido(pasta):
+        modelo = ModeloHibrido(pasta, args.device)
+    else:
+        modelo = ModeloV1(pasta)
+    if isinstance(modelo, ModeloHibrido):
+        usar = args.memoria == "sim" or (args.memoria == "auto" and not isinstance(modelo, ModeloBase))
+        if usar:
+            from nucleo.memoria import Memoria
+
+            modelo.memoria = Memoria()
+            modelo.nome += " + memória"
     print(f"== prova do {modelo.nome} ({pasta}) ==", file=sys.stderr)
 
     itens = [(cat, q, g, "palavras") for cat, lista in PROVA.items() for q, g in lista]

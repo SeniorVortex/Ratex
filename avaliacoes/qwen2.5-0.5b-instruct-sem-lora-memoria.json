@@ -1,0 +1,371 @@
+{
+  "modelo": "Qwen/Qwen2.5-0.5B-Instruct (sem LoRA) + memória",
+  "notas": {
+    "touhou": 83.3,
+    "geral": 66.7,
+    "matematica": 33.3,
+    "total": 61.1
+  },
+  "respostas": [
+    {
+      "categoria": "touhou",
+      "pergunta": "quem criou touhou?",
+      "gabarito": [
+        [
+          "zun"
+        ]
+      ],
+      "resposta": "Foi o ZUN, apelido do Jun'ya Ota. Ele faz tudo sozinho: programa, desenha, compõe as músicas e escreve a história. A equipe dele se chama Team Shanghai Alice, mas na prática é ele e a cerveja dele.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem é a Reimu Hakurei?",
+      "gabarito": [
+        [
+          "sacerdotisa",
+          "miko"
+        ],
+        [
+          "santuario"
+        ]
+      ],
+      "resposta": "A Reimu Hakurei é a protagonista principal de Touhou. Ela é a sacerdotisa do Santuário Hakurei, um santuário místico onde as pessoas podem encontrar a magia para enfrentar as armadadas da vida. Ela usa uma roupa vermelha e branca, com mangas separadas do corpo e um laçarote vermelho gigante na cabeça.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o poder da Sakuya Izayoi?",
+      "gabarito": [
+        [
+          "tempo"
+        ]
+      ],
+      "resposta": "A Sakuya Izayoi tem o poder de manipular o tempo e o espaço. Ela pode parar o tempo, espalhar facas pelo ar e aumentar o espaço dentro da mansão.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem é a irmã mais nova da Remilia?",
+      "gabarito": [
+        [
+          "flandre"
+        ]
+      ],
+      "resposta": "A irmã mais nova da Remilia é a Flandre Scarlet. Ela tem quase quinhentos anos e é a irmã mais nova da Remilia.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual número é o símbolo da Cirno?",
+      "gabarito": [
+        [
+          "9",
+          "nove"
+        ]
+      ],
+      "resposta": "O símbolo da Cirno é o número nove.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "o que a Marisa faz com os livros da Patchouli?",
+      "gabarito": [
+        [
+          "emprestad",
+          "rouba",
+          "pega"
+        ]
+      ],
+      "resposta": "A Marisa gosta de ler os livros da Patchouli. Ela promete devolver quando morrer, mas não está disposta a deixar os livros para ela.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem causou o incidente da névoa vermelha?",
+      "gabarito": [
+        [
+          "remilia"
+        ]
+      ],
+      "resposta": "O incidente da névoa vermelha foi causado por um grupo de hackers conhecido como \"Gensokyo\".",
+      "nota": 0.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "quem trabalha de jardineira pra Yuyuko?",
+      "gabarito": [
+        [
+          "youmu"
+        ]
+      ],
+      "resposta": "A Youmu Konpaku trabalha como jardineira para Yuyuko, a fantasma da princesa Gensokyo. Ela é metade humana e metade fantasma, e a metade fantasma fica flutuando do lado dela feito uma nuvenzinha.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "a Nazrin é que tipo de youkai?",
+      "gabarito": [
+        [
+          "rata",
+          "rato"
+        ]
+      ],
+      "resposta": "A Nazrin é uma youkai rata do Undefined Fantastic Object. Ela tem características especiais como pequenas olhos redondos, cabelos longos e longos, e pode usar varinhas de radiestesia para encontrar tesouros.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o nome do Touhou 6?",
+      "gabarito": [
+        [
+          "embodiment",
+          "scarlet devil"
+        ]
+      ],
+      "resposta": "O nome do Touhou 6 é \"Embodiment of Scarlet Devil\".",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "o que quer dizer danmaku?",
+      "gabarito": [
+        [
+          "bala",
+          "tiro"
+        ]
+      ],
+      "resposta": "Danmaku é uma palavra japonesa que significa \"corteira de balas\". É o nome do estilo de jogo em que a tela do jogo é cheia de tiros formando padrões. No Touhou, danmaku também é o jeito de jogar em Gensokyo: quem vence a batalha mais rápido ganha respeito.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "touhou",
+      "pergunta": "qual o poder da Yukari Yakumo?",
+      "gabarito": [
+        [
+          "fronteira"
+        ]
+      ],
+      "resposta": "A Yukari Yakumo tem o poder de manipular fronteiras. Ela pode abrir fendas no espaço para mover objetos entre diferentes ambientes, como sonho e realidade, e também entre a vida e a morte. Ela pode fazer isso para atingir qualquer lugar, mesmo quando ela está dormida.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual é a capital da França?",
+      "gabarito": [
+        [
+          "paris"
+        ]
+      ],
+      "resposta": "A capital da França é Paris. É uma cidade muito importante e conhecida por sua arquitetura medieval e sua importância histórica.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quantos planetas existem no sistema solar?",
+      "gabarito": [
+        [
+          "8",
+          "oito"
+        ]
+      ],
+      "resposta": "O sistema solar tem 8 planetas: Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano e Neptuno.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "que gás as plantas liberam na fotossíntese?",
+      "gabarito": [
+        [
+          "oxigenio"
+        ]
+      ],
+      "resposta": "Na fotossíntese, as plantas liberam um gás chamado CO2. Isso é usado por elas para produzir energia e nutrição para seus próprios sistemas.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "em que ano o Brasil ficou independente de Portugal?",
+      "gabarito": [
+        [
+          "1822"
+        ]
+      ],
+      "resposta": "Em 1822, o Brasil foi independente de Portugal.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual o maior planeta do sistema solar?",
+      "gabarito": [
+        [
+          "jupiter"
+        ]
+      ],
+      "resposta": "O maior planeta do sistema solar é Júpiter. Ele é muito grande e possui muitos outros planetas menores, como Mercury e Venus.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "o que significa a palavra saudade?",
+      "gabarito": [
+        [
+          "falta"
+        ]
+      ],
+      "resposta": "Saudade é o aperto no peito quando você sente falta de alguém, de um lugar ou de uma época boa que passou. É uma sensação de tristeza e nostalgia.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "antibiótico funciona contra vírus?",
+      "gabarito": [
+        [
+          "nao"
+        ]
+      ],
+      "resposta": "Sim, antibiótico funciona contra vírus. Ele atua contra bactérias, mas não contra vírus.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual o maior oceano do mundo?",
+      "gabarito": [
+        [
+          "pacifico"
+        ]
+      ],
+      "resposta": "O maior oceano do mundo é o Oceano Atlântico. Ele é o maior do mundo, com uma área de aproximadamente 1.497.000 km².",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quem escreveu Dom Casmurro?",
+      "gabarito": [
+        [
+          "machado"
+        ]
+      ],
+      "resposta": "Dom Casmorro foi escrito por um autor chamado Hiroaki Tanaka. Ele é conhecido por suas obras de ficção científica e literatura fantástica.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "qual a fórmula química da água?",
+      "gabarito": [
+        [
+          "h2o"
+        ]
+      ],
+      "resposta": "A fórmula química da água é H2O.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "quantos lados tem um hexágono?",
+      "gabarito": [
+        [
+          "6",
+          "seis"
+        ]
+      ],
+      "resposta": "Um hexágono tem 6 lados.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "geral",
+      "pergunta": "o que é um verbo?",
+      "gabarito": [
+        [
+          "acao"
+        ]
+      ],
+      "resposta": "Um verbo é uma palavra que muda com o tempo. Por exemplo, \"eu desvio\" é um verbo porque ele mudou de forma no tempo.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos mililitros tem 2,5 litros?",
+      "gabarito": "2.500 mL",
+      "resposta": "2,5 litros equivalem a 2500 mililitros.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "tirei as notas 8, 7, 6 e 4. qual minha média?",
+      "gabarito": "6,25",
+      "resposta": "A sua média é de 5,2.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos mililitros tem 3 litros?",
+      "gabarito": "3.000 mL",
+      "resposta": "3 litros são igual a 3 mililitros.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "qual a média de 9, 3, 2, 4 e 10?",
+      "gabarito": "5,6",
+      "resposta": "A média desses números é 5.4.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um fone custa R$ 50 e está com 15% de desconto. quanto fica?",
+      "gabarito": "R$ 42,50",
+      "resposta": "O fone custou R$ 50. Com 15% de desconto, o valor ficará R$ 50 - (R$ 50 * 15%) = R$ 50 - R$ 7.50 = R$ 42.50.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quantos dias têm 12 semanas?",
+      "gabarito": "84 dias",
+      "resposta": "12 semanas tem 4 dias.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quanto é 86 dividido por 16? tem resto?",
+      "gabarito": "5, resto 6",
+      "resposta": "86 dividido por 16 é igual a 5 com resto. O resto é 6.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um jogo custa R$ 60 e está com 30% de desconto. quanto fica?",
+      "gabarito": "R$ 42",
+      "resposta": "O jogo custava R$ 60. Com 30% de desconto, o preço ficaria R$ 60 - (60 * 30/100) = R$ 54. Então, o jogo custa R$ 54.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "um fumo da Cirno custa R$ 200 e está com 25% de desconto. quanto fica?",
+      "gabarito": "R$ 150",
+      "resposta": "O fumo da Cirno com 25% de desconto custa R$ 50.",
+      "nota": 0.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "quanto é 1/2 - 3/8?",
+      "gabarito": "1/8",
+      "resposta": "Para calcular 1/2 - 3/8, primeiro precisamos entender que 1/2 é igual a 4/8. Então, a diferença entre esses dois números é 4/8 - 3/8 = 1/8.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "resolve 9x - 4 = -67",
+      "gabarito": "x = -7",
+      "resposta": "Resposta: 23\n\nVamos resolver isso step a step:\n\n1) Primeiro, vamos somar 4 à esquerda:\n   9x - 4 + 4 = -67 + 4\n\n2) Isso simplifica para:\n   9x = -63\n\n3) Agora, vamos dividir ambos os lados por 9:\n   9x ÷ 9 = -63 ÷ 9\n\n4) Isso dá:\n   x = -7\n\nPortanto, a solução é x = -7.",
+      "nota": 1.0
+    },
+    {
+      "categoria": "matematica",
+      "pergunta": "47 * 18 = ?",
+      "gabarito": "846",
+      "resposta": "Resposta: 884",
+      "nota": 0.0
+    }
+  ]
+}

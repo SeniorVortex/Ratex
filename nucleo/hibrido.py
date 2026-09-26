@@ -195,13 +195,30 @@ def montar_mensagens(historico: list[dict], system_prompt: str = SYSTEM_PROMPT) 
     return [{"role": "system", "content": system_prompt}, *historico]
 
 
+def consulta_da_conversa(historico: list[dict]) -> str:
+    """O que buscar na memória: a última pergunta, e a anterior junto se a última for curta
+    ("e a irmã dela?")."""
+    perguntas = [m["content"] for m in historico if m["role"] == "user"]
+    if not perguntas:
+        return ""
+    if len(perguntas) > 1 and len(perguntas[-1].split()) <= 5:
+        return f"{perguntas[-2]} {perguntas[-1]}"
+    return perguntas[-1]
+
+
 @torch.no_grad()
 def responder(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PROMPT,
               stream: bool = True, max_novos_tokens: int = 400, temperatura: float = 0.7,
-              top_k: int = 40, top_p: float = 0.9, penalidade_repeticao: float = 1.1, **_) -> str:
-    """Gera a próxima resposta do Xselo para uma conversa [{role, content}, ...]."""
+              top_k: int = 40, top_p: float = 0.9, penalidade_repeticao: float = 1.1,
+              memoria=None, **_) -> str:
+    """Gera a próxima resposta do Xselo para uma conversa [{role, content}, ...].
+    Com `memoria` (nucleo.memoria.Memoria), os trechos relevantes do dataset entram no prompt."""
     from transformers import TextStreamer
 
+    if memoria is not None:
+        from .memoria import prompt_com_memoria
+
+        system_prompt = prompt_com_memoria(system_prompt, memoria.buscar(consulta_da_conversa(historico)))
     texto = tok.apply_chat_template(montar_mensagens(historico, system_prompt), tokenize=False,
                                     add_generation_prompt=True)
     entrada = tok(texto, return_tensors="pt", add_special_tokens=False).to(modelo.device)
