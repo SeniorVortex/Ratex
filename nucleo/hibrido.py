@@ -349,18 +349,10 @@ def buscar_na_conversa(memoria, historico: list[dict]) -> list[str]:
     return trechos
 
 
-@torch.no_grad()
-def responder(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PROMPT,
-              stream: bool = True, max_novos_tokens: int = 400, temperatura: float = 0.7,
-              top_k: int = 40, top_p: float = 0.9, penalidade_repeticao: float = 1.1,
-              memoria=None, busca=None, **_) -> str:
-    """Gera a próxima resposta do Xselo para uma conversa [{role, content}, ...].
-    Uma mensagem pode trazer "imagens": [caminho, link ou imagem PIL, ...] se o modelo enxerga.
-    Com `memoria` (nucleo.memoria.Memoria), os trechos relevantes do dataset entram no prompt.
-    Com `busca` (nucleo.busca.Busca), perguntas sobre coisa atual (ou que começam com /buscar)
-    são pesquisadas na internet antes, e os resultados entram no prompt com as fontes."""
-    from transformers import TextStreamer
-
+def preparar_entrada(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PROMPT,
+                     memoria=None, busca=None) -> dict:
+    """Monta a entrada do modelo: system prompt (+ memória, + busca na internet) e a conversa,
+    com as imagens quando houver. Usado pelo responder e pelo responder_varias."""
     if memoria is not None:
         from .memoria import prompt_com_memoria
 
@@ -382,10 +374,24 @@ def responder(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PR
     if any(m.get("imagens") for m in historico):
         if not enxerga(modelo):
             raise ValueError("este modelo base não enxerga imagens: use uma base como a Gemma 4 ou a Qwen3.5+")
-        entrada = _entrada_com_imagens(modelo, mensagens)
-    else:
-        texto = texto_do_chat(tok, [{"role": m["role"], "content": m["content"]} for m in mensagens], gerar=True)
-        entrada = tok(texto, return_tensors="pt", add_special_tokens=False).to(modelo.device)
+        return _entrada_com_imagens(modelo, mensagens)
+    texto = texto_do_chat(tok, [{"role": m["role"], "content": m["content"]} for m in mensagens], gerar=True)
+    return tok(texto, return_tensors="pt", add_special_tokens=False).to(modelo.device)
+
+
+@torch.no_grad()
+def responder(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PROMPT,
+              stream: bool = True, max_novos_tokens: int = 400, temperatura: float = 0.7,
+              top_k: int = 40, top_p: float = 0.9, penalidade_repeticao: float = 1.1,
+              memoria=None, busca=None, **_) -> str:
+    """Gera a próxima resposta do Xselo para uma conversa [{role, content}, ...].
+    Uma mensagem pode trazer "imagens": [caminho, link ou imagem PIL, ...] se o modelo enxerga.
+    Com `memoria` (nucleo.memoria.Memoria), os trechos relevantes do dataset entram no prompt.
+    Com `busca` (nucleo.busca.Busca), perguntas sobre coisa atual (ou que começam com /buscar)
+    são pesquisadas na internet antes, e os resultados entram no prompt com as fontes."""
+    from transformers import TextStreamer
+
+    entrada = preparar_entrada(modelo, tok, historico, system_prompt, memoria, busca)
     streamer = TextStreamer(tok, skip_prompt=True, skip_special_tokens=True) if stream else None
     amostrar = temperatura > 0
     saida = modelo.generate(
@@ -400,3 +406,22 @@ def responder(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PR
         streamer=streamer,
     )
     return tok.decode(saida[0, entrada["input_ids"].shape[1]:], skip_special_tokens=True).strip()
+
+
+@torch.no_grad()
+def responder_varias(modelo, tok, historico: list[dict], n: int, system_prompt: str = SYSTEM_PROMPT,
+                     max_novos_tokens: int = 500, temperatura: float = 0.9, top_k: int = 50, top_p: float = 0.95,
+                     penalidade_repeticao: float = 1.05, memoria=None) -> list[tuple[str, bool]]:
+    """n respostas diferentes pra mesma conversa, geradas juntas (quase o custo de uma só).
+    Retorna [(texto, terminou)]: terminou=False quando a resposta foi cortada no limite de tokens."""
+    entrada = preparar_entrada(modelo, tok, historico, system_prompt, memoria)
+    saida = modelo.generate(**entrada, max_new_tokens=max_novos_tokens, do_sample=True, temperature=temperatura,
+                            top_k=top_k, top_p=top_p, repetition_penalty=penalidade_repeticao,
+                            num_return_sequences=n, pad_token_id=tok.pad_token_id)
+    fins = modelo.generation_config.eos_token_id
+    fins = set(fins if isinstance(fins, (list, tuple)) else [fins]) | {tok.eos_token_id}
+    respostas = []
+    for seq in saida[:, entrada["input_ids"].shape[1]:].tolist():
+        terminou = any(t in fins for t in seq) or len(seq) < max_novos_tokens
+        respostas.append((tok.decode(seq, skip_special_tokens=True).strip(), terminou))
+    return respostas

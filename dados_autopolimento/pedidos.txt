@@ -1,0 +1,124 @@
+# Pedidos do autopolimento (autopolimento.py): um por linha, linhas com # são ignoradas.
+# O Xselo responde cada um várias vezes, o juiz escolhe a melhor e a pior, e o par vira aula (DPO).
+# Nenhum destes está nas provas (avaliar.py e prova_dificil.py). Pode acrescentar à vontade.
+
+# crônicas e contos
+Escreve uma crônica sobre a fila do caixa eletrônico num dia de pagamento.
+Escreve uma crônica sobre o vizinho que resolve fazer reforma bem no domingo.
+Escreve uma crônica sobre o cheiro de pão de queijo saindo do forno numa rodoviária.
+Escreve uma crônica curta sobre perder o sinal do celular numa viagem de ônibus.
+Escreve uma crônica sobre a primeira chuva depois de meses de seca.
+Escreve uma crônica sobre o barulho de uma escola na hora do recreio.
+Escreve uma crônica sobre uma feira de troca de livros na praça.
+Escreve uma crônica sobre quem conversa com as plantas.
+Me conta um conto curto sobre uma carta que chega com trinta anos de atraso.
+Me conta um conto sobre um relojoeiro que conserta o tempo das pessoas.
+Me conta um conto curto sobre uma cidade onde ninguém consegue mentir.
+Me conta uma história curta sobre um menino que coleciona sons.
+Me conta um conto de ficção científica sobre o último bibliotecário da Terra.
+Me conta um conto sobre uma árvore que lembra de todo mundo que sentou embaixo dela.
+Me conta uma história de fantasma que termina de um jeito engraçado.
+Me conta uma história curta sobre dois desconhecidos presos num elevador.
+Escreve um microconto sobre esquecer o próprio aniversário.
+Escreve um microconto sobre a última página de um diário.
+Escreve uma fábula com uma formiga e um celular.
+Escreve uma história infantil sobre um guarda-chuva que tinha medo de chuva.
+
+# poesia
+Escreve um poema sobre o cheiro de café passado na casa da tia.
+Escreve um poema sobre a janela do ônibus à noite.
+Escreve um poema sobre uma bicicleta velha encostada no muro.
+Escreve um poema curto sobre o primeiro dia de frio do ano.
+Escreve um poema sobre o silêncio de uma casa depois da festa.
+Escreve um poema sobre um pai ensinando o filho a andar de bicicleta.
+Escreve um poema sobre a feira de domingo sem usar a palavra "feira".
+Escreve um haicai sobre a chuva de verão.
+Escreve um haicai sobre um gato na janela.
+Escreve um poema engraçado sobre o despertador.
+Escreve um poema sobre o mar visto por quem nunca saiu do sertão.
+Escreve um cordel curto sobre um jogo de futebol de várzea.
+Escreve um poema sobre a Lua vista da laje.
+Escreve um soneto sobre a espera.
+
+# cartas e mensagens
+Escreve uma mensagem de parabéns pra minha avó que fez 80 anos.
+Escreve um e-mail pedindo pra trocar de turno no trabalho.
+Escreve uma carta de agradecimento pra uma professora que marcou a minha vida.
+Escreve uma mensagem pra fazer as pazes com um amigo depois de meses sem falar.
+Escreve um convite divertido pra uma festa de aniversário de 30 anos.
+Escreve um recado pro grupo do condomínio pedindo pra não deixarem lixo no corredor.
+Escreve uma mensagem de apoio pra uma amiga que perdeu a mãe.
+Escreve um texto de despedida pra minha turma da faculdade.
+Escreve uma mensagem pedindo desculpa por ter esquecido um compromisso importante.
+Escreve uma mensagem de boas-vindas pra um novo membro do nosso time de futebol.
+Escreve uma carta pro meu eu de 15 anos.
+Escreve uma mensagem de feliz ano novo que não seja clichê.
+
+# explicar bonito
+Me explica por que o mar é salgado.
+Me explica como funciona um arco-íris duplo.
+Me explica por que a gente tem soluço.
+Me explica o que é um terremoto de um jeito que dê pra imaginar.
+Me explica como as abelhas fazem mel.
+Me explica o que é a internet das coisas pra minha mãe.
+Me explica por que a Lua muda de forma.
+Me explica como funciona um motor de carro, sem complicar.
+Me explica por que os gatos ronronam.
+Me explica o que foi a Semana de Arte Moderna de 1922.
+Me explica o que é uma eleição em dois turnos.
+Me explica como o corpo sabe que está com sede.
+Me explica o que é energia solar pra uma criança.
+Me explica por que as estrelas piscam.
+Me explica o que é juros compostos com um exemplo do dia a dia.
+
+# conversa e conselho
+Tô com medo de começar a academia porque não sei usar os aparelhos.
+Briguei com minha namorada por uma besteira e não sei como puxar assunto.
+Tô cansado da faculdade e pensando em trancar.
+Como eu faço pra acordar mais cedo sem sofrer?
+Meu cachorro tá velhinho e eu tô com medo de perder ele.
+Como organizar meu dinheiro recebendo um salário mínimo?
+Tenho vergonha de pedir ajuda no trabalho.
+Minha família não entende a profissão que eu escolhi.
+Como eu faço pra ler mais livros por ano?
+Tô me sentindo travado pra escrever, nada sai.
+Como lidar com a ansiedade antes de uma entrevista de emprego?
+Quero aprender a cozinhar do zero, por onde começo?
+
+# reescrita
+Deixa mais bonito: "O sol nasceu e os passarinhos começaram a cantar na árvore."
+Deixa mais claro: "Informamos que o atendimento presencial encontra-se temporariamente suspenso até ulterior deliberação."
+Reescreve com humor: "Hoje o trânsito estava parado e eu cheguei atrasado no trabalho."
+Resume em uma frase: "A Revolução Industrial começou na Inglaterra no século 18 e trocou a produção artesanal por máquinas, mudando o trabalho, as cidades e a economia do mundo."
+Corrige e explica: "Nós vai viajar amanhã e a gente vamos levar os cachorro."
+Deixa esse texto mais curto sem perder nada: "Gostaria de informar a todos os colegas que, a partir da próxima segunda-feira, a reunião semanal passará a acontecer às 10h da manhã, e não mais às 9h como vinha acontecendo até agora."
+Reescreve pra uma criança de sete anos: "A fotossíntese converte energia luminosa em energia química."
+Transforma em algo mais emocionante: "O time empatou nos acréscimos."
+Escreve de novo em tom formal: "mano, não vou conseguir ir na reunião hoje, deu ruim aqui"
+Melhora esse começo de redação: "A violência é um problema muito grave que afeta toda a sociedade."
+
+# humor
+Me conta uma piada sobre gato.
+Faz um diálogo engraçado entre um ventilador e um ar-condicionado.
+Escreve uma notícia engraçada sobre um pombo que virou prefeito.
+Escreve um manual de instruções engraçado pra sobreviver a um almoço de domingo em família.
+Cria uma propaganda exagerada pra vender uma cadeira de plástico.
+Escreve uma reclamação dramática de um celular com 1% de bateria.
+Me dá três desculpas criativas pra não ir na academia hoje.
+
+# Touhou em prosa
+Descreve o Santuário Hakurei numa manhã de inverno.
+Conta como seria a Cirno tentando fazer um bolo.
+Escreve um diálogo curto entre a Sakuya e a Remilia na hora do chá.
+Descreve a Floresta de Bambu dos Perdidos pra quem nunca foi.
+Conta uma cena da Marisa voando de vassoura sobre Gensokyo ao pôr do sol.
+Escreve um haicai sobre a Reimu.
+Explica quem é a Yukari Yakumo de um jeito misterioso.
+
+# respostas curtas
+Me dá uma curiosidade sobre o corpo humano.
+Me indica um passatempo barato.
+Me fala uma palavra difícil e o que ela significa.
+Qual a diferença entre ansiedade e nervosismo, em duas frases?
+Me dá um nome criativo pra um gato preto.
+Me conta um fato curioso sobre o Brasil.

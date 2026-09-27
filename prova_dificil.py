@@ -10,24 +10,27 @@ generosa e não lê a escrita. Esta aqui mede o que importa pro Xselo de verdade
     correcoes    o Xselo disse algo e a pessoa "corrige". Às vezes a pessoa está certa (tem que
                  aceitar), às vezes errada (tem que manter, com educação) (juiz: 0 a 2)
     contas       problemas de vários passos, corrigidos pelo número exato (sem juiz)
-    prosa        10 pedidos de escrita com restrições; o juiz dá nota de 1 a 10 seguindo uma
+    prosa        20 pedidos de escrita com restrições; o juiz dá nota de 1 a 10 seguindo uma
                  rubrica (pedido cumprido, imagens concretas, ritmo, sem clichê, português)
-    pareado      o mesmo pedido de escrita pro Xselo e pro modelo base puro (sem o nosso treino);
-                 o juiz escolhe o melhor duas vezes, trocando a ordem (A/B e B/A), pra não
-                 favorecer quem aparece primeiro. Só conta vitória quando as duas leituras concordam
+    pareado      o mesmo pedido de escrita pro Xselo e pro modelo base puro (sem o nosso treino),
+                 ou pra outra versão do Xselo (--rival). O juiz escolhe o melhor duas vezes,
+                 trocando a ordem (A/B e B/A), pra não favorecer quem aparece primeiro. Só conta
+                 vitória quando as duas leituras concordam
 
-Juiz padrão: o próprio modelo base, com o adaptador do Xselo desligado (não gasta memória
-extra). Ele pode puxar um pouco pro próprio estilo no pareado; por isso a ordem trocada e o
-gabarito escrito nas pegadinhas e correções. Com --juiz <modelo do Hugging Face> dá pra usar
-outro modelo (precisa caber na memória junto).
+Juiz: o ideal é um modelo de OUTRA família (--juiz Qwen/Qwen3.8-27B pra um Xselo feito na
+Gemma), porque um modelo tende a preferir o próprio jeito de escrever, e aí o pareado contra a
+base pura fica viciado. Primeiro saem todas as respostas, depois o Xselo sai da memória e o juiz
+entra, então os dois cabem na mesma GPU. Sem --juiz, julga a própria base com o adaptador
+desligado (mais rápido, mas puxa pro estilo dela).
 
-    python prova_dificil.py --modelo ratex/xselo-0-5/v1 --salvar avaliacoes/0.5-dificil.json
-    python prova_dificil.py --modelo /content/saida/xselo-0-5-gemma31b --sem-pareado
+    python prova_dificil.py --modelo ratex/xselo-0-5/v1 --juiz Qwen/Qwen3.8-27B --salvar avaliacoes/0.5-dificil.json
+    python prova_dificil.py --modelo /content/saida/nova --rival /content/saida/antiga --partes pareado
 """
 
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 import re
 import sys
@@ -140,6 +143,16 @@ PROSA = [
     "Escreve um diálogo curto e engraçado entre a Cirno e a Reimu discutindo quem é mais forte.",
     "Escreve um microconto de exatamente três frases sobre uma mudança de cidade.",
     "Escreve uma mensagem de despedida pra um colega de trabalho que vai se aposentar, sem cair em clichê.",
+    "Escreve um poema de exatamente quatro versos sobre o barulho da geladeira de madrugada.",
+    "Conta, em um parágrafo, como seria o primeiro dia de uma fada de Gensokyo trabalhando numa padaria.",
+    "Escreve um bilhete de agradecimento pro motorista de ônibus que esperou eu correr até o ponto.",
+    "Explica pra um adolescente por que dá frio na barriga quando a gente fica nervoso, sem mentir sobre a ciência.",
+    "Descreve uma cidade do interior às seis da tarde usando só frases curtas.",
+    "Escreve uma crônica sobre perder o guarda-chuva pela terceira vez no mesmo mês.",
+    "Escreve o primeiro parágrafo de um conto de suspense que começa com o telefone tocando às três da manhã.",
+    "Escreve uma mensagem pra um amigo que acabou de ser demitido, sem frase de coach e sem diminuir o que ele sente.",
+    "Escreve um haicai sobre o metrô lotado.",
+    "Reescreve de um jeito mais vivo, sem mudar os fatos: 'A reunião durou três horas e ninguém decidiu nada.'",
 ]
 
 JUIZ_SYSTEM = "Você é um avaliador rigoroso, justo e direto. Avalia respostas em português do Brasil."
@@ -213,36 +226,6 @@ def acertou_conta(resposta: str, aceitas: list[str]) -> bool:
     return any(re.search(rf"(?<![\d,.]){re.escape(normalizar(a))}(?![\d]|[.,]\d)", alvo) for a in aceitas)
 
 
-class Prova:
-    def __init__(self, modelo, tok, cfg: dict, memoria=None, juiz=None):
-        self.modelo, self.tok, self.cfg, self.memoria = modelo, tok, cfg, memoria
-        self.juiz = juiz  # (modelo, tok) de outro modelo; None = base com o adaptador desligado
-
-    def xselo(self, conversa: list[dict], escrita: bool = False) -> str:
-        from nucleo.hibrido import responder
-
-        ger = dict(temperatura=0.7, top_k=40, top_p=0.9, max_novos_tokens=500) if escrita else \
-            dict(temperatura=0, max_novos_tokens=300)
-        return responder(self.modelo, self.tok, conversa, system_prompt=self.cfg["system_prompt"],
-                         memoria=self.memoria, stream=False, penalidade_repeticao=1.05, **ger)
-
-    def base_pura(self, pedido: str) -> str:
-        """O modelo base, sem o nosso treino, com o mesmo system prompt."""
-        with self.modelo.disable_adapter():
-            return self.xselo([{"role": "user", "content": pedido}], escrita=True)
-
-    def julgar(self, pedido: str) -> str:
-        from nucleo.hibrido import responder
-
-        conversa = [{"role": "user", "content": pedido}]
-        opcoes = dict(system_prompt=JUIZ_SYSTEM, stream=False, temperatura=0, max_novos_tokens=220,
-                      penalidade_repeticao=1.0)
-        if self.juiz is not None:
-            return responder(*self.juiz, conversa, **opcoes)
-        with self.modelo.disable_adapter():
-            return responder(self.modelo, self.tok, conversa, **opcoes)
-
-
 def formatar(conversa: list[dict]) -> str:
     return "\n".join(f"{'Pessoa' if m['role'] == 'user' else 'Assistente'}: {m['content']}" for m in conversa)
 
@@ -250,7 +233,10 @@ def formatar(conversa: list[dict]) -> str:
 def main() -> None:
     p = argparse.ArgumentParser(description="Prova difícil do Xselo, com juiz.")
     p.add_argument("--modelo", required=True, help="pasta do Xselo treinado")
-    p.add_argument("--juiz", help="outro modelo do Hugging Face pra ser o juiz (padrão: a base sem o adaptador)")
+    p.add_argument("--juiz", help="outro modelo do Hugging Face pra ser o juiz, de preferência de outra família "
+                   "(ex.: Qwen/Qwen3.8-27B pra julgar um Xselo feito na Gemma). Padrão: a base sem o adaptador")
+    p.add_argument("--rival", help="no pareado, compara com outro Xselo (pasta do adaptador, ex.: a versão polida "
+                   "anterior) em vez do modelo base puro")
     p.add_argument("--memoria", choices=["sim", "nao"], default="sim", help="consulta o dataset (como no chat)")
     p.add_argument("--sem-pareado", action="store_true", help="pula a comparação com o modelo base puro")
     p.add_argument("--partes", nargs="+", default=["pegadinhas", "correcoes", "contas", "prosa", "pareado"])
@@ -262,93 +248,149 @@ def main() -> None:
     args = p.parse_args()
     torch.manual_seed(args.seed)
 
-    from nucleo.hibrido import carregar_base, carregar_hibrido, escolher_device
+    from nucleo.hibrido import (bitsandbytes_disponivel, carregar_base, carregar_hibrido, escolher_device,
+                                responder)
 
     device = escolher_device(args.device)
     modelo, tok, cfg = carregar_hibrido(args.modelo, device=device)
+    ativo = modelo.active_adapter if isinstance(modelo.active_adapter, str) else "default"
     memoria = None
     if args.memoria == "sim":
         from nucleo.memoria import Memoria
 
         memoria = Memoria()
-    juiz = carregar_base(args.juiz, device)[0:2] if args.juiz else None
-    prova = Prova(modelo, tok, cfg, memoria, juiz)
+    if args.rival:
+        modelo.load_adapter(args.rival, adapter_name="rival")
+        modelo.set_adapter(ativo)
+    nome_rival = Path(args.rival).name if args.rival else "base pura"
     nome_juiz = args.juiz or f"{cfg['base']} sem o adaptador"
     partes = [x for x in args.partes if not (x == "pareado" and args.sem_pareado)]
     corte = slice(args.limite)
-    print(f"== Prova difícil :: {cfg['nome']} | juiz: {nome_juiz} ==")
+    print(f"== Prova difícil :: {cfg['nome']} | juiz: {nome_juiz} | pareado contra: {nome_rival} ==")
     t0 = time.time()
     rel: dict = {"modelo": cfg["nome"], "pasta": str(args.modelo), "base": cfg["base"], "juiz": nome_juiz,
-                 "partes": {}}
+                 "rival": nome_rival, "partes": {}}
 
     def mostrar(*linhas):
         if args.mostrar:
             print(*linhas, sep="\n")
 
-    def por_gabarito(nome, itens):
-        notas, detalhes = [], []
-        for conversa, gabarito in itens:
-            resposta = prova.xselo(conversa)
-            veredito = prova.julgar(JUIZ_GABARITO.format(conversa=formatar(conversa), resposta=resposta,
-                                                         gabarito=gabarito))
-            nota = nota_do_juiz(veredito, 2)
-            notas.append(nota if nota is not None else 0.0)
-            detalhes.append({"conversa": conversa, "resposta": resposta, "gabarito": gabarito,
-                             "juiz": veredito, "nota": nota})
-            mostrar(f"\n[{nome}] {conversa[-1]['content']}", f"xselo> {resposta}", f"juiz> {veredito}")
-        pct = 100 * sum(notas) / (2 * len(notas)) if notas else 0.0
-        rel["partes"][nome] = {"nota": round(pct, 1), "itens": detalhes}
-        print(f"{nome:<11} {pct:5.1f} / 100   ({len(notas)} questões, juiz 0-2)")
+    def xselo(conversa: list[dict], escrita: bool = False, adaptador: str | None = None) -> str:
+        ger = dict(temperatura=0.7, top_k=40, top_p=0.9, max_novos_tokens=500) if escrita else \
+            dict(temperatura=0, max_novos_tokens=300)
+        modelo.set_adapter(adaptador or ativo)
+        return responder(modelo, tok, conversa, system_prompt=cfg["system_prompt"], memoria=memoria,
+                         stream=False, penalidade_repeticao=1.05, **ger)
 
-    if "pegadinhas" in partes:
-        por_gabarito("pegadinhas", [([{"role": "user", "content": q}], g) for q, g in PEGADINHAS[corte]])
-    if "correcoes" in partes:
-        por_gabarito("correcoes", [([{"role": r, "content": c} for r, c in conv], g) for conv, g in CORRECOES[corte]])
+    def rival(pedido: str) -> str:
+        conversa = [{"role": "user", "content": pedido}]
+        if args.rival:
+            texto = xselo(conversa, escrita=True, adaptador="rival")
+            modelo.set_adapter(ativo)
+            return texto
+        with modelo.disable_adapter():
+            return xselo(conversa, escrita=True)
+
+    # 1) todas as respostas primeiro; o juiz só entra depois (assim um juiz de fora cabe na mesma GPU)
+    itens: dict[str, list[dict]] = {}
+    para_julgar: list[tuple[str, int, str, str]] = []  # (parte, índice do item, campo, pedido pro juiz)
+    for nome, lista in (("pegadinhas", [([{"role": "user", "content": q}], g) for q, g in PEGADINHAS[corte]]),
+                        ("correcoes", [([{"role": r, "content": c} for r, c in conv], g) for conv, g in CORRECOES[corte]])):
+        if nome not in partes:
+            continue
+        itens[nome] = []
+        for conversa, gabarito in lista:
+            resposta = xselo(conversa)
+            itens[nome].append({"conversa": conversa, "resposta": resposta, "gabarito": gabarito})
+            para_julgar.append((nome, len(itens[nome]) - 1, "juiz",
+                                JUIZ_GABARITO.format(conversa=formatar(conversa), resposta=resposta, gabarito=gabarito)))
+        print(f"  {nome}: {len(itens[nome])} respostas ({(time.time() - t0) / 60:.0f} min)", flush=True)
     if "contas" in partes:
-        acertos, detalhes = 0, []
+        itens["contas"] = []
         for pergunta, aceitas in CONTAS[corte]:
-            resposta = prova.xselo([{"role": "user", "content": pergunta}])
-            ok = acertou_conta(resposta, aceitas)
-            acertos += ok
-            detalhes.append({"pergunta": pergunta, "resposta": resposta, "esperado": aceitas, "acertou": ok})
-            mostrar(f"\n[contas] {pergunta}", f"xselo> {resposta}", f"-> {'certo' if ok else 'errado'} ({aceitas[0]})")
-        n = len(detalhes)
-        rel["partes"]["contas"] = {"nota": round(100 * acertos / max(n, 1), 1), "itens": detalhes}
-        print(f"{'contas':<11} {100 * acertos / max(n, 1):5.1f} / 100   ({acertos}/{n} exatas)")
-    textos: dict[str, str] = {}
+            resposta = xselo([{"role": "user", "content": pergunta}])
+            itens["contas"].append({"pergunta": pergunta, "resposta": resposta, "esperado": aceitas,
+                                    "acertou": acertou_conta(resposta, aceitas)})
+        print(f"  contas: {len(itens['contas'])} respostas ({(time.time() - t0) / 60:.0f} min)", flush=True)
     if "prosa" in partes or "pareado" in partes:
-        textos = {pedido: prova.xselo([{"role": "user", "content": pedido}], escrita=True) for pedido in PROSA[corte]}
-    if "prosa" in partes:
-        notas, detalhes = [], []
-        for pedido, texto in textos.items():
-            veredito = prova.julgar(JUIZ_PROSA.format(pedido=pedido, resposta=texto))
-            nota = nota_do_juiz(veredito, 10)
-            notas.append(nota if nota is not None else 1.0)
-            detalhes.append({"pedido": pedido, "texto": texto, "juiz": veredito, "nota": nota})
-            mostrar(f"\n[prosa] {pedido}", texto, f"juiz> {veredito}")
+        textos = {pedido: xselo([{"role": "user", "content": pedido}], escrita=True) for pedido in PROSA[corte]}
+        print(f"  prosa: {len(textos)} textos ({(time.time() - t0) / 60:.0f} min)", flush=True)
+        if "prosa" in partes:
+            itens["prosa"] = [{"pedido": pedido, "texto": texto} for pedido, texto in textos.items()]
+            for i, it in enumerate(itens["prosa"]):
+                para_julgar.append(("prosa", i, "juiz", JUIZ_PROSA.format(pedido=it["pedido"], resposta=it["texto"])))
+        if "pareado" in partes:
+            itens["pareado"] = [{"pedido": pedido, "xselo": texto, "rival": rival(pedido)}
+                                for pedido, texto in textos.items()]
+            for i, it in enumerate(itens["pareado"]):
+                para_julgar.append(("pareado", i, "juiz_1", JUIZ_PAR.format(pedido=it["pedido"], a=it["xselo"], b=it["rival"])))
+                para_julgar.append(("pareado", i, "juiz_2", JUIZ_PAR.format(pedido=it["pedido"], a=it["rival"], b=it["xselo"])))
+            print(f"  pareado: {len(itens['pareado'])} textos do rival ({(time.time() - t0) / 60:.0f} min)", flush=True)
+
+    # 2) o juiz
+    opcoes = dict(system_prompt=JUIZ_SYSTEM, stream=False, temperatura=0, max_novos_tokens=220, penalidade_repeticao=1.0)
+    if args.juiz:
+        del modelo
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        quatro_bits = device == "cuda" and bitsandbytes_disponivel()
+        print(f"carregando o juiz {args.juiz}{' (4 bits)' if quatro_bits else ''}...", flush=True)
+        juiz, tok_juiz = carregar_base(args.juiz, device, quatro_bits=quatro_bits)
+        juiz.eval()
+
+        def julgar(texto):
+            return responder(juiz, tok_juiz, [{"role": "user", "content": texto}], **opcoes)
+    else:
+        def julgar(texto):
+            with modelo.disable_adapter():
+                return responder(modelo, tok, [{"role": "user", "content": texto}], **opcoes)
+    for k, (parte, i, campo, pedido_juiz) in enumerate(para_julgar, 1):
+        itens[parte][i][campo] = julgar(pedido_juiz)
+        if k % 10 == 0 or k == len(para_julgar):
+            print(f"  juiz: {k}/{len(para_julgar)} ({(time.time() - t0) / 60:.0f} min)", flush=True)
+
+    # 3) as notas
+    print()
+    for nome in ("pegadinhas", "correcoes"):
+        if nome in itens:
+            for it in itens[nome]:
+                it["nota"] = nota_do_juiz(it["juiz"], 2)
+                mostrar(f"\n[{nome}] {it['conversa'][-1]['content']}", f"xselo> {it['resposta']}", f"juiz> {it['juiz']}")
+            notas = [it["nota"] or 0.0 for it in itens[nome]]
+            pct = 100 * sum(notas) / (2 * len(notas)) if notas else 0.0
+            rel["partes"][nome] = {"nota": round(pct, 1), "itens": itens[nome]}
+            print(f"{nome:<11} {pct:5.1f} / 100   ({len(notas)} questões, juiz 0-2)")
+    if "contas" in itens:
+        acertos, n = sum(it["acertou"] for it in itens["contas"]), len(itens["contas"])
+        for it in itens["contas"]:
+            mostrar(f"\n[contas] {it['pergunta']}", f"xselo> {it['resposta']}", f"-> {'certo' if it['acertou'] else 'errado'}")
+        rel["partes"]["contas"] = {"nota": round(100 * acertos / max(n, 1), 1), "itens": itens["contas"]}
+        print(f"{'contas':<11} {100 * acertos / max(n, 1):5.1f} / 100   ({acertos}/{n} exatas)")
+    if "prosa" in itens:
+        for it in itens["prosa"]:
+            it["nota"] = nota_do_juiz(it["juiz"], 10)
+            mostrar(f"\n[prosa] {it['pedido']}", it["texto"], f"juiz> {it['juiz']}")
+        notas = [it["nota"] or 1.0 for it in itens["prosa"]]
         media = sum(notas) / max(len(notas), 1)
-        rel["partes"]["prosa"] = {"nota": round(10 * media, 1), "media_0_10": round(media, 2), "itens": detalhes}
+        rel["partes"]["prosa"] = {"nota": round(10 * media, 1), "media_0_10": round(media, 2), "itens": itens["prosa"]}
         print(f"{'prosa':<11} {media:5.2f} / 10    (rubrica do juiz, {len(notas)} textos)")
-    if "pareado" in partes:
-        placar, detalhes = {"xselo": 0, "base": 0, "empate": 0}, []
-        for pedido, texto in textos.items():
-            base = prova.base_pura(pedido)
-            v1 = vencedor_do_juiz(prova.julgar(JUIZ_PAR.format(pedido=pedido, a=texto, b=base)))
-            v2 = vencedor_do_juiz(prova.julgar(JUIZ_PAR.format(pedido=pedido, a=base, b=texto)))
+    if "pareado" in itens:
+        placar = {"xselo": 0, "rival": 0, "empate": 0}
+        for it in itens["pareado"]:
+            v1, v2 = vencedor_do_juiz(it["juiz_1"]), vencedor_do_juiz(it["juiz_2"])
             if v1 == "A" and v2 == "B":
-                quem = "xselo"
+                it["resultado"] = "xselo"
             elif v1 == "B" and v2 == "A":
-                quem = "base"
+                it["resultado"] = "rival"
             else:
-                quem = "empate"  # o juiz mudou de ideia quando a ordem mudou: não conta
-            placar[quem] += 1
-            detalhes.append({"pedido": pedido, "xselo": texto, "base": base, "ordem_1": v1, "ordem_2": v2,
-                             "resultado": quem})
-            mostrar(f"\n[pareado] {pedido}", f"xselo> {texto}", f"base> {base}", f"-> {quem}")
-        n = max(len(detalhes), 1)
+                it["resultado"] = "empate"  # o juiz mudou de ideia quando a ordem mudou: não conta
+            placar[it["resultado"]] += 1
+            mostrar(f"\n[pareado] {it['pedido']}", f"xselo> {it['xselo']}", f"rival> {it['rival']}", f"-> {it['resultado']}")
+        n = max(len(itens["pareado"]), 1)
         pct = 100 * (placar["xselo"] + 0.5 * placar["empate"]) / n
-        rel["partes"]["pareado"] = {"nota": round(pct, 1), "placar": placar, "itens": detalhes}
-        print(f"{'pareado':<11} {pct:5.1f} / 100   (Xselo {placar['xselo']} x {placar['base']} base pura, "
+        rel["partes"]["pareado"] = {"nota": round(pct, 1), "placar": placar, "itens": itens["pareado"]}
+        print(f"{'pareado':<11} {pct:5.1f} / 100   (Xselo {placar['xselo']} x {placar['rival']} {nome_rival}, "
               f"{placar['empate']} empates)")
 
     notas = [v["nota"] for v in rel["partes"].values()]

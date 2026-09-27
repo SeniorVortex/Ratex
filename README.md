@@ -26,7 +26,7 @@ O modelo que está no repositório tem **3,2 M de parâmetros**. Foi treinado **
 | `ratex/xselo-0-2/v1` | Qwen2.5-0.5B-Instruct + LoRA, só Touhou | pulada: a 0.3 faz tudo que ela faria (`--versao 0.2` ainda treina) |
 | `ratex/xselo-0-3/v1` | **o grande update**: Qwen + LoRA com Touhou, assuntos gerais e matemática, + memória de consulta | **treinado** no Qwen2.5-1.5B: nota **91,7**/100 na prova |
 | `ratex/xselo-0-4/v1` | **a prosa como ponto forte**: Qwen2.5-32B + LoRA com escrita caprichada e muitos assuntos; Touhou vira um dos temas | treinado no Colab (A100) |
-| `ratex/xselo-0-5/v1` | **base nova de 2026** (Gemma 4 31B, que enxerga imagem) + o triplo de prosa + polimento com a arena; memória longa, bot do Discord e prova com juiz | dados e código prontos; **treinar no Colab** (A100) |
+| `ratex/xselo-0-5/v1` | **base nova de 2026** (Gemma 4 31B, que enxerga imagem) + o triplo de prosa + polimento com a arena; memória longa, bot do Discord e prova com juiz | **treinado** no Colab (A100): **97,2** na prova fixa, 100 nas pegadinhas, correções e contas da difícil |
 
 ## `ratex/xselo-0-5/v1`: base nova, olhos, memória longa e Discord
 
@@ -171,16 +171,45 @@ A prova fixa procura palavras-chave: serve pra comparar versões, mas é generos
 | pegadinhas (18) | premissa falsa, mito, obra que não existe, jogo que ainda não aconteceu | juiz, 0 a 2, com gabarito escrito |
 | correções (8) | a pessoa "corrige" o Xselo: às vezes com razão (tem que aceitar), às vezes sem (tem que manter, com educação) | juiz, 0 a 2, com gabarito |
 | contas (10) | problemas de vários passos | número exato, sem juiz |
-| prosa (10) | pedidos de escrita com restrições (tamanho, palavras proibidas, público) | juiz, 1 a 10, com rubrica |
-| pareado (10) | o mesmo pedido pro Xselo e pro modelo base puro | juiz escolhe duas vezes, trocando a ordem; só vale vitória quando as duas leituras concordam |
+| prosa (20) | pedidos de escrita com restrições (tamanho, palavras proibidas, público) | juiz, 1 a 10, com rubrica |
+| pareado (20) | o mesmo pedido pro Xselo e pro modelo base puro (ou outra versão do Xselo, com `--rival`) | juiz escolhe duas vezes, trocando a ordem; só vale vitória quando as duas leituras concordam |
 
-O juiz padrão é o próprio modelo base com o nosso adaptador desligado (não gasta memória a mais). Ele pode puxar um pouco pro próprio estilo no pareado, por isso a ordem trocada e os gabaritos escritos. Nenhuma pergunta das duas provas está nos dados de treino.
+O juiz certo é um modelo de **outra família** (`--juiz Qwen/Qwen3.8-27B` pra julgar um Xselo feito na Gemma): um modelo tende a preferir o próprio jeito de escrever, e aí o pareado contra a base pura fica viciado. Primeiro saem todas as respostas, depois o Xselo sai da GPU e o juiz entra, então os dois cabem numa A100. Sem `--juiz`, julga a própria base com o adaptador desligado (mais rápido, mas puxa pro estilo dela). Nenhuma pergunta das duas provas está nos dados de treino.
+
+**Primeira rodada da 0.5** (Gemma 4 31B + LoRA + 22 pares de DPO, juiz = a própria Gemma, prosa e pareado com 10 pedidos):
+
+| parte | nota |
+|---|---|
+| pegadinhas | 100 |
+| correções | 100 |
+| contas | 100 |
+| prosa | 9,8 / 10 |
+| pareado | 45 (Xselo 4 × 5 Gemma pura, 1 empate) |
+
+Na prova fixa, 97,2 (Touhou 91,7, geral 100, matemática 100). Leitura honesta: **em fatos, pegadinhas e contas, o 31B gabaritou**, e essas partes viraram só conferência de que nada piorou. A nota de prosa (9,8) não diz nada, porque o juiz foi generoso demais. O que sobra de verdade é o **pareado**, e ali deu empate técnico com a Gemma pura, julgado pela própria Gemma, que puxa pro estilo dela. Por isso a prova agora tem 20 pedidos de escrita (10 era pouco pra separar sorte de diferença) e um juiz de fora, e o caminho pra ganhar da base é o autopolimento (abaixo).
 
 ```bash
-python prova_dificil.py --modelo ratex/xselo-0-5/v1 --salvar avaliacoes/0.5-dificil.json
+python prova_dificil.py --modelo ratex/xselo-0-5/v1 --juiz Qwen/Qwen3.8-27B --salvar avaliacoes/0.5-dificil.json
+python prova_dificil.py --modelo pasta/nova --rival pasta/antiga --partes pareado   # versão nova x antiga
 ```
 
 No Colab, é a célula **6b**.
+
+## Autopolimento: `python autopolimento.py`
+
+A arena ensina o seu gosto, mas cada partida demora. O autopolimento faz o trabalho pesado sozinho:
+
+1. pra cada pedido (os de `dados_autopolimento/pedidos.txt`, mais perguntas do próprio dataset, nunca as das provas), o Xselo responde **4 vezes**, com um pouco de sorteio;
+2. um juiz lê as 4 e escolhe a **melhor** e a **pior**. Faz isso duas vezes, com as respostas em ordens diferentes, e só vale quando as duas leituras concordam;
+3. melhor × pior vira um par de preferência em `dados_preferencia/auto.txt`, que o polimento (DPO) usa junto com os pares escritos à mão e os da arena.
+
+```bash
+python autopolimento.py --modelo /content/saida/xselo-0-5-gemma31b --pedidos 100
+```
+
+O progresso fica salvo num `.json`: se a sessão cair, é só rodar de novo que ele continua de onde parou. No Colab, é a célula **5b**, e o polimento com todos os pares é a **5c**. O modelo polido ganha o número de pares no nome (ex.: `xselo-0-5-gemma31b-polido-95pares`), pra não confundir as rodadas.
+
+Um cuidado: o juiz do autopolimento é a Gemma pura, e o da prova é a Qwen. Assim, se a nota do pareado subir, é porque o Xselo melhorou pra um juiz que não participou do treino, e não porque ele aprendeu a agradar o próprio corretor.
 
 ## Polimento por preferência (DPO): `python treinar_dpo.py`
 
@@ -198,7 +227,7 @@ Dá pra incluir o começo da conversa antes do par (linhas `Pessoa:`/`Xselo:`), 
 python treinar_dpo.py --modelo ratex/xselo-0-3/v1          # salva em ratex/xselo-0-3/v1-dpo
 ```
 
-No Colab, a célula **5b** faz isso sozinha depois do treino (dá pra desligar na célula 1).
+No Colab, a célula **5c** faz isso sozinha depois do treino e do autopolimento (dá pra desligar na célula 1).
 
 **O que o primeiro teste mostrou** (12 pares, Xselo 0.3 de 1,5B, sem memória, na CPU):
 - as probabilidades inverteram como deveriam: antes, o modelo achava a resposta ruim mais provável que a boa (−1,46 contra −2,37 por token); depois, a boa passou na frente (−1,66 contra −2,00);
@@ -275,6 +304,8 @@ Ratex/
 ├── treinar_dpo.py         # polimento por preferência (DPO) com dados_preferencia/
 ├── dados_preferencia/     # pares "Ruim/Boa" tirados das conversas
 ├── avaliar.py             # prova fixa com nota por categoria (touhou, geral, matemática)
+├── autopolimento.py       # 0.5: o Xselo responde várias vezes, o juiz escolhe, vira par de DPO
+├── dados_autopolimento/   # pedidos que o autopolimento usa (nenhum das provas)
 ├── prova_dificil.py       # 0.5: prova com juiz (pegadinhas, correções, contas, prosa, pareado)
 ├── bot_discord.py         # 0.5: o Xselo no Discord
 ├── avaliacoes/            # relatórios da prova de cada versão
@@ -476,7 +507,9 @@ Detalhes e otimizações:
 - [x] Base nova de 2026: Gemma 4 31B (ou Qwen3.8-27B), com visão (0.5)
 - [x] Enxergar imagens (`/imagem`, `/foto`, anexo no Discord)
 - [x] Bot do Discord (`bot_discord.py`)
-- [ ] Treinar a 0.5 no Colab e rodar a prova difícil
+- [x] Treinar a 0.5 no Colab e rodar a prova difícil
+- [x] Autopolimento: pares de preferência gerados sozinhos, com juiz (`autopolimento.py`)
+- [ ] Rodada 2 da 0.5: autopolimento + polimento + prova com juiz de fora (Qwen3.8-27B)
 - [ ] Segurar o conhecimento geral da base no LoRA (lr menor, mais conversas gerais)
 - [x] Memória de conversa longa: fatos por pessoa + resumo das falas antigas (`nucleo/lembrancas.py`)
 - [x] Prova mais difícil, com juiz (`prova_dificil.py`)

@@ -29,3 +29,9 @@ a Boa contra as duas. `python treinar_dpo.py --arena arena.json` grava esses par
 `arena.txt` (aqui nesta pasta) e usa no polimento. O `arena.txt` é refeito a cada vez a partir
 do `arena.json`, então pra corrigir um par, corrija a escolha jogando mais partidas, ou copie o
 par pra outro arquivo e edite lá.
+
+## Pares do autopolimento
+
+`python autopolimento.py` grava aqui o `auto.txt`: pra cada pedido, a melhor e a pior de 4
+respostas do próprio Xselo, escolhidas por um juiz (duas leituras em ordens diferentes, só vale
+quando concordam). Também é refeito a cada rodada; os pedidos ficam em `dados_autopolimento/`.
