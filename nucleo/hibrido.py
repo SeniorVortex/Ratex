@@ -30,7 +30,11 @@ import re
 import sys
 from pathlib import Path
 
-import torch
+# menos memória "perdida" em pedaços soltos na GPU (precisa estar definido antes da 1ª alocação)
+os.environ.setdefault("PYTORCH_ALLOC_CONF", "expandable_segments:True")
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
+
+import torch  # noqa: E402
 
 from .dados_chat import SYSTEM_PROMPT, SYSTEM_PROMPT_03, SYSTEM_PROMPT_04, SYSTEM_PROMPT_05
 
@@ -224,7 +228,10 @@ def carregar_base(base: str, device: str, quatro_bits: bool = False):
     # mais de uma GPU (ex.: 2x T4 no Kaggle): o modelo é dividido entre elas, com folga pra conversa
     if device == "cuda" and torch.cuda.device_count() > 1:
         gb = [torch.cuda.get_device_properties(i).total_memory / 2**30 for i in range(torch.cuda.device_count())]
-        extra = {"device_map": "auto", "max_memory": {i: f"{int(g - 2.5)}GiB" for i, g in enumerate(gb)}}
+        # a 1ª GPU guarda o vocabulário (262 mil tokens na Gemma) e é onde a resposta sai: precisa de mais folga
+        memoria_max = {i: f"{max(1, int(g - (4.5 if i == 0 else 2.0)))}GiB" for i, g in enumerate(gb)}
+        memoria_max["cpu"] = "24GiB"  # se mesmo assim não couber, o resto vai pra RAM (mais lento, mas não quebra)
+        extra = {"device_map": "auto", "max_memory": memoria_max}
     if quatro_bits:
         if not bitsandbytes_disponivel():
             raise SystemExit("--4bit precisa de GPU NVIDIA e do pacote bitsandbytes (pip install bitsandbytes)")
@@ -234,7 +241,8 @@ def carregar_base(base: str, device: str, quatro_bits: bool = False):
             "quantization_config": BitsAndBytesConfig(
                 load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_use_double_quant=True,
                 bnb_4bit_compute_dtype=dtype,
-                llm_int8_skip_modules=_FORA_DO_4BIT),
+                llm_int8_skip_modules=_FORA_DO_4BIT,
+                llm_int8_enable_fp32_cpu_offload="max_memory" in extra),
             "device_map": extra.get("device_map", {"": 0}),
             **({"max_memory": extra["max_memory"]} if "max_memory" in extra else {}),
         }
@@ -253,7 +261,33 @@ def carregar_base(base: str, device: str, quatro_bits: bool = False):
         tok.pad_token = tok.eos_token
     if not hasattr(modelo, "hf_device_map"):  # quem foi espalhado pelas GPUs (ou em 4 bits) já está no lugar
         modelo = modelo.to(device)
+    elif os.environ.get("XSELO_VISAO_NA_CPU") == "1":
+        try:
+            movidos = _visao_na_cpu(modelo)
+            if movidos:
+                print(f"(olhos do modelo na CPU pra sobrar GPU pra conversa: {', '.join(movidos)})", file=sys.stderr)
+        except Exception as erro:  # é só economia: se não der, segue com tudo na GPU
+            print(f"(não deu pra mover a visão pra CPU: {erro})", file=sys.stderr)
     return modelo, tok
+
+
+def _visao_na_cpu(modelo) -> list[str]:
+    """Nas GPUs pequenas (2x T4), a parte que enxerga imagem (~2 GB em float32) vai pra CPU: sobra
+    memória pra conversa e só as fotos ficam um pouco mais lentas. O gancho do accelerate leva a
+    imagem pra CPU e devolve o resultado pra GPU sozinho."""
+    from accelerate.hooks import AlignDevicesHook, add_hook_to_module, remove_hook_from_submodules
+
+    movidos: list[str] = []
+    for nome, modulo in modelo.named_modules():
+        if nome.split(".")[-1] in ("vision_tower", "visual", "embed_vision", "audio_tower", "embed_audio") \
+                and not any(nome.startswith(m + ".") for m in movidos):
+            remove_hook_from_submodules(modulo)
+            modulo.to("cpu", dtype=torch.float32)
+            add_hook_to_module(modulo, AlignDevicesHook(execution_device="cpu", io_same_device=True))
+            movidos.append(nome)
+    if movidos and torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    return movidos
 
 
 def carregar_hibrido(pasta=None, device: str = "auto", base: str | None = None):

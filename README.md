@@ -201,7 +201,7 @@ O Kaggle (do Google) dá ~30h de GPU por semana de graça: duas T4 que, juntas, 
 
 ### Usar no Colab (sem treinar)
 
-[`notebooks/usar_no_colab.ipynb`](https://colab.research.google.com/github/SeniorVortex/Ratex/blob/main/notebooks/usar_no_colab.ipynb) só liga o Xselo já treinado: acha o mais polido no seu Drive (ou recebe o `.zip`) e oferece os mesmos modos do Kaggle (`api`, `chat`, `discord`). Na A100 responde bem mais rápido e aguenta ~32 mil tokens de contexto, mas gasta unidades do Colab; o Kaggle é de graça.
+[`notebooks/usar_no_colab.ipynb`](https://colab.research.google.com/github/SeniorVortex/Ratex/blob/main/notebooks/usar_no_colab.ipynb) só liga o Xselo já treinado: acha o mais polido no seu Drive (ou recebe o `.zip`) e oferece os mesmos modos do Kaggle (`api`, `chat`, `discord`). Na A100 responde bem mais rápido e aguenta ~32 mil tokens de contexto (no Kaggle, ~4 mil), mas gasta unidades do Colab; o Kaggle é de graça.
 
 ### API compatível com OpenAI (pra usar em sites e apps)
 

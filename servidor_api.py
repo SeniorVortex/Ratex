@@ -189,7 +189,14 @@ def criar_app(modelo, tok, cfg: dict, chave: str, nome_modelo: str | None = None
                         laco.call_soon_threadsafe(fila.put_nowait, ("texto", pedaco))
                 laco.call_soon_threadsafe(fila.put_nowait, ("fim", "stop"))
             except Exception as erro:
-                laco.call_soon_threadsafe(fila.put_nowait, ("erro", str(erro)))
+                mensagem = str(erro)
+                if "out of memory" in mensagem.lower():
+                    import torch
+
+                    torch.cuda.empty_cache()  # libera o que sobrou, pra próxima mensagem funcionar
+                    mensagem = ("a conversa ficou grande demais pra memória da GPU. Diminua o Context Size no site "
+                                "(ou o CONTEXTO no notebook) e mande de novo")
+                laco.call_soon_threadsafe(fila.put_nowait, ("erro", mensagem))
 
         threading.Thread(target=trabalhar, daemon=True).start()
 
