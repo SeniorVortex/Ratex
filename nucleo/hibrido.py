@@ -419,6 +419,47 @@ def responder(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PR
     return tok.decode(saida[0, entrada["input_ids"].shape[1]:], skip_special_tokens=True).strip()
 
 
+def responder_em_partes(modelo, tok, historico: list[dict], system_prompt: str = SYSTEM_PROMPT,
+                        max_novos_tokens: int = 400, temperatura: float = 0.7, top_k: int = 40, top_p: float = 0.9,
+                        penalidade_repeticao: float = 1.05, memoria=None, busca=None, parar=None, **_):
+    """Igual ao responder, mas entrega a resposta aos pedaços, enquanto o modelo escreve
+    (pra API e pra sites mostrarem o texto aparecendo). `parar` (threading.Event) interrompe."""
+    import threading
+
+    from transformers import StoppingCriteria, StoppingCriteriaList, TextIteratorStreamer
+
+    class _Parar(StoppingCriteria):
+        def __call__(self, input_ids, scores, **kwargs):
+            return bool(parar is not None and parar.is_set())
+
+    entrada = preparar_entrada(modelo, tok, historico, system_prompt, memoria, busca)
+    streamer = TextIteratorStreamer(tok, skip_prompt=True, skip_special_tokens=True, timeout=600)
+    amostrar = temperatura > 0
+    opcoes = dict(**entrada, max_new_tokens=max_novos_tokens, do_sample=amostrar,
+                  temperature=temperatura if amostrar else None, top_k=top_k if amostrar else None,
+                  top_p=top_p if amostrar else None, repetition_penalty=penalidade_repeticao,
+                  pad_token_id=tok.pad_token_id, streamer=streamer,
+                  stopping_criteria=StoppingCriteriaList([_Parar()]))
+    erro: list[BaseException] = []
+
+    def gerar():
+        try:
+            with torch.no_grad():
+                modelo.generate(**opcoes)
+        except BaseException as e:  # o erro aparece pra quem está lendo, não some na thread
+            erro.append(e)
+            streamer.end()
+
+    fio = threading.Thread(target=gerar, daemon=True)
+    fio.start()
+    for pedaco in streamer:
+        if pedaco:
+            yield pedaco
+    fio.join()
+    if erro:
+        raise erro[0]
+
+
 @torch.no_grad()
 def responder_varias(modelo, tok, historico: list[dict], n: int, system_prompt: str = SYSTEM_PROMPT,
                      max_novos_tokens: int = 500, temperatura: float = 0.9, top_k: int = 50, top_p: float = 0.95,

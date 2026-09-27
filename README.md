@@ -199,6 +199,15 @@ No Colab, é a célula **6b**.
 
 O Kaggle (do Google) dá ~30h de GPU por semana de graça: duas T4 que, juntas, seguram o Xselo 31B em 4 bits (o modelo é dividido entre as duas placas sozinho). É mais devagar que a A100 do Colab, mas não gasta unidade. O notebook [`notebooks/xselo_no_kaggle.ipynb`](notebooks/xselo_no_kaggle.ipynb) traz o passo a passo: subir o `.zip` do Xselo como dataset privado, anexar a Gemma 4 pelos *Models* do Kaggle (sem baixar 60 GB), escolher **GPU T4 x2** e dar *Run All*. Tem conversa com memória, busca, `/foto <link>` e o bot do Discord.
 
+### API compatível com OpenAI (pra usar em sites e apps)
+
+`servidor_api.py` põe o Xselo atrás de uma API igual à da OpenAI (`/v1/models` e `/v1/chat/completions`, com streaming, `temperature`, `top_p`, `max_tokens`, `stop` e imagens por `image_url`), protegida por uma chave, e abre um link público grátis pelo túnel rápido da Cloudflare (`trycloudflare.com`, sem conta). Aí qualquer site ou app que aceite *OpenAI compatible* (SillyTavern, Open WebUI, Janitor AI, extensões...) conversa com ele: URL base `https://....trycloudflare.com/v1`, a API key e o modelo `xselo-0.5`. No Kaggle, é o `MODO = "api"` (o padrão). O link muda toda vez que liga, e só funciona enquanto a sessão estiver aberta.
+
+```bash
+python servidor_api.py --modelo ratex/xselo-0-5/v1 --tunel                # imprime URL, chave e modelo
+python servidor_api.py --modelo ... --chave minha-chave --system substituir  # o system do site manda (personagens)
+```
+
 Nas T4, a Gemma roda com a parte que não é 4 bits em float32 (`XSELO_DTYPE=float32`), porque em float16 ela pode estourar os números; nelas não existe bf16 de verdade.
 
 ## Autopolimento: `python autopolimento.py`
@@ -314,6 +323,7 @@ Ratex/
 ├── dados_autopolimento/   # pedidos que o autopolimento usa (nenhum das provas)
 ├── prova_dificil.py       # 0.5: prova com juiz (pegadinhas, correções, contas, prosa, pareado)
 ├── bot_discord.py         # 0.5: o Xselo no Discord
+├── servidor_api.py        # 0.5: API compatível com OpenAI + link público (Cloudflare)
 ├── avaliacoes/            # relatórios da prova de cada versão
 ├── nucleo/
 │   ├── modelo.py          # arquitetura Transformer (embeddings, atenção, FFN, LayerNorm, logits)
