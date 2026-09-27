@@ -199,6 +199,10 @@ No Colab, é a célula **6b**.
 
 O Kaggle (do Google) dá ~30h de GPU por semana de graça: duas T4 que, juntas, seguram o Xselo 31B em 4 bits (o modelo é dividido entre as duas placas sozinho). É mais devagar que a A100 do Colab, mas não gasta unidade. O notebook [`notebooks/xselo_no_kaggle.ipynb`](notebooks/xselo_no_kaggle.ipynb) traz o passo a passo: subir o `.zip` do Xselo como dataset privado, anexar a Gemma 4 pelos *Models* do Kaggle (sem baixar 60 GB), escolher **GPU T4 x2** e dar *Run All*. Tem conversa com memória, busca, `/foto <link>` e o bot do Discord.
 
+### Usar no Colab (sem treinar)
+
+[`notebooks/usar_no_colab.ipynb`](https://colab.research.google.com/github/SeniorVortex/Ratex/blob/main/notebooks/usar_no_colab.ipynb) só liga o Xselo já treinado: acha o mais polido no seu Drive (ou recebe o `.zip`) e oferece os mesmos modos do Kaggle (`api`, `chat`, `discord`). Na A100 responde bem mais rápido e aguenta ~32 mil tokens de contexto, mas gasta unidades do Colab; o Kaggle é de graça.
+
 ### API compatível com OpenAI (pra usar em sites e apps)
 
 `servidor_api.py` põe o Xselo atrás de uma API igual à da OpenAI (`/v1/models` e `/v1/chat/completions`, com streaming, `temperature`, `top_p`, `max_tokens`, `stop` e imagens por `image_url`), protegida por uma chave, e abre um link público grátis pelo túnel rápido da Cloudflare (`trycloudflare.com`, sem conta). Aí qualquer site ou app que aceite *OpenAI compatible* (SillyTavern, Open WebUI, Janitor AI, extensões...) conversa com ele: URL base `https://....trycloudflare.com/v1`, a API key e o modelo `xselo-0.5`. No Kaggle, é o `MODO = "api"` (o padrão). O link muda toda vez que liga, e só funciona enquanto a sessão estiver aberta.
