@@ -100,8 +100,23 @@ def converter_mensagens(mensagens: list[dict]) -> tuple[str, list[dict]]:
     return "\n\n".join(s for s in system if s), historico
 
 
+def cortar_contexto(tok, system: str, historico: list[dict], limite: int) -> list[dict]:
+    """Tira as mensagens mais antigas até a conversa caber em `limite` tokens (o system fica).
+    Sites como o SillyTavern mandam o histórico inteiro; sem isso, conversa longa estoura a GPU."""
+    def tamanho(m):
+        return len(tok(m["content"], add_special_tokens=False)["input_ids"]) + 8 + 300 * len(m.get("imagens") or [])
+    total = len(tok(system, add_special_tokens=False)["input_ids"]) + sum(tamanho(m) for m in historico)
+    historico = list(historico)
+    while total > limite and len(historico) > 1:
+        total -= tamanho(historico.pop(0))
+        if historico and historico[0]["role"] == "assistant":  # a conversa tem que começar pela pessoa
+            total -= tamanho(historico.pop(0))
+    return historico
+
+
 def criar_app(modelo, tok, cfg: dict, chave: str, nome_modelo: str | None = None, memoria=None, busca=None,
-              modo_system: str = "juntar", max_tokens_teto: int = 1024):
+              modo_system: str = "juntar", max_tokens_teto: int = 1024, contexto: int = 16384):
+    """contexto: máximo de tokens da conversa que entra (o resto, mais antigo, é cortado)."""
     from fastapi import FastAPI, HTTPException, Request
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import JSONResponse, StreamingResponse
@@ -148,6 +163,8 @@ def criar_app(modelo, tok, cfg: dict, chave: str, nome_modelo: str | None = None
         limite = pedido.get("max_completion_tokens") or pedido.get("max_tokens")
         if limite:
             ger["max_novos_tokens"] = max(1, min(int(limite), max_tokens_teto))
+        # sobra espaço pra resposta e pra memória/busca que o Xselo acrescenta ao system
+        historico = cortar_contexto(tok, system, historico, contexto - ger.get("max_novos_tokens", 400) - 600)
         paradas = pedido.get("stop") or []
         paradas = [paradas] if isinstance(paradas, str) else [p for p in paradas if p]
         ident, criado = f"chatcmpl-{uuid.uuid4().hex[:24]}", int(time.time())
@@ -288,6 +305,8 @@ def main() -> None:
     p.add_argument("--nome", help="nome do modelo na API (padrão: xselo-<versão>)")
     p.add_argument("--porta", type=int, default=8000)
     p.add_argument("--tunel", action="store_true", help="abre um link público grátis (trycloudflare.com)")
+    p.add_argument("--contexto", type=int, default=16384,
+                   help="máximo de tokens da conversa (o mais antigo é cortado); nas T4 do Kaggle use ~8000")
     p.add_argument("--system", choices=["juntar", "substituir"], default="juntar",
                    help="o system prompt do site entra junto com o do Xselo, ou no lugar dele")
     p.add_argument("--busca", nargs="?", const="auto", metavar="URL", help="liga a busca na internet (SearXNG)")
@@ -310,7 +329,7 @@ def main() -> None:
 
         busca = Busca(iniciar_searxng() if args.busca == "auto" else args.busca)
     chave = args.chave or "xselo-" + secrets.token_urlsafe(18)
-    app = criar_app(modelo, tok, cfg, chave, args.nome, memoria, busca, args.system)
+    app = criar_app(modelo, tok, cfg, chave, args.nome, memoria, busca, args.system, contexto=args.contexto)
     ligar_servidor(app, args.porta)
     url = abrir_tunel(args.porta) if args.tunel else f"http://127.0.0.1:{args.porta}"
     nome = args.nome or f"xselo-{cfg.get('versao', '')}"
