@@ -195,6 +195,12 @@ python prova_dificil.py --modelo pasta/nova --rival pasta/antiga --partes paread
 
 No Colab, é a célula **6b**.
 
+## Rodar de graça no Kaggle
+
+O Kaggle (do Google) dá ~30h de GPU por semana de graça: duas T4 que, juntas, seguram o Xselo 31B em 4 bits (o modelo é dividido entre as duas placas sozinho). É mais devagar que a A100 do Colab, mas não gasta unidade. O notebook [`notebooks/xselo_no_kaggle.ipynb`](notebooks/xselo_no_kaggle.ipynb) traz o passo a passo: subir o `.zip` do Xselo como dataset privado, anexar a Gemma 4 pelos *Models* do Kaggle (sem baixar 60 GB), escolher **GPU T4 x2** e dar *Run All*. Tem conversa com memória, busca, `/foto <link>` e o bot do Discord.
+
+Nas T4, a Gemma roda com a parte que não é 4 bits em float32 (`XSELO_DTYPE=float32`), porque em float16 ela pode estourar os números; nelas não existe bf16 de verdade.
+
 ## Autopolimento: `python autopolimento.py`
 
 A arena ensina o seu gosto, mas cada partida demora. O autopolimento faz o trabalho pesado sozinho:
@@ -320,6 +326,7 @@ Ratex/
 │   ├── arena.py           # arena às cegas com ranking Elo
 │   ├── preferencias.py    # pares de dados_preferencia/ e da arena
 │   ├── lembrancas.py      # 0.5: memória de conversa longa (fatos por pessoa + resumo)
+│   ├── nuvem.py           # acha o Xselo e a base nos arquivos do Kaggle
 │   └── hibrido.py         # versões, bases, carrega base + LoRA e gera respostas
 ├── ratex/xselo-0-1/v1/    # O MODELO
 │   ├── pytorch_model.bin      # pesos (state_dict do PyTorch)

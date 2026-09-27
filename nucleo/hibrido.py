@@ -214,11 +214,17 @@ def carregar_base(base: str, device: str, quatro_bits: bool = False):
     except ImportError as e:  # pragma: no cover
         raise SystemExit("o xselo híbrido precisa de: pip install -U transformers peft accelerate safetensors") from e
     base = BASES.get(base, base)
-    bf16 = device == "cuda" and torch.cuda.is_bf16_supported()
+    # bf16 só nas GPUs que fazem bf16 de verdade (A100, L4, RTX 30/40/50); nas antigas (T4 do Kaggle/Colab
+    # grátis) fica float16, e XSELO_DTYPE=float32 é o modo seguro pra Gemma nelas (em float16 ela pode estourar)
+    bf16 = device == "cuda" and torch.cuda.get_device_capability(0)[0] >= 8
     dtype = torch.bfloat16 if bf16 else (torch.float16 if device in ("cuda", "mps") else torch.float32)
     if os.environ.get("XSELO_DTYPE"):  # ex.: XSELO_DTYPE=bfloat16 pra caber um modelo maior na RAM da CPU
         dtype = getattr(torch, os.environ["XSELO_DTYPE"])
     extra = {}
+    # mais de uma GPU (ex.: 2x T4 no Kaggle): o modelo é dividido entre elas, com folga pra conversa
+    if device == "cuda" and torch.cuda.device_count() > 1:
+        gb = [torch.cuda.get_device_properties(i).total_memory / 2**30 for i in range(torch.cuda.device_count())]
+        extra = {"device_map": "auto", "max_memory": {i: f"{int(g - 2.5)}GiB" for i, g in enumerate(gb)}}
     if quatro_bits:
         if not bitsandbytes_disponivel():
             raise SystemExit("--4bit precisa de GPU NVIDIA e do pacote bitsandbytes (pip install bitsandbytes)")
@@ -227,9 +233,10 @@ def carregar_base(base: str, device: str, quatro_bits: bool = False):
         extra = {
             "quantization_config": BitsAndBytesConfig(
                 load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_use_double_quant=True,
-                bnb_4bit_compute_dtype=torch.bfloat16 if bf16 else torch.float16,
+                bnb_4bit_compute_dtype=dtype,
                 llm_int8_skip_modules=_FORA_DO_4BIT),
-            "device_map": {"": 0},
+            "device_map": extra.get("device_map", {"": 0}),
+            **({"max_memory": extra["max_memory"]} if "max_memory" in extra else {}),
         }
     try:
         tok = AutoTokenizer.from_pretrained(base)
@@ -244,7 +251,7 @@ def carregar_base(base: str, device: str, quatro_bits: bool = False):
         ) from e
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-    if not quatro_bits:
+    if not hasattr(modelo, "hf_device_map"):  # quem foi espalhado pelas GPUs (ou em 4 bits) já está no lugar
         modelo = modelo.to(device)
     return modelo, tok
 
@@ -266,10 +273,14 @@ def carregar_hibrido(pasta=None, device: str = "auto", base: str | None = None):
         tok = AutoTokenizer.from_pretrained(pasta)
         if tok.pad_token is None:
             tok.pad_token = tok.eos_token
+    espalhado = hasattr(modelo, "hf_device_map")
     modelo = PeftModel.from_pretrained(modelo, pasta)
-    if not quatro_bits:
+    if not espalhado:
         modelo = modelo.to(device)
-    anexar_processador(modelo, base or cfg["base"])
+    try:
+        anexar_processador(modelo, base or cfg["base"])
+    except (OSError, ValueError):  # pasta local sem os arquivos de imagem: pega só o processador do Hugging Face
+        anexar_processador(modelo, cfg["base"])
     return modelo.eval(), tok, cfg
 
 
